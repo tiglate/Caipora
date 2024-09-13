@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{software.add.headline}]]</title>
+</head>
+<body>
+    <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <div layout:fragment="content">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 class="flex-grow-1">[[#{software.add.headline}]]</h1>
+            <div>
+                <a th:href="@{/softwares}" class="btn btn-secondary">[[#{software.add.back}]]</a>
+            </div>
+        </div>
+        <div th:replace="~{fragments/forms::globalErrors('software')}"></div>
+        <form th:action="${requestUri}" method="post">
+            <th:block th:replace="~{software/_form :: softwareForm('add', ${software}, ${ownerValues})}"></th:block>
+            <input type="submit" th:value="#{global.form.save}" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+</body>
+</html>

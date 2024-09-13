@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{software.view.headline}]]</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 class="flex-grow-1">[[#{software.view.headline}]]</h1>
+            <div>
+                <a th:href="@{/softwares}" class="btn btn-secondary">[[#{software.view.back}]]</a>
+            </div>
+        </div>
+        <th:block th:replace="~{software/_form :: softwareForm('view', ${software}, ${ownerValues})}"></th:block>
+    </div>
+</body>
+</html>

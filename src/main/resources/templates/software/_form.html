@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="softwareForm(mode, software, ownerValues)" th:object="${software}">
+    <div class="row mb-3" th:if="${mode != 'add'}">
+        <label for="id" class="col-md-2 col-form-label">
+            <span>[[#{software.id.label}]]</span>
+        </label>
+        <div class="col-md-10">
+            <input type="number" id="id" th:field="*{id}" disabled="disabled" class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="code" class="col-md-2 col-form-label">
+            <span>[[#{software.code.label}]]</span>
+        </label>
+        <div class="col-md-10">
+            <input type="text"
+                   id="code"
+                   class="form-control"
+                   th:field="*{code}"
+                   th:disabled="${mode == 'view'}"
+                   th:classappend="${#fields.hasErrors('code') ? 'is-invalid' : ''}" />
+            <div th:if="${#fields.hasErrors('code')}" class="invalid-feedback d-block">
+                <p th:each="error : ${#fields.errors('code')}" class="mb-0">[[${error}]]</p>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="name" class="col-md-2 col-form-label">
+            <span>[[#{software.name.label}]]*</span>
+        </label>
+        <div class="col-md-10">
+            <input type="text"
+                   id="name"
+                   class="form-control"
+                   th:field="*{name}"
+                   th:disabled="${mode == 'view'}"
+                   th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
+            <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
+                <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="owner" class="col-md-2 col-form-label">
+            <span>[[#{software.owner.label}]]*</span>
+        </label>
+        <div class="col-md-10">
+            <select id="owner"
+                    class="form-select"
+                    th:field="*{ownerId}"
+                    th:disabled="${mode == 'view'}"
+                    th:classappend="${#fields.hasErrors('ownerId') ? 'is-invalid' : ''}">
+                <option value="">[[#{select.empty.label}]]</option>
+                <option th:each="optionValue : ${ownerValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
+            </select>
+            <div th:if="${#fields.hasErrors('ownerId')}" class="invalid-feedback d-block">
+                <p th:each="error : ${#fields.errors('ownerId')}" class="mb-0">[[${error}]]</p>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

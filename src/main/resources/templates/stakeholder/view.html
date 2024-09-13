@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{stakeholder.view.headline}]]</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 class="flex-grow-1">[[#{stakeholder.view.headline}]]</h1>
+            <div>
+                <a th:href="@{/stakeholders}" class="btn btn-secondary">[[#{stakeholder.view.back}]]</a>
+            </div>
+        </div>
+        <th:block th:replace="~{stakeholder/_form :: stakeholderForm('view', ${stakeholder}, ${departmentValues}, ${genderValues})}"></th:block>
+    </div>
+</body>
+</html>

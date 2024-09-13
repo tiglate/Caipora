@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{version.add.headline}]]</title>
+</head>
+<body>
+    <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <div layout:fragment="content">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 class="flex-grow-1">[[#{version.add.headline}]]</h1>
+            <div>
+                <a th:href="@{/versions}" class="btn btn-secondary">[[#{version.add.back}]]</a>
+            </div>
+        </div>
+        <div th:replace="~{fragments/forms::globalErrors('version')}"></div>
+        <form th:action="${requestUri}" method="post" enctype="multipart/form-data" id="versionForm">
+            <th:block th:replace="~{version/_form :: versionForm('add', ${version}, ${softwareValues})}"></th:block>
+            <input type="submit" th:value="#{global.form.save}" class="btn btn-primary mt-4" />
+        </form>
+    </div>
+    <script>
+        function preventMultiplesClicksOnSaveButton() {
+            const form = document.getElementById('versionForm');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', () => {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Uploading...'; // Or display a loading spinner
+            });
+        }
+        document.addEventListener('DOMContentLoaded', preventMultiplesClicksOnSaveButton);
+        document.body.addEventListener('htmx:afterSwap', preventMultiplesClicksOnSaveButton);
+    </script>
+</body>
+</html>

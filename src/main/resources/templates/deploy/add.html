@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{deploy.add.headline}]]</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1">[[#{deploy.add.headline}]]</h1>
+        <div>
+            <a th:href="@{/deploys}" class="btn btn-secondary">[[#{deploy.add.back}]]</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/forms::globalErrors('deploy')}" />
+    <form th:action="${requestUri}" method="post">
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='environment', required=true, type='select')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='sequence', required=true, type='number')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='rfc', required=true)}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='executionDate', required=true, inputClass='js-datetimepicker')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='version', required=true, type='select')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='operator', required=true, type='select')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='authorizer', required=true, type='select')}" />
+        <input type="submit" th:value="#{deploy.add.headline}" class="btn btn-primary mt-4" />
+    </form>
+</div>
+</body>
+</html>

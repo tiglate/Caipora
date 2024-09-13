@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>[[#{deploy.list.headline}]]</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1">[[#{deploy.list.headline}]]</h1>
+        <div>
+            <a th:href="@{/deploys/add}" class="btn btn-primary ms-2">[[#{deploy.list.createNew}]]</a>
+        </div>
+    </div>
+    <div th:if="${!deploys.empty || filter != null}" class="row">
+        <div th:replace="~{fragments/utils::searchFilter(object='deploy')}" />
+        <div th:replace="~{fragments/utils::sorting(object='deploy', sortOptions=${ {'id,ASC', 'environment,ASC', 'sequence,ASC'} }, columnClass='offset-lg-4')}" />
+    </div>
+    <div th:if="${deploys.empty}">[[#{deploy.list.empty}]]</div>
+    <div th:if="${!deploys.empty}" class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+            <tr>
+                <th scope="col">[[#{deploy.id.label}]]</th>
+                <th scope="col">[[#{deploy.environment.label}]]</th>
+                <th scope="col">[[#{deploy.sequence.label}]]</th>
+                <th scope="col">[[#{deploy.rfc.label}]]</th>
+                <th scope="col">[[#{deploy.executionDate.label}]]</th>
+                <th scope="col">[[#{deploy.version.label}]]</th>
+                <th scope="col">[[#{deploy.operator.label}]]</th>
+                <th scope="col">[[#{deploy.authorizer.label}]]</th>
+                <th><!-- --></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="deploy : ${deploys}">
+                <td>[[${deploy.id}]]</td>
+                <td>[[${deploy.environment}]]</td>
+                <td>[[${deploy.sequence}]]</td>
+                <td>[[${deploy.rfc}]]</td>
+                <td>[[${deploy.executionDate}]]</td>
+                <td>[[${deploy.version}]]</td>
+                <td>[[${deploy.operator}]]</td>
+                <td>[[${deploy.authorizer}]]</td>
+                <td>
+                    <div class="float-end text-nowrap">
+                        <a th:href="@{/deploys/edit/{id}(id=${deploy.id})}" class="btn btn-sm btn-secondary">[[#{deploy.list.edit}]]</a>
+                        <form th:action="@{/deploys/delete/{id}(id=${deploy.id})}"
+                              th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-secondary">[[#{deploy.list.delete}]]</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="~{fragments/utils::pagination()}" />
+</div>
+</body>
+</html>
