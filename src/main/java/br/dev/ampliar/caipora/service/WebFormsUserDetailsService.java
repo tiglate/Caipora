@@ -26,7 +26,7 @@ public class WebFormsUserDetailsService implements UserDetailsService {
 
     @Override
     public WebFormsUserDetails loadUserByUsername(final String username) {
-        final User user = userRepository.findByNameIgnoreCase(username);
+        final User user = userRepository.findByUsernameIgnoreCase(username);
         if (user == null) {
             log.warn("user not found: {}", username);
             throw new UsernameNotFoundException("User " + username + " not found");

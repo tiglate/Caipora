@@ -17,5 +17,4 @@ public class WebFormsUserDetails extends User {
         super(username, hash, authorities);
         this.id = id;
     }
-
 }

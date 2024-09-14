@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     @EntityGraph(attributePaths = "roles")
-    User findByNameIgnoreCase(String name);
+    User findByUsernameIgnoreCase(String username);
 
     User findFirstByDepartment(Department department);
 

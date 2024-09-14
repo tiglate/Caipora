@@ -19,8 +19,8 @@ DROP TABLE tb_user_aud;
 DROP TABLE tb_department_aud;
 DROP TABLE SPRING_SESSION_ATTRIBUTES;
 DROP TABLE SPRING_SESSION;
-DROP TABLE revinfo;
-DROP TABLE revtype_lookup;
+DROP TABLE tb_revision;
+DROP TABLE tb_revision_type;
 */
 
 IF OBJECT_ID('SPRING_SESSION', 'U') IS NULL
@@ -52,21 +52,25 @@ CREATE TABLE SPRING_SESSION_ATTRIBUTES (
         ON DELETE CASCADE
 );
 
-IF OBJECT_ID('revinfo', 'U') IS NULL
-CREATE TABLE revinfo (
-    rev      INT     NOT NULL IDENTITY(1, 1),
-    revtstmp BIGINT  NOT NULL,
-    PRIMARY KEY (rev)
-);
-
-IF OBJECT_ID('revtype_lookup', 'U') IS NULL
+IF OBJECT_ID('tb_revision', 'U') IS NULL
 BEGIN
-    CREATE TABLE revtype_lookup (
-        revtype TINYINT NOT NULL PRIMARY KEY,
-        description VARCHAR(50) NOT NULL
+    CREATE TABLE tb_revision (
+        id_revision     INT       NOT NULL IDENTITY(1, 1),
+        id_user         INT       NULL,
+        event_timestamp DATETIME2 NOT NULL,
+        CONSTRAINT pk_revision PRIMARY KEY (id_revision)
+    );
+END
+
+IF OBJECT_ID('tb_revision_type', 'U') IS NULL
+BEGIN
+    CREATE TABLE tb_revision_type (
+        id_revision_type TINYINT     NOT NULL,
+        description      VARCHAR(50) NOT NULL,
+        CONSTRAINT pk_revision_type PRIMARY KEY (id_revision_type)
     );
 
-    INSERT INTO revtype_lookup (revtype, description) VALUES
+    INSERT INTO tb_revision_type (id_revision_type, description) VALUES
     (0, 'ADD'),
     (1, 'MOD'),
     (2, 'DEL');
@@ -86,15 +90,16 @@ BEGIN
     );
 
     CREATE TABLE tb_department_aud (
-        id_department INT           NOT NULL,
-        rev           INT           NOT NULL,
-        revtype       TINYINT       NULL,
-        name          VARCHAR(255)  NULL,
-        email         VARCHAR(255)  NULL,
-        created_at    DATETIME2     NULL,
-        updated_at    DATETIME2     NULL,
-        PRIMARY KEY (id_department, rev),
-        CONSTRAINT fk_department_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_department    INT           NOT NULL,
+        id_revision      INT           NOT NULL,
+        id_revision_type TINYINT       NULL,
+        name             VARCHAR(255)  NULL,
+        email            VARCHAR(255)  NULL,
+        created_at       DATETIME2     NULL,
+        updated_at       DATETIME2     NULL,
+        PRIMARY KEY (id_department, id_revision),
+        CONSTRAINT fk_department_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_department_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -118,20 +123,21 @@ BEGIN
     );
 
     CREATE TABLE tb_user_aud (
-        id_user       INT          NOT NULL,
-        rev           INT          NOT NULL,
-        revtype       TINYINT      NULL,
-        id_department INT          NULL,
-        name          VARCHAR(255) NULL,
-        email         VARCHAR(255) NULL,
-        gender        VARCHAR(10)  NULL,
-        username      VARCHAR(50)  NULL,
-        password      VARCHAR(255) NULL,
-        enabled       BIT          NULL,
-        created_at    DATETIME2    NULL,
-        updated_at    DATETIME2    NULL,
-        PRIMARY KEY (id_user, rev),
-        CONSTRAINT fk_user_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_user          INT          NOT NULL,
+        id_revision      INT          NOT NULL,
+        id_revision_type TINYINT      NULL,
+        id_department    INT          NULL,
+        name             VARCHAR(255) NULL,
+        email            VARCHAR(255) NULL,
+        gender           VARCHAR(10)  NULL,
+        username         VARCHAR(50)  NULL,
+        password         VARCHAR(255) NULL,
+        enabled          BIT          NULL,
+        created_at       DATETIME2    NULL,
+        updated_at       DATETIME2    NULL,
+        PRIMARY KEY (id_user, id_revision),
+        CONSTRAINT fk_user_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_user_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -148,14 +154,15 @@ BEGIN
     );
 
     CREATE TABLE tb_role_aud (
-        id_role    INT          NOT NULL,
-        rev        INT          NOT NULL,
-        revtype    TINYINT      NULL,
-        name       VARCHAR(255) NULL,
-        created_at DATETIME2    NULL,
-        updated_at DATETIME2    NULL,
-        PRIMARY KEY (id_role, rev),
-        CONSTRAINT fk_role_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_role          INT          NOT NULL,
+        id_revision      INT          NOT NULL,
+        id_revision_type TINYINT      NULL,
+        name             VARCHAR(255) NULL,
+        created_at       DATETIME2    NULL,
+        updated_at       DATETIME2    NULL,
+        PRIMARY KEY (id_role, id_revision),
+        CONSTRAINT fk_role_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_role_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -175,12 +182,13 @@ BEGIN
     );
 
     CREATE TABLE tb_user_role_aud (
-        id_user  INT     NOT NULL,
-        id_role  INT     NOT NULL,
-        rev      INT     NOT NULL,
-        revtype  TINYINT NULL,
-        PRIMARY KEY (id_user, id_role, rev),
-        CONSTRAINT fk_user_role_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_user          INT     NOT NULL,
+        id_role          INT     NOT NULL,
+        id_revision      INT     NOT NULL,
+        id_revision_type TINYINT NULL,
+        PRIMARY KEY (id_user, id_role, id_revision),
+        CONSTRAINT fk_user_role_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_user_role_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -200,17 +208,18 @@ BEGIN
     );
 
     CREATE TABLE tb_stakeholder_aud (
-        id_stakeholder INT          NOT NULL,
-        rev            INT          NOT NULL,
-        revtype        TINYINT      NULL,
-        id_department  INT          NULL,
-        name           VARCHAR(255) NULL,
-        email          VARCHAR(255) NULL,
-        gender         VARCHAR(10)  NULL,
-        created_at     DATETIME2    NULL,
-        updated_at     DATETIME2    NULL,
-        PRIMARY KEY (id_stakeholder, rev),
-        CONSTRAINT fk_stakeholder_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_stakeholder   INT          NOT NULL,
+        id_revision      INT          NOT NULL,
+        id_revision_type TINYINT      NULL,
+        id_department    INT          NULL,
+        name             VARCHAR(255) NULL,
+        email            VARCHAR(255) NULL,
+        gender           VARCHAR(10)  NULL,
+        created_at       DATETIME2    NULL,
+        updated_at       DATETIME2    NULL,
+        PRIMARY KEY (id_stakeholder, id_revision),
+        CONSTRAINT fk_stakeholder_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_stakeholder_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -231,16 +240,17 @@ BEGIN
     );
 
     CREATE TABLE tb_software_aud (
-        id_software INT          NOT NULL,
-        rev         INT          NOT NULL,
-        revtype     TINYINT      NULL,
-        id_owner    INT          NULL,
-        code        VARCHAR(20)  NULL,
-        name        VARCHAR(255) NULL,
-        created_at  DATETIME2    NULL,
-        updated_at  DATETIME2    NULL,
-        PRIMARY KEY (id_software, rev),
-        CONSTRAINT fk_software_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_software      INT          NOT NULL,
+        id_revision      INT          NOT NULL,
+        id_revision_type TINYINT      NULL,
+        id_owner         INT          NULL,
+        code             VARCHAR(20)  NULL,
+        name             VARCHAR(255) NULL,
+        created_at       DATETIME2    NULL,
+        updated_at       DATETIME2    NULL,
+        PRIMARY KEY (id_software, id_revision),
+        CONSTRAINT fk_software_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_software_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -262,19 +272,20 @@ BEGIN
     );
 
     CREATE TABLE tb_version_aud (
-        id_version   INT           NOT NULL,
-        rev          INT           NOT NULL,
-        revtype      TINYINT       NULL,
-        id_software  INT           NULL,
-        name         VARCHAR(255)  NULL,
-        file_name    VARCHAR(255)  NULL,
-        release_date DATE          NULL,
-        changelog    VARCHAR(MAX)  NULL,
-        comments     VARCHAR(MAX)  NULL,
-        created_at   DATETIME2     NULL,
-        updated_at   DATETIME2     NULL,
-        PRIMARY KEY (id_version, rev),
-        CONSTRAINT fk_version_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_version       INT           NOT NULL,
+        id_revision      INT           NOT NULL,
+        id_revision_type TINYINT       NULL,
+        id_software      INT           NULL,
+        name             VARCHAR(255)  NULL,
+        file_name        VARCHAR(255)  NULL,
+        release_date     DATE          NULL,
+        changelog        VARCHAR(MAX)  NULL,
+        comments         VARCHAR(MAX)  NULL,
+        created_at       DATETIME2     NULL,
+        updated_at       DATETIME2     NULL,
+        PRIMARY KEY (id_version, id_revision),
+        CONSTRAINT fk_version_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_version_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
 
@@ -301,19 +312,20 @@ BEGIN
     );
 
     CREATE TABLE tb_deploy_aud (
-        id_deploy      INT         NOT NULL,
-        rev            INT         NOT NULL,
-        revtype        TINYINT     NULL,
-        id_version     INT         NULL,
-        id_operator    INT         NULL,
-        id_authorizer  INT         NULL,
-        sequence       INT         NULL,
-        environment    VARCHAR(30) NULL,
-        rfc            VARCHAR(30) NULL,
-        execution_date DATETIME    NULL,
-        created_at     DATETIME2   NULL,
-        updated_at     DATETIME2   NULL,
-        PRIMARY KEY (id_deploy, rev),
-        CONSTRAINT fk_deploy_aud_rev FOREIGN KEY (rev) REFERENCES revinfo (rev)
+        id_deploy        INT         NOT NULL,
+        id_revision      INT         NOT NULL,
+        id_revision_type TINYINT     NULL,
+        id_version       INT         NULL,
+        id_operator      INT         NULL,
+        id_authorizer    INT         NULL,
+        sequence         INT         NULL,
+        environment      VARCHAR(30) NULL,
+        rfc              VARCHAR(30) NULL,
+        execution_date   DATETIME    NULL,
+        created_at       DATETIME2   NULL,
+        updated_at       DATETIME2   NULL,
+        PRIMARY KEY (id_deploy, id_revision),
+        CONSTRAINT fk_deploy_aud_revision FOREIGN KEY (id_revision) REFERENCES tb_revision (id_revision),
+        CONSTRAINT fk_deploy_aud_revision_type FOREIGN KEY (id_revision_type) REFERENCES tb_revision_type (id_revision_type)
     );
 END
