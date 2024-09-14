@@ -33,14 +33,17 @@ public class CustomRevisionEntity {
         this.id = id;
     }
 
+    @SuppressWarnings("unused")
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
+    @SuppressWarnings("unused")
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
+    @SuppressWarnings("unused")
     public Integer getUserId() {
         return userId;
     }
