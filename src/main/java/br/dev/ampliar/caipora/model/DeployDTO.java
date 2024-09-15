@@ -13,7 +13,7 @@ public class DeployDTO {
     private Environment environment;
 
     @NotNull
-    private Integer sequence;
+    private Boolean isActive;
 
     @NotNull
     @Size(max = 30)
@@ -48,12 +48,12 @@ public class DeployDTO {
         this.environment = environment;
     }
 
-    public Integer getSequence() {
-        return sequence;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setSequence(final Integer sequence) {
-        this.sequence = sequence;
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public String getRfc() {

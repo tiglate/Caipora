@@ -264,3 +264,127 @@ BEGIN
         (12, 'v3.0', 'software12-v3.0.zip', '2023-08-25', 'Major update, new UI, performance boost', 'Big release!'),
         (12, 'v3.0.1', 'software12-v3.0.1.zip', '2023-09-01', 'Critical bug fixes', 'Addressing issues in v3.0');
 END
+
+IF OBJECT_ID('tempdb..#tb_last_version') IS NOT NULL
+BEGIN
+    DROP TABLE #tb_last_version;
+END
+
+CREATE TABLE #tb_last_version (
+    id_software INT NULL,
+    id_version  INT NULL
+);
+
+INSERT INTO #tb_last_version
+SELECT
+    sow.id_software,
+    ver.id_version
+FROM
+    tb_software AS sow
+
+    INNER JOIN tb_version AS ver
+            ON ver.id_software  = sow.id_software
+           AND ver.release_date = (SELECT MAX(aux.release_date)
+                                   FROM tb_version AS aux
+                                   WHERE aux.id_software = sow.id_software)
+
+DECLARE @MaxUsers        INT
+DECLARE @MaxStakeholders INT
+
+SELECT @MaxUsers        = COUNT(*) FROM tb_user
+SELECT @MaxStakeholders = COUNT(*) FROM tb_stakeholder
+
+INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
+SELECT
+    id_version     = ver.id_version,
+    id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
+    id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
+    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    environment    = 'DEVELOPMENT',
+    rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
+    execution_date = DATEADD(DAY, 1, ver.release_date)
+FROM
+    tb_version AS ver
+
+    LEFT JOIN #tb_last_version AS lvr
+           ON lvr.id_software = ver.id_software
+ORDER BY
+    ver.id_software ASC,
+    ver.release_date ASC
+
+INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
+SELECT
+    id_version     = ver.id_version,
+    id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
+    id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
+    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    environment    = 'QA',
+    rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
+    execution_date = DATEADD(DAY, 2, ver.release_date)
+FROM
+    tb_version AS ver
+
+    LEFT JOIN #tb_last_version AS lvr
+           ON lvr.id_software = ver.id_software
+ORDER BY
+    ver.id_software ASC,
+    ver.release_date ASC
+
+INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
+SELECT
+    id_version     = ver.id_version,
+    id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
+    id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
+    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    environment    = 'UAT',
+    rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
+    execution_date = DATEADD(DAY, 3, ver.release_date)
+FROM
+    tb_version AS ver
+
+    LEFT JOIN #tb_last_version AS lvr
+           ON lvr.id_software = ver.id_software
+ORDER BY
+    ver.id_software ASC,
+    ver.release_date ASC
+
+INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
+SELECT
+    id_version     = ver.id_version,
+    id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
+    id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
+    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    environment    = 'PRODUCTION',
+    rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
+    execution_date = DATEADD(DAY, 4, ver.release_date)
+FROM
+    tb_version AS ver
+
+    LEFT JOIN #tb_last_version AS lvr
+           ON lvr.id_software = ver.id_software
+ORDER BY
+    ver.id_software ASC,
+    ver.release_date ASC
+
+INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
+SELECT
+    id_version     = ver.id_version,
+    id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
+    id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
+    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    environment    = 'DR',
+    rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
+    execution_date = DATEADD(DAY, 5, ver.release_date)
+FROM
+    tb_version AS ver
+
+    LEFT JOIN #tb_last_version AS lvr
+           ON lvr.id_software = ver.id_software
+ORDER BY
+    ver.id_software ASC,
+    ver.release_date ASC
+
+IF OBJECT_ID('tempdb..#tb_last_version') IS NOT NULL
+BEGIN
+    DROP TABLE #tb_last_version;
+END

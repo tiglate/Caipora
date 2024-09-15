@@ -27,5 +27,17 @@
                 <button type="submit" class="btn btn-secondary">[[#{searchFilter.apply}]]</button>
             </div>
         </form>
+
+
+        <th:block th:fragment="pagination2()" th:if="${paginationModel != null}">
+            <nav th:if="${paginationModel.steps.size > 3}">
+                <ul class="pagination m-0">
+                    <li th:each="step : ${paginationModel.steps}" th:classappend="${(step.active ? 'active' : '') + (step.disabled ? ' disabled' : '')}" class="page-item">
+                        <a th:href="${requestUri + step.url}" class="page-link">[[${step.label}]]</a>
+                    </li>
+                </ul>
+            </nav>
+            <p class="fw-normal small m-0 d-none d-xl-block d-xxl-block">[[${paginationModel.elements}]]</p>
+        </th:block>
     </body>
 </html>

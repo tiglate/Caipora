@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en"
       layout:decorate="~{layout}">
 <head>
     <title>[[#{deploy.list.headline}]]</title>
@@ -12,50 +14,40 @@
             <a th:href="@{/deploys/add}" class="btn btn-primary ms-2">[[#{deploy.list.createNew}]]</a>
         </div>
     </div>
-    <div th:if="${!deploys.empty || filter != null}" class="row">
-        <div th:replace="~{fragments/utils::searchFilter(object='deploy')}" />
-        <div th:replace="~{fragments/utils::sorting(object='deploy', sortOptions=${ {'id,ASC', 'environment,ASC', 'sequence,ASC'} }, columnClass='offset-lg-4')}" />
+
+    <div class="row row-cols-1 row-cols-lg-3 g-4 mb-3">
+        <div class="col" th:each="deploy : ${deploys}">
+            <div class="card shadow h-100">
+                <div class="card-header text-truncate">
+                    [[${deploy.code}]] - [[${deploy.name}]]
+                </div>
+                <div class="card-body p-2">
+                    <table class="table table-sm align-middle table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Env</th>
+                                <th scope="col">Version</th>
+                                <th scope="col" class="text-center">Deploy</th>
+                                <th scope="col" class="text-center"><i class="bi-list"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dev.deployId}, 'DEV', ${deploy.dev.version}, ${deploy.dev.executionDate})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.qa.deployId}, 'QA', ${deploy.qa.version}, ${deploy.qa.executionDate})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.uat.deployId}, 'UAT', ${deploy.uat.version}, ${deploy.uat.executionDate})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.prod.deployId}, 'PROD', ${deploy.prod.version}, ${deploy.prod.executionDate})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dr.deployId}, 'DR', ${deploy.dr.version}, ${deploy.dr.executionDate})}"></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-center">
+                    <button class="btn btn-danger btn-sm"><i class="bi-unlock"></i> Unlock</button>
+                    <button class="btn btn-secondary btn-sm"><i class="bi-clock"></i> History</button>
+                    <button class="btn btn-primary btn-sm"><i class="bi-plus-circle"></i> Deploy</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div th:if="${deploys.empty}">[[#{deploy.list.empty}]]</div>
-    <div th:if="${!deploys.empty}" class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-            <thead>
-            <tr>
-                <th scope="col">[[#{deploy.id.label}]]</th>
-                <th scope="col">[[#{deploy.environment.label}]]</th>
-                <th scope="col">[[#{deploy.sequence.label}]]</th>
-                <th scope="col">[[#{deploy.rfc.label}]]</th>
-                <th scope="col">[[#{deploy.executionDate.label}]]</th>
-                <th scope="col">[[#{deploy.version.label}]]</th>
-                <th scope="col">[[#{deploy.operator.label}]]</th>
-                <th scope="col">[[#{deploy.authorizer.label}]]</th>
-                <th><!-- --></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="deploy : ${deploys}">
-                <td>[[${deploy.id}]]</td>
-                <td>[[${deploy.environment}]]</td>
-                <td>[[${deploy.sequence}]]</td>
-                <td>[[${deploy.rfc}]]</td>
-                <td>[[${deploy.executionDate}]]</td>
-                <td>[[${deploy.version}]]</td>
-                <td>[[${deploy.operator}]]</td>
-                <td>[[${deploy.authorizer}]]</td>
-                <td>
-                    <div class="float-end text-nowrap">
-                        <a th:href="@{/deploys/edit/{id}(id=${deploy.id})}" class="btn btn-sm btn-secondary">[[#{deploy.list.edit}]]</a>
-                        <form th:action="@{/deploys/delete/{id}(id=${deploy.id})}"
-                              th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-secondary">[[#{deploy.list.delete}]]</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div th:replace="~{fragments/utils::pagination()}" />
 </div>
 </body>
 </html>

@@ -21,6 +21,7 @@ DROP TABLE SPRING_SESSION_ATTRIBUTES;
 DROP TABLE SPRING_SESSION;
 DROP TABLE tb_revision;
 DROP TABLE tb_revision_type;
+DROP VIEW vw_last_version_deployed;
 */
 
 IF OBJECT_ID('SPRING_SESSION', 'U') IS NULL
@@ -296,7 +297,7 @@ BEGIN
         id_version     INT         NOT NULL,
         id_operator    INT         NOT NULL,
         id_authorizer  INT         NOT NULL,
-        sequence       INT         NOT NULL,
+        is_active      BIT         NOT NULL DEFAULT(0),
         environment    VARCHAR(30) NOT NULL,
         rfc            VARCHAR(30) NOT NULL,
         execution_date DATETIME    NOT NULL DEFAULT (GETDATE()),
@@ -310,6 +311,7 @@ BEGIN
         CONSTRAINT fk_deploy_authorizer FOREIGN KEY (id_authorizer) REFERENCES tb_stakeholder (id_stakeholder),
         CONSTRAINT ck_deploy_environment CHECK (environment IN ('DEVELOPMENT', 'QA', 'UAT', 'PRODUCTION', 'DR'))
     );
+    CREATE UNIQUE INDEX uq_deploy_environment_active ON tb_deploy (id_version, environment, is_active) WHERE is_active = 1;
 
     CREATE TABLE tb_deploy_aud (
         id_deploy        INT         NOT NULL,
@@ -318,7 +320,7 @@ BEGIN
         id_version       INT         NULL,
         id_operator      INT         NULL,
         id_authorizer    INT         NULL,
-        sequence         INT         NULL,
+        is_active        BIT         NULL,
         environment      VARCHAR(30) NULL,
         rfc              VARCHAR(30) NULL,
         execution_date   DATETIME    NULL,

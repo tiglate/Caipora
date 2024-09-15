@@ -27,7 +27,7 @@ public class Deploy {
     private Environment environment;
 
     @Column(nullable = false)
-    private Integer sequence;
+    private Boolean isActive;
 
     @Column(nullable = false, unique = true, length = 30)
     private String rfc;
@@ -71,12 +71,12 @@ public class Deploy {
         this.environment = environment;
     }
 
-    public Integer getSequence() {
-        return sequence;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setSequence(final Integer sequence) {
-        this.sequence = sequence;
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public String getRfc() {

@@ -16,7 +16,7 @@
     <form th:action="${requestUri}" method="post">
         <div th:replace="~{fragments/forms::inputRow(object='deploy', field='id', disabled=true, type='number')}" />
         <div th:replace="~{fragments/forms::inputRow(object='deploy', field='environment', required=true, type='select')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='sequence', required=true, type='number')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='isActive', type='checkbox')}" />
         <div th:replace="~{fragments/forms::inputRow(object='deploy', field='rfc', required=true)}" />
         <div th:replace="~{fragments/forms::inputRow(object='deploy', field='executionDate', required=true, inputClass='js-datetimepicker')}" />
         <div th:replace="~{fragments/forms::inputRow(object='deploy', field='version', required=true, type='select')}" />

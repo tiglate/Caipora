@@ -23,64 +23,90 @@
                 <a th:href="@{/versions/add}" class="btn btn-primary ms-2">[[#{version.list.createNew}]]</a>
             </div>
         </div>
-        <form id="searchForm" th:action="${requestUri}" th:object="${versionSearch}" method="get">
-            <div class="row mb-3">
-                <div class="col-md-7">
-                    <label for="software" class="form-label">
-                        [[#{version.software.label}]]
-                    </label>
-                    <select id="software" th:field="*{softwareId}" class="form-select">
-                        <option value=""></option>
-                        <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
-                    </select>
-                </div>
-                <div class="col-md-5">
-                    <label for="name" class="form-label">
-                        [[#{version.name.label}]]
-                    </label>
-                    <input type="text" id="name" th:field="*{name}" class="form-control" />
-                </div>
+
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                Filters
             </div>
-            <div class="row mb-3">
-                <div class="col d-flex justify-content-end">
-                    <input type="reset" value="Clear" class="btn btn-secondary me-2" onclick="return clearForm();" />
-                    <input type="submit" value="Search" class="btn btn-primary" />
-                </div>
-            </div>
-        </form>
-        <div th:if="${#lists.isEmpty(versions)}">[[#{version.list.empty}]]</div>
-        <div th:if="${not #lists.isEmpty(versions)}" class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead>
-                <tr>
-                    <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.id.label', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                    <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.software.label', ${sortBySoftwareLink}, ${sortBySoftwareDirection}, 'software.name')}"></th>
-                    <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.name.label', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
-                    <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.releaseDate.label', ${sortByReleaseDateLink}, ${sortByReleaseDateDirection}, 'releaseDate')}"></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="version : ${versions}">
-                    <td>[[${version.id}]]</td>
-                    <td>[[${version.softwareName}]]</td>
-                    <td>[[${version.name}]]</td>
-                    <td>[[${version.releaseDate}]]</td>
-                    <td>
-                        <div class="float-end text-nowrap">
-                            <a th:href="@{/versions/edit/{id}(id=${version.id})}" class="btn btn-sm btn-secondary">[[#{version.list.edit}]]</a>
-                            <a th:href="@{/versions/view/{id}(id=${version.id})}" class="btn btn-sm btn-secondary">[[#{version.list.view}]]</a>
-                            <form th:action="@{/versions/delete/{id}(id=${version.id})}"
-                                  th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-secondary">[[#{version.list.delete}]]</button>
-                            </form>
+            <div class="card-body">
+                <form id="searchForm" th:action="${requestUri}" th:object="${versionSearch}" method="get">
+                    <div class="row mb-3">
+                        <div class="col-md-7">
+                            <label for="software" class="form-label">
+                                [[#{version.software.label}]]
+                            </label>
+                            <select id="software" th:field="*{softwareId}" class="form-select">
+                                <option value=""></option>
+                                <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">
+                                    [[${optionValue.value}]]
+                                </option>
+                            </select>
                         </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                        <div class="col-md-5">
+                            <label for="name" class="form-label">
+                                [[#{version.name.label}]]
+                            </label>
+                            <input type="text" id="name" th:field="*{name}" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col d-flex justify-content-end">
+                            <input type="reset" value="Clear" class="btn btn-secondary me-2"
+                                   onclick="return clearForm();"/>
+                            <input type="submit" value="Search" class="btn btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div th:replace="~{fragments/utils::pagination()}"></div>
+
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                Results
+            </div>
+            <div class="card-body">
+                <p class="card-text" th:if="${#lists.isEmpty(versions)}">[[#{version.list.empty}]]</p>
+                <div th:if="${not #lists.isEmpty(versions)}" class="table-responsive">
+                    <table class="table table-sm table-striped table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.id.label', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.software.label', ${sortBySoftwareLink}, ${sortBySoftwareDirection}, 'software.name')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.name.label', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.releaseDate.label', ${sortByReleaseDateLink}, ${sortByReleaseDateDirection}, 'releaseDate')}"></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                        <tr th:each="version : ${versions}">
+                            <td>[[${version.id}]]</td>
+                            <td>[[${version.softwareName}]]</td>
+                            <td>[[${version.name}]]</td>
+                            <td>[[${version.releaseDate}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/versions/view/{id}(id=${version.id})}"
+                                       class="btn btn-sm btn-secondary bi-eye"
+                                       th:title="#{version.list.view}"></a>
+                                    <a th:href="@{/versions/edit/{id}(id=${version.id})}"
+                                       class="btn btn-sm btn-secondary bi-pencil-square"
+                                       th:title="#{version.list.edit}"></a>
+                                    <form th:action="@{/versions/delete/{id}(id=${version.id})}"
+                                          th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary bi-trash" th:title="#{version.list.delete}">
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer d-flex flex-column flex-md-row align-items-center justify-content-between">
+                <nav th:replace="~{fragments/utils::pagination2()}"></nav>
+            </div>
+        </div>
     </div>
 </body>
 </html>

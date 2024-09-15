@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <table>
+        <tr th:fragment="cardRow(deployId, environment, version, executionDate)">
+            <td>[[${environment}]]</td>
+            <td class="text-truncate"><div class="text-truncate" style="max-width: 130px;">[[${version}]]</div></td>
+            <td class="text-center">[[${#temporals.format(executionDate, 'dd-MMM-yy')}]]</td>
+            <td class="text-center">
+                <a th:href="@{/deploys/view/{id}(id=${deployId})}" title="View" class="bi-eye-fill"></a>
+                <a href="#" title="Rollback" class="bi-arrow-down-square-fill link-danger"></a>
+                <a href="#" title="Promote" class="bi-arrow-up-square-fill link-success"></a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
