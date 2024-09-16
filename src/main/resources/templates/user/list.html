@@ -4,7 +4,7 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{user.list.headline}]]</title>
+    <title>Users</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
@@ -24,9 +24,9 @@
     <!--/*@thymesVar id="sortByDepartmentNameDirection" type="java.lang.String"*/-->
     <div layout:fragment="content">
         <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">[[#{user.list.headline}]]</h1>
+            <h1 class="flex-grow-1">Users</h1>
             <div>
-                <a th:href="@{/users/add}" class="btn btn-primary ms-2">[[#{user.list.createNew}]]</a>
+                <a th:href="@{/users/add}" class="btn btn-primary ms-2"><i class="bi-plus-circle"></i> Add</a>
             </div>
         </div>
 
@@ -38,22 +38,16 @@
                 <form id="searchForm" th:action="${requestUri}" th:object="${userSearch}" method="get">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label for="username" class="form-label">
-                                [[#{user.username.label}]]
-                            </label>
-                            <input type="text" id="username" th:field="*{username}" class="form-control"/>
+                            <label for="txtUsername" class="form-label">Username</label>
+                            <input type="text" id="txtUsername" th:field="*{username}" class="form-control"/>
                         </div>
                         <div class="col-md-4">
-                            <label for="name" class="form-label">
-                                [[#{user.name.label}]]
-                            </label>
-                            <input type="text" id="name" th:field="*{name}" class="form-control"/>
+                            <label for="txtName" class="form-label">Name</label>
+                            <input type="text" id="txtName" th:field="*{name}" class="form-control"/>
                         </div>
                         <div class="col-md-4">
-                            <label for="department" class="form-label">
-                                [[#{user.department.label}]]
-                            </label>
-                            <select id="department" th:field="*{department}" class="form-select">
+                            <label for="cboDepartment" class="form-label">Department</label>
+                            <select id="cboDepartment" th:field="*{department}" class="form-select">
                                 <option value=""></option>
                                 <option th:each="optionValue : ${departmentValues}" th:value="${optionValue.key}">
                                     [[${optionValue.value}]]
@@ -77,18 +71,18 @@
                 Results
             </div>
             <div class="card-body">
-                <p th:if="${#lists.isEmpty(users)}" class="card-text">[[#{users.list.empty}]]</p>
+                <p th:if="${#lists.isEmpty(users)}" class="card-text">No records found</p>
                 <div th:if="${not #lists.isEmpty(users)}" class="table-responsive">
                     <table class="table table-sm table-striped table-hover align-middle">
                         <thead>
                         <tr>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.id.label', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.name.label', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.email.label', ${sortByEmailLink}, ${sortByEmailDirection}, 'email')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.gender.label', ${sortByGenderLink}, ${sortByGenderDirection}, 'gender')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.username.label', ${sortByUsernameLink}, ${sortByUsernameDirection}, 'username')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.enabled.label', ${sortByEnabledLink}, ${sortByEnabledDirection}, 'enabled')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('user.department.label', ${sortByDepartmentNameLink}, ${sortByDepartmentNameDirection}, 'department.name')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Id', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Name', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('E-mail', ${sortByEmailLink}, ${sortByEmailDirection}, 'email')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Gender', ${sortByGenderLink}, ${sortByGenderDirection}, 'gender')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Username', ${sortByUsernameLink}, ${sortByUsernameDirection}, 'username')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Enabled', ${sortByEnabledLink}, ${sortByEnabledDirection}, 'enabled')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Department', ${sortByDepartmentNameLink}, ${sortByDepartmentNameDirection}, 'department.name')}"></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -105,13 +99,13 @@
                                 <div class="float-end text-nowrap">
                                     <a th:href="@{/users/view/{id}(id=${user.id})}"
                                        class="btn btn-sm btn-secondary bi-eye"
-                                       th:title="#{user.list.view}"></a>
+                                       title="View"></a>
                                     <a th:href="@{/users/edit/{id}(id=${user.id})}"
                                        class="btn btn-sm btn-secondary bi-pencil-square"
-                                       th:title="#{user.list.edit}"></a>
+                                       title="Edit"></a>
                                     <form th:action="@{/users/delete/{id}(id=${user.id})}"
                                           th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-secondary bi-trash" th:title="#{user.list.delete}">
+                                        <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
                                         </button>
                                     </form>
                                 </div>

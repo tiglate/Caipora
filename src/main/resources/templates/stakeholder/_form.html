@@ -1,85 +1,98 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<th:block th:fragment="stakeholderForm(mode, stakeholder, departmentValues, genderValues)" th:object="${stakeholder}">
-    <div class="row mb-3" th:if="${mode != 'add'}">
-        <label for="id" class="col-md-2 col-form-label">
-            <span>[[#{stakeholder.id.label}]]</span>
-        </label>
-        <div class="col-md-10">
-            <input type="number" id="id" th:field="*{id}" disabled="disabled" class="form-control" />
-        </div>
-    </div>
-    <div class="row mb-3">
-        <label for="name" class="col-md-2 col-form-label">
-            <span>[[#{stakeholder.name.label}]]*</span>
-        </label>
-        <div class="col-md-10">
-            <input type="text"
-                   id="name"
-                   class="form-control"
-                   th:field="*{name}"
-                   th:disabled="${mode == 'view'}"
-                   th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
-            <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
-                <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
+    <!--/*@thymesVar id="mode" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="stakeholder" type="br.dev.ampliar.caipora.model.StakeholderDTO"*/-->
+    <!--/*@thymesVar id="departmentValues" type="java.util.Map"*/-->
+    <!--/*@thymesVar id="genderValues" type="br.dev.ampliar.caipora.model.Gender[]"*/-->
+    <th:block th:fragment="stakeholderForm(mode, stakeholder, departmentValues, genderValues)" th:object="${stakeholder}">
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                Details
+            </div>
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <label for="txtName" class="form-label">Name*</label>
+                        <input type="text"
+                               id="txtName"
+                               class="form-control"
+                               th:field="*{name}"
+                               th:disabled="${mode == 'view'}"
+                               th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
+                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="txtEmail" class="form-label">E-mail</label>
+                        <input type="email"
+                               id="txtEmail"
+                               class="form-control"
+                               th:field="*{email}"
+                               th:disabled="${mode == 'view'}"
+                               th:classappend="${#fields.hasErrors('email') ? 'is-invalid' : ''}" />
+                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('email')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label for="cboDepartment" class="form-label">Department*</label>
+                        <select id="cboDepartment"
+                                class="form-select"
+                                th:field="*{departmentId}"
+                                th:disabled="${mode == 'view'}"
+                                th:classappend="${#fields.hasErrors('departmentId') ? 'is-invalid' : ''}">
+                            <option value="">Please select</option>
+                            <option th:each="optionValue : ${departmentValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('departmentId')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('departmentId')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Gender*</label>
+                        <div th:each="radioValue : ${genderValues}" class="form-check">
+                            <input type="radio"
+                                   class="form-check-input"
+                                   th:field="*{gender}"
+                                   th:id="${'gender' + radioValue}"
+                                   th:value="${radioValue}"
+                                   th:disabled="${mode == 'view'}"
+                                   th:classappend="${#fields.hasErrors('gender') ? 'is-invalid' : ''}" />
+                            <label th:for="${'gender' + radioValue}" class="form-check-label">[[${radioValue}]]</label>
+                        </div>
+                        <div th:if="${#fields.hasErrors('gender')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('gender')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <label for="email" class="col-md-2 col-form-label">
-            <span>[[#{stakeholder.email.label}]]</span>
-        </label>
-        <div class="col-md-10">
-            <input type="email"
-                   id="email"
-                   class="form-control"
-                   th:field="*{email}"
-                   th:disabled="${mode == 'view'}"
-                   th:classappend="${#fields.hasErrors('email') ? 'is-invalid' : ''}" />
-            <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback d-block">
-                <p th:each="error : ${#fields.errors('email')}" class="mb-0">[[${error}]]</p>
+
+        <div class="card shadow mb-3" th:if="${mode != 'add'}">
+            <div class="card-header">
+                Audit
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="txtId" class="form-label">Id</label>
+                        <input type="number" id="txtId" th:field="*{id}" disabled="disabled" class="form-control" />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="txtCreatedAt" class="form-label">Input Date</label>
+                        <input type="text" id="txtCreatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(stakeholder.createdAt, 'dd-MMM-yy hh:mm:ss')}"  />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="txtUpdatedAt" class="form-label">Last Update</label>
+                        <input type="text" id="txtUpdatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(stakeholder.updatedAt, 'dd-MMM-yy hh:mm:ss')}"  />
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <label class="col-md-2 col-form-label">
-            <span>[[#{stakeholder.gender.label}]]*</span>
-        </label>
-        <div class="col-md-10">
-            <div th:each="radioValue : ${genderValues}" class="form-check form-check-inline pt-2">
-                <input type="radio"
-                       class="form-check-input"
-                       th:field="*{gender}"
-                       th:id="${'gender' + radioValue}"
-                       th:value="${radioValue}"
-                       th:disabled="${mode == 'view'}"
-                       th:classappend="${#fields.hasErrors('gender') ? 'is-invalid' : ''}" />
-                <label th:for="${'gender' + radioValue}" class="form-check-label">[[${radioValue}]]</label>
-            </div>
-            <div th:if="${#fields.hasErrors('gender')}" class="invalid-feedback d-block">
-                <p th:each="error : ${#fields.errors('gender')}" class="mb-0">[[${error}]]</p>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-3">
-        <label for="department" class="col-md-2 col-form-label">
-            <span>[[#{stakeholder.department.label}]]*</span>
-        </label>
-        <div class="col-md-10">
-            <select id="department"
-                    class="form-select"
-                    th:field="*{departmentId}"
-                    th:disabled="${mode == 'view'}"
-                    th:classappend="${#fields.hasErrors('departmentId') ? 'is-invalid' : ''}">
-                <option value="">[[#{select.empty.label}]]</option>
-                <option th:each="optionValue : ${departmentValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
-            </select>
-            <div th:if="${#fields.hasErrors('departmentId')}" class="invalid-feedback d-block">
-                <p th:each="error : ${#fields.errors('departmentId')}" class="mb-0">[[${error}]]</p>
-            </div>
-        </div>
-    </div>
-</th:block>
+    </th:block>
 </body>
 </html>

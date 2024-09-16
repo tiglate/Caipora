@@ -43,6 +43,7 @@ import static java.util.Map.entry;
 @RequestMapping("/versions")
 public class VersionController {
 
+    private final static String ENTITY_NAME = "Version";
     private final VersionService versionService;
     private final SoftwareRepository softwareRepository;
     private final String uploadDirectory;
@@ -100,12 +101,12 @@ public class VersionController {
         }
         try {
             versionService.create(versionDTO);
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("version.create.success"));
+            FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("file", "error.file", e.getMessage());
             return "version/add";
-        } catch (RuntimeException e) { // Handle other exceptions (e.g., file saving issues)
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR, e.getMessage());
+        } catch (RuntimeException e) {
+            FlashMessages.error(redirectAttributes, e);
             return "version/add";
         }
         return "redirect:/versions";
@@ -134,7 +135,7 @@ public class VersionController {
             return "version/edit";
         }
         versionService.update(id, versionDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("version.update.success"));
+        FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/versions";
     }
 
@@ -148,7 +149,7 @@ public class VersionController {
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             versionService.delete(id);
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("version.delete.success"));
+            FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
         return "redirect:/versions";
     }

@@ -37,6 +37,7 @@ import static java.util.Map.entry;
 @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
 public class UserController {
 
+    private final static String ENTITY_NAME = "User";
     private final UserService userService;
     private final DepartmentRepository departmentRepository;
     private final RoleRepository roleRepository;
@@ -98,7 +99,7 @@ public class UserController {
             return "user/add";
         }
         userService.create(userDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("user.create.success"));
+        FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/users";
     }
 
@@ -116,13 +117,14 @@ public class UserController {
 
     @PostMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") final Integer id,
-            @ModelAttribute("user") @Valid final UserDTO userDTO, final BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) {
+                       @ModelAttribute("user") @Validated(OnUpdate.class) final UserDTO userDTO,
+                       final BindingResult bindingResult,
+                       final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/edit";
         }
         userService.update(id, userDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("user.update.success"));
+        FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/users";
     }
 
@@ -135,7 +137,7 @@ public class UserController {
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             userService.delete(id);
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("user.delete.success"));
+            FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
         return "redirect:/users";
     }

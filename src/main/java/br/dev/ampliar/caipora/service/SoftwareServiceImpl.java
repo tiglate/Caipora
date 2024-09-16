@@ -71,6 +71,8 @@ public class SoftwareServiceImpl implements SoftwareService {
         softwareDTO.setCode(software.getCode());
         softwareDTO.setName(software.getName());
         softwareDTO.setOwnerId(software.getOwner() == null ? null : software.getOwner().getId());
+        softwareDTO.setCreatedAt(software.getCreatedAt());
+        softwareDTO.setUpdatedAt(software.getUpdatedAt());
         return softwareDTO;
     }
 

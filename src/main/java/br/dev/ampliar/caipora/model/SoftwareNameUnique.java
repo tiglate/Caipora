@@ -29,7 +29,7 @@ import org.springframework.web.servlet.HandlerMapping;
 )
 public @interface SoftwareNameUnique {
 
-    String message() default "{Exists.software.name}";
+    String message() default "This Name is already taken.";
 
     Class<?>[] groups() default {};
 

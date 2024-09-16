@@ -10,10 +10,12 @@ import br.dev.ampliar.caipora.repos.StakeholderRepository;
 import br.dev.ampliar.caipora.repos.UserRepository;
 import br.dev.ampliar.caipora.repos.VersionRepository;
 import br.dev.ampliar.caipora.util.NotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@Transactional
 public class DeployServiceImpl implements DeployService {
 
     private final DeployRepository deployRepository;
@@ -39,8 +41,7 @@ public class DeployServiceImpl implements DeployService {
 
     @Override
     public Integer create(final DeployDTO deployDTO) {
-        final Deploy deploy = new Deploy();
-        mapToEntity(deployDTO, deploy);
+        final var deploy = mapToEntity(deployDTO);
         return deployRepository.save(deploy).getId();
     }
 
@@ -50,10 +51,35 @@ public class DeployServiceImpl implements DeployService {
         deployDTO.setIsActive(deploy.getIsActive());
         deployDTO.setRfc(deploy.getRfc());
         deployDTO.setExecutionDate(deploy.getExecutionDate());
-        deployDTO.setVersion(deploy.getVersion() == null ? null : deploy.getVersion().getId());
-        deployDTO.setOperator(deploy.getOperator() == null ? null : deploy.getOperator().getId());
-        deployDTO.setAuthorizer(deploy.getAuthorizer() == null ? null : deploy.getAuthorizer().getId());
+        deployDTO.setCreatedAt(deploy.getCreatedAt());
+        deployDTO.setNotes(deploy.getNotes());
+        deployDTO.setAuthorizerId(deploy.getAuthorizer() == null ? null : deploy.getAuthorizer().getId());
+        if (deploy.getOperator() != null) {
+            final var operator = deploy.getOperator();
+            deployDTO.setOperatorId(operator.getId());
+            deployDTO.setOperatorName(operator.getName());
+        } else {
+            deployDTO.setOperatorId(null);
+            deployDTO.setOperatorName(null);
+        }
+        if (deploy.getVersion() != null && deploy.getVersion().getSoftware() != null) {
+            final var version = deploy.getVersion();
+            final var software = version.getSoftware();
+            deployDTO.setVersionId(version.getId());
+            deployDTO.setSoftwareId(software.getId());
+            deployDTO.setSoftwareCode(software.getCode());
+            deployDTO.setSoftwareName(software.getName());
+        } else {
+            deployDTO.setVersionId(null);
+            deployDTO.setSoftwareId(null);
+            deployDTO.setSoftwareCode(null);
+            deployDTO.setSoftwareName(null);
+        }
         return deployDTO;
+    }
+
+    private Deploy mapToEntity(final DeployDTO deployDTO) {
+        return mapToEntity(deployDTO, new Deploy());
     }
 
     private Deploy mapToEntity(final DeployDTO deployDTO, final Deploy deploy) {
@@ -61,13 +87,14 @@ public class DeployServiceImpl implements DeployService {
         deploy.setIsActive(deployDTO.getIsActive());
         deploy.setRfc(deployDTO.getRfc());
         deploy.setExecutionDate(deployDTO.getExecutionDate());
-        final Version version = deployDTO.getVersion() == null ? null : versionRepository.findById(deployDTO.getVersion())
+        deploy.setNotes(deployDTO.getNotes());
+        final Version version = deployDTO.getVersionId() == null ? null : versionRepository.findById(deployDTO.getVersionId())
                 .orElseThrow(() -> new NotFoundException("version not found"));
         deploy.setVersion(version);
-        final User operator = deployDTO.getOperator() == null ? null : userRepository.findById(deployDTO.getOperator())
+        final User operator = deployDTO.getOperatorId() == null ? null : userRepository.findById(deployDTO.getOperatorId())
                 .orElseThrow(() -> new NotFoundException("operator not found"));
         deploy.setOperator(operator);
-        final Stakeholder authorizer = deployDTO.getAuthorizer() == null ? null : stakeholderRepository.findById(deployDTO.getAuthorizer())
+        final Stakeholder authorizer = deployDTO.getAuthorizerId() == null ? null : stakeholderRepository.findById(deployDTO.getAuthorizerId())
                 .orElseThrow(() -> new NotFoundException("authorizer not found"));
         deploy.setAuthorizer(authorizer);
         return deploy;

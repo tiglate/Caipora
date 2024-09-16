@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     boolean existsByUsernameIgnoreCase(String username);
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.UserDTO(u.id, u.name, u.email, u.gender, u.username, u.password, u.enabled, d.id, d.name) " +
+    @Query("SELECT new br.dev.ampliar.caipora.model.UserDTO(u.id, u.name, u.email, u.gender, u.username, u.password, u.enabled, d.id, d.name, u.createdAt, u.updatedAt) " +
             "FROM User u " +
             "LEFT JOIN u.department d " +
             "WHERE (:username IS NULL OR u.username LIKE %:username%) " +

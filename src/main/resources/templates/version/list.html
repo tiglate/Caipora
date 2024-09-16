@@ -4,7 +4,7 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{version.list.headline}]]</title>
+    <title>Versions</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
@@ -18,9 +18,9 @@
     <!--/*@thymesVar id="sortBySoftwareDirection" type="java.lang.String"*/-->
     <div layout:fragment="content">
         <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">[[#{version.list.headline}]]</h1>
+            <h1 class="flex-grow-1">Versions</h1>
             <div>
-                <a th:href="@{/versions/add}" class="btn btn-primary ms-2">[[#{version.list.createNew}]]</a>
+                <a th:href="@{/versions/add}" class="btn btn-primary ms-2"><i class="bi-plus-circle"></i> Add</a>
             </div>
         </div>
 
@@ -32,10 +32,8 @@
                 <form id="searchForm" th:action="${requestUri}" th:object="${versionSearch}" method="get">
                     <div class="row mb-3">
                         <div class="col-md-7">
-                            <label for="software" class="form-label">
-                                [[#{version.software.label}]]
-                            </label>
-                            <select id="software" th:field="*{softwareId}" class="form-select">
+                            <label for="cboSoftware" class="form-label">Application</label>
+                            <select id="cboSoftware" th:field="*{softwareId}" class="form-select">
                                 <option value=""></option>
                                 <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">
                                     [[${optionValue.value}]]
@@ -43,10 +41,8 @@
                             </select>
                         </div>
                         <div class="col-md-5">
-                            <label for="name" class="form-label">
-                                [[#{version.name.label}]]
-                            </label>
-                            <input type="text" id="name" th:field="*{name}" class="form-control"/>
+                            <label for="txtName" class="form-label">Name</label>
+                            <input type="text" id="txtName" th:field="*{name}" class="form-control"/>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -65,15 +61,15 @@
                 Results
             </div>
             <div class="card-body">
-                <p class="card-text" th:if="${#lists.isEmpty(versions)}">[[#{version.list.empty}]]</p>
+                <p class="card-text" th:if="${#lists.isEmpty(versions)}">No records found</p>
                 <div th:if="${not #lists.isEmpty(versions)}" class="table-responsive">
                     <table class="table table-sm table-striped table-hover align-middle">
                         <thead>
                         <tr>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.id.label', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.software.label', ${sortBySoftwareLink}, ${sortBySoftwareDirection}, 'software.name')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.name.label', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('version.releaseDate.label', ${sortByReleaseDateLink}, ${sortByReleaseDateDirection}, 'releaseDate')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Id', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Application', ${sortBySoftwareLink}, ${sortBySoftwareDirection}, 'software.name')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Version', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
+                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Release Date', ${sortByReleaseDateLink}, ${sortByReleaseDateDirection}, 'releaseDate')}"></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -87,13 +83,13 @@
                                 <div class="float-end text-nowrap">
                                     <a th:href="@{/versions/view/{id}(id=${version.id})}"
                                        class="btn btn-sm btn-secondary bi-eye"
-                                       th:title="#{version.list.view}"></a>
+                                       title="View"></a>
                                     <a th:href="@{/versions/edit/{id}(id=${version.id})}"
                                        class="btn btn-sm btn-secondary bi-pencil-square"
-                                       th:title="#{version.list.edit}"></a>
+                                       title="Edit"></a>
                                     <form th:action="@{/versions/delete/{id}(id=${version.id})}"
                                           th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-secondary bi-trash" th:title="#{version.list.delete}">
+                                        <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
                                         </button>
                                     </form>
                                 </div>

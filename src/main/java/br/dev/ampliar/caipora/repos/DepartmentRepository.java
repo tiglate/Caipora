@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface DepartmentRepository extends JpaRepository<Department, Integer> {
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.DepartmentDTO(d.id, d.name, d.email) " +
+    @Query("SELECT new br.dev.ampliar.caipora.model.DepartmentDTO(d.id, d.name, d.email, d.createdAt, d.updatedAt) " +
             "FROM Department d " +
             "WHERE (:name IS NULL OR d.name LIKE %:name%) " +
             "AND (:email IS NULL OR d.name LIKE %:email%)")

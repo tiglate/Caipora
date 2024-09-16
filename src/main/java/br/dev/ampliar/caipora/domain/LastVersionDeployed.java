@@ -1,4 +1,4 @@
-    package br.dev.ampliar.caipora.domain;
+package br.dev.ampliar.caipora.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.springframework.data.annotation.Immutable;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Immutable
@@ -30,7 +30,7 @@ public class LastVersionDeployed {
     private String environment;
 
     @Column(name = "execution_date")
-    private LocalDateTime executionDate;
+    private LocalDate executionDate;
 
     @Column(name = "rfc")
     private String rfc;
@@ -64,7 +64,7 @@ public class LastVersionDeployed {
         return environment;
     }
 
-    public LocalDateTime getExecutionDate() {
+    public LocalDate getExecutionDate() {
         return executionDate;
     }
 

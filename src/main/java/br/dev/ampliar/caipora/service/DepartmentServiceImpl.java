@@ -69,6 +69,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentDTO.setId(department.getId());
         departmentDTO.setName(department.getName());
         departmentDTO.setEmail(department.getEmail());
+        departmentDTO.setCreatedAt(department.getCreatedAt());
+        departmentDTO.setUpdatedAt(department.getUpdatedAt());
         return departmentDTO;
     }
 

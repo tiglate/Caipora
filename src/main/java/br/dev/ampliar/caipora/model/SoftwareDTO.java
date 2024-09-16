@@ -3,6 +3,8 @@ package br.dev.ampliar.caipora.model;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.OffsetDateTime;
+
 
 public class SoftwareDTO {
 
@@ -18,15 +20,21 @@ public class SoftwareDTO {
     @SoftwareNameUnique
     private String name;
 
+    private OffsetDateTime createdAt;
+
+    private OffsetDateTime updatedAt;
+
     public SoftwareDTO() {
     }
 
-    public SoftwareDTO(Integer id, String code, String name, Integer ownerId, String ownerName) {
+    public SoftwareDTO(Integer id, String code, String name, Integer ownerId, String ownerName, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
         this.id = id;
         this.code = code;
         this.name = name;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     private Integer ownerId;
@@ -71,5 +79,21 @@ public class SoftwareDTO {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

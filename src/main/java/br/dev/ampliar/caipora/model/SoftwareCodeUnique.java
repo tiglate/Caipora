@@ -29,7 +29,7 @@ import org.springframework.web.servlet.HandlerMapping;
 )
 public @interface SoftwareCodeUnique {
 
-    String message() default "{Exists.software.code}";
+    String message() default "This Code is already taken.";
 
     Class<?>[] groups() default {};
 

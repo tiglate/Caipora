@@ -29,7 +29,7 @@ import org.springframework.web.servlet.HandlerMapping;
 )
 public @interface DepartmentNameUnique {
 
-    String message() default "{Exists.department.name}";
+    String message() default "This Name is already taken.";
 
     Class<?>[] groups() default {};
 

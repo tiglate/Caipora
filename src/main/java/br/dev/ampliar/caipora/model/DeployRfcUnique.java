@@ -29,7 +29,7 @@ import org.springframework.web.servlet.HandlerMapping;
 )
 public @interface DeployRfcUnique {
 
-    String message() default "{Exists.deploy.rfc}";
+    String message() default "This RFC is already taken.";
 
     Class<?>[] groups() default {};
 

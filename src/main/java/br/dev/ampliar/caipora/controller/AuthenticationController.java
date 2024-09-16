@@ -20,13 +20,13 @@ public class AuthenticationController {
         // dummy for using the inputRow fragment
         model.addAttribute("authentication", new AuthenticationRequest());
         if (loginRequired == Boolean.TRUE) {
-            model.addAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("authentication.login.required"));
+            model.addAttribute(WebUtils.MSG_INFO, "Please login to access this area.");
         }
         if (loginError == Boolean.TRUE) {
-            model.addAttribute(WebUtils.MSG_ERROR, WebUtils.getMessage("authentication.login.error"));
+            model.addAttribute(WebUtils.MSG_ERROR, "Your login was not successful - please try again.");
         }
         if (logoutSuccess == Boolean.TRUE) {
-            model.addAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("authentication.logout.success"));
+            model.addAttribute(WebUtils.MSG_INFO, "Your logout was successful.");
         }
         return "authentication/login";
     }

@@ -5,7 +5,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       data-bs-theme="light">
 <head>
-    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">[[#{app.title}]]</title>
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Caipora</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -24,34 +24,34 @@
         <div class="container">
             <nav class="navbar navbar-light navbar-expand-md">
                 <a th:href="@{/}" class="navbar-brand">
-                    <img th:src="@{/images/logo.png}" th:alt="#{app.title}" width="30" height="30" class="d-inline-block align-top">
-                    <span class="ps-1">[[#{app.title}]]</span>
+                    <img th:src="@{/images/logo.png}" alt="Caipora" width="30" height="30" class="d-inline-block align-top">
+                    <span class="ps-1">Caipora</span>
                 </a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarToggle"
-                        th:aria-label="#{navigation.toggle}" aria-controls="navbarToggle" aria-expanded="false">
+                        aria-label="Toggle navigation" aria-controls="navbarToggle" aria-expanded="false">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <ul class="navbar-nav ms-auto">
                         <li class="navbar-item">
-                            <a th:href="@{/}" class="nav-link">[[#{navigation.home}]]</a>
+                            <a th:href="@{/}" class="nav-link">Home</a>
                         </li>
                         <li class="navbar-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="navbarEntitiesLink" role="button"
-                                    aria-expanded="false">[[#{navigation.entities}]]</a>
+                                    aria-expanded="false">Entities</a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarEntitiesLink">
-                                <li><a th:href="@{/departments}" class="dropdown-item">[[#{department.list.headline}]]</a></li>
-                                <li><a th:href="@{/users}" class="dropdown-item">[[#{user.list.headline}]]</a></li>
-                                <li><a th:href="@{/versions}" class="dropdown-item">[[#{version.list.headline}]]</a></li>
-                                <li><a th:href="@{/deploys}" class="dropdown-item">[[#{deploy.list.headline}]]</a></li>
-                                <li><a th:href="@{/stakeholders}" class="dropdown-item">[[#{stakeholder.list.headline}]]</a></li>
-                                <li><a th:href="@{/softwares}" class="dropdown-item">[[#{software.list.headline}]]</a></li>
+                                <li><a th:href="@{/departments}" class="dropdown-item">Departments</a></li>
+                                <li><a th:href="@{/users}" class="dropdown-item">Users</a></li>
+                                <li><a th:href="@{/versions}" class="dropdown-item">Versions</a></li>
+                                <li><a th:href="@{/deploys}" class="dropdown-item">Deploys</a></li>
+                                <li><a th:href="@{/stakeholders}" class="dropdown-item">Stakeholders</a></li>
+                                <li><a th:href="@{/softwares}" class="dropdown-item">Applications</a></li>
                             </ul>
                         </li>
                         <li class="navbar-item">
-                            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="nav-link">[[#{navigation.login}]]</a>
+                            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="nav-link">Login</a>
                             <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="nav-link">
-                                <input th:value="#{navigation.logout}" type="submit" class="unset" />
+                                <input value="Logout" type="submit" class="unset" />
                             </form>
                         </li>
                     </ul>

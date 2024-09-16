@@ -4,16 +4,11 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{user.view.headline}]]</title>
+    <title>View User</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">[[#{user.view.headline}]]</h1>
-            <div>
-                <a th:href="@{/users}" class="btn btn-secondary">[[#{user.view.back}]]</a>
-            </div>
-        </div>
+        <div th:replace="~{fragments/header :: header('view', 'View User', 'userForm', @{/users})}"></div>
         <th:block th:replace="~{user/_form :: userForm('view', ${user}, ${genderValues}, ${departmentValues}, ${rolesValues})}"></th:block>
     </div>
 </body>

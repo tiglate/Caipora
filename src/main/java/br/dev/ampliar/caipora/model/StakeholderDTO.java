@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.OffsetDateTime;
+
 
 public class StakeholderDTO {
 
@@ -25,16 +27,22 @@ public class StakeholderDTO {
 
     private String departmentName;
 
+    private OffsetDateTime createdAt;
+
+    private OffsetDateTime updatedAt;
+
     public StakeholderDTO() {
     }
 
-    public StakeholderDTO(Integer id, String name, String email, Gender gender, Integer departmentId, String departmentName) {
+    public StakeholderDTO(Integer id, String name, String email, Gender gender, Integer departmentId, String departmentName, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.gender = gender;
         this.departmentId = departmentId;
         this.departmentName = departmentName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Integer getId() {
@@ -83,5 +91,21 @@ public class StakeholderDTO {
 
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

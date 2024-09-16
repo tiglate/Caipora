@@ -2,9 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
     <table>
-        <tr th:fragment="cardRow(deployId, environment, version, executionDate)">
+        <tr th:fragment="cardRow(deployId, environment, version, executionDate, rfc)">
             <td>[[${environment}]]</td>
-            <td class="text-truncate"><div class="text-truncate" style="max-width: 130px;">[[${version}]]</div></td>
+            <td class="text-truncate" data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-title="${rfc}"><div class="text-truncate" style="max-width: 130px;">[[${version}]]</div></td>
             <td class="text-center">[[${#temporals.format(executionDate, 'dd-MMM-yy')}]]</td>
             <td class="text-center">
                 <a th:href="@{/deploys/view/{id}(id=${deployId})}" title="View" class="bi-eye-fill"></a>

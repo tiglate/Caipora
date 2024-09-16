@@ -4,16 +4,11 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{version.view.headline}]]</title>
+    <title>View Version</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">[[#{version.view.headline}]]</h1>
-            <div>
-                <a th:href="@{/versions}" class="btn btn-secondary">[[#{version.view.back}]]</a>
-            </div>
-        </div>
+        <div th:replace="~{fragments/header :: header('view', 'View Version', 'versionForm', @{/versions})}"></div>
         <th:block th:replace="~{version/_form :: versionForm('view', ${version}, ${softwareValues})}"></th:block>
     </div>
 </body>

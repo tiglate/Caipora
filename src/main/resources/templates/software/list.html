@@ -4,7 +4,7 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{software.list.headline}]]</title>
+    <title>Applications</title>
 </head>
 <body>
 <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
@@ -18,11 +18,12 @@
 <!--/*@thymesVar id="sortByOwnerDirection" type="java.lang.String"*/-->
 <div layout:fragment="content">
     <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">[[#{software.list.headline}]]</h1>
+        <h1 class="flex-grow-1">Applications</h1>
         <div>
-            <a th:href="@{/softwares/add}" class="btn btn-primary ms-2">[[#{software.list.createNew}]]</a>
+            <a th:href="@{/softwares/add}" class="btn btn-primary ms-2"><i class="bi-plus-circle"></i> Add</a>
         </div>
     </div>
+
     <div class="card shadow mb-3">
         <div class="card-header">
             Filters
@@ -32,22 +33,16 @@
                 <form id="searchForm" th:action="${requestUri}" th:object="${softwareSearch}" method="get">
                     <div class="row mb-3">
                         <div class="col-md-2">
-                            <label for="code" class="form-label">
-                                [[#{software.code.label}]]
-                            </label>
-                            <input type="text" id="code" th:field="*{code}" class="form-control"/>
+                            <label for="txtCode" class="form-label">Code</label>
+                            <input type="text" id="txtCode" th:field="*{code}" class="form-control"/>
                         </div>
                         <div class="col-md-5">
-                            <label for="name" class="form-label">
-                                [[#{software.name.label}]]
-                            </label>
-                            <input type="text" id="name" th:field="*{name}" class="form-control"/>
+                            <label for="txtName" class="form-label">Name</label>
+                            <input type="text" id="txtName" th:field="*{name}" class="form-control"/>
                         </div>
                         <div class="col-md-5">
-                            <label for="owner" class="form-label">
-                                [[#{software.owner.label}]]
-                            </label>
-                            <select id="owner" th:field="*{ownerId}" class="form-select">
+                            <label for="cboOwner" class="form-label">Owner</label>
+                            <select id="cboOwner" th:field="*{ownerId}" class="form-select">
                                 <option value=""></option>
                                 <option th:each="optionValue : ${ownerValues}" th:value="${optionValue.key}">
                                     [[${optionValue.value}]]
@@ -71,15 +66,15 @@
             Results
         </div>
         <div class="card-body">
-            <p class="card-text" th:if="${#lists.isEmpty(softwares)}">[[#{software.list.empty}]]</p>
+            <p class="card-text" th:if="${#lists.isEmpty(softwares)}">No records found</p>
             <div th:if="${not #lists.isEmpty(softwares)}" class="table-responsive">
                 <table class="table table-sm table-striped table-hover align-middle">
                     <thead>
                     <tr>
-                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('software.id.label', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('software.code.label', ${sortByCodeLink}, ${sortByCodeDirection}, 'email')}"></th>
-                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('software.name.label', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
-                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('software.owner.label', ${sortByOwnerLink}, ${sortByOwnerDirection}, 'owner.name')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Id', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Code', ${sortByCodeLink}, ${sortByCodeDirection}, 'email')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Name', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Owner', ${sortByOwnerLink}, ${sortByOwnerDirection}, 'owner.name')}"></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -93,13 +88,13 @@
                             <div class="float-end text-nowrap">
                                 <a th:href="@{/softwares/view/{id}(id=${software.id})}"
                                    class="btn btn-sm btn-secondary bi-eye"
-                                   th:title="#{software.list.view}"></a>
+                                   title="View"></a>
                                 <a th:href="@{/softwares/edit/{id}(id=${software.id})}"
                                    class="btn btn-sm btn-secondary bi-pencil-square"
-                                   th:title="#{software.list.edit}"></a>
+                                   title="Edit"></a>
                                 <form th:action="@{/softwares/delete/{id}(id=${software.id})}"
                                       th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-secondary bi-trash" th:title="#{software.list.delete}">
+                                    <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
                                     </button>
                                 </form>
                             </div>

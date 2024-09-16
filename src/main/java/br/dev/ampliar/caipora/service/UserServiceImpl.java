@@ -90,6 +90,8 @@ public class UserServiceImpl implements UserService {
         userDTO.setUsername(user.getUsername());
         userDTO.setEnabled(user.getEnabled());
         userDTO.setDepartmentId(user.getDepartment() == null ? null : user.getDepartment().getId());
+        userDTO.setCreatedAt(user.getCreatedAt());
+        userDTO.setUpdatedAt(user.getUpdatedAt());
         userDTO.setRoles(user.getRoles().stream()
                 .map(Role::getId)
                 .toList());

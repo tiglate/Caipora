@@ -55,7 +55,7 @@ public class WebUtils {
         final ArrayList<PaginationStep> steps = new ArrayList<>();
         final PaginationStep previous = new PaginationStep();
         previous.setDisabled(!page.hasPrevious());
-        previous.setLabel(getMessage("pagination.previous"));
+        previous.setLabel("Previous");
         previous.setUrl(getStepUrl(page, page.previousOrFirstPageable().getPageNumber()));
         steps.add(previous);
         // find a range of up to 5 pages around the current active page
@@ -70,7 +70,7 @@ public class WebUtils {
         }
         final PaginationStep next = new PaginationStep();
         next.setDisabled(!page.hasNext());
-        next.setLabel(getMessage("pagination.next"));
+        next.setLabel("Next");
         next.setUrl(getStepUrl(page, page.nextOrLastPageable().getPageNumber()));
         steps.add(next);
 
@@ -79,7 +79,7 @@ public class WebUtils {
         final String range = rangeStart == rangeEnd ? "" + rangeStart : rangeStart + " - " + rangeEnd;
         final PaginationModel paginationModel = new PaginationModel();
         paginationModel.setSteps(steps);
-        paginationModel.setElements(getMessage("pagination.elements", range, page.getTotalElements()));
+        paginationModel.setElements("Item %s of %d".formatted(range, page.getTotalElements()));
         return paginationModel;
     }
 

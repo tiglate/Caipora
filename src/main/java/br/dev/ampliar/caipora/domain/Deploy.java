@@ -7,7 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 
@@ -33,7 +33,10 @@ public class Deploy {
     private String rfc;
 
     @Column(nullable = false)
-    private LocalDateTime executionDate;
+    private LocalDate executionDate;
+
+    @Column(columnDefinition = "varchar(max)")
+    private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_version", nullable = false)
@@ -59,7 +62,7 @@ public class Deploy {
         return id;
     }
 
-    public void setId(final Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -67,7 +70,7 @@ public class Deploy {
         return environment;
     }
 
-    public void setEnvironment(final Environment environment) {
+    public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
@@ -75,31 +78,39 @@ public class Deploy {
         return isActive;
     }
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
+    public void setIsActive(Boolean active) {
+        isActive = active;
     }
 
     public String getRfc() {
         return rfc;
     }
 
-    public void setRfc(final String rfc) {
+    public void setRfc(String rfc) {
         this.rfc = rfc;
     }
 
-    public LocalDateTime getExecutionDate() {
+    public LocalDate getExecutionDate() {
         return executionDate;
     }
 
-    public void setExecutionDate(final LocalDateTime executionDate) {
+    public void setExecutionDate(LocalDate executionDate) {
         this.executionDate = executionDate;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Version getVersion() {
         return version;
     }
 
-    public void setVersion(final Version version) {
+    public void setVersion(Version version) {
         this.version = version;
     }
 
@@ -107,7 +118,7 @@ public class Deploy {
         return operator;
     }
 
-    public void setOperator(final User operator) {
+    public void setOperator(User operator) {
         this.operator = operator;
     }
 
@@ -115,7 +126,7 @@ public class Deploy {
         return authorizer;
     }
 
-    public void setAuthorizer(final Stakeholder authorizer) {
+    public void setAuthorizer(Stakeholder authorizer) {
         this.authorizer = authorizer;
     }
 
@@ -134,5 +145,4 @@ public class Deploy {
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }

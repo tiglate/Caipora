@@ -1,10 +1,11 @@
 package br.dev.ampliar.caipora.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DeployedDTO {
     private Integer deployId;
-    private LocalDateTime executionDate;
+    private LocalDate executionDate;
     private String rfc;
     private String version;
     private String operator;
@@ -13,7 +14,7 @@ public class DeployedDTO {
     public DeployedDTO() {
     }
 
-    public DeployedDTO(Integer deployId, LocalDateTime executionDate, String rfc, String version, String operator, String authorizer) {
+    public DeployedDTO(Integer deployId, LocalDate executionDate, String rfc, String version, String operator, String authorizer) {
         this.deployId = deployId;
         this.executionDate = executionDate;
         this.rfc = rfc;
@@ -30,11 +31,11 @@ public class DeployedDTO {
         this.deployId = deployId;
     }
 
-    public LocalDateTime getExecutionDate() {
+    public LocalDate getExecutionDate() {
         return executionDate;
     }
 
-    public void setExecutionDate(LocalDateTime executionDate) {
+    public void setExecutionDate(LocalDate executionDate) {
         this.executionDate = executionDate;
     }
 

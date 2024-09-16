@@ -4,15 +4,12 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{deploy.list.headline}]]</title>
+    <title>Deploys</title>
 </head>
 <body>
 <div layout:fragment="content">
     <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">[[#{deploy.list.headline}]]</h1>
-        <div>
-            <a th:href="@{/deploys/add}" class="btn btn-primary ms-2">[[#{deploy.list.createNew}]]</a>
-        </div>
+        <h1 class="flex-grow-1">Deploys</h1>
     </div>
 
     <div class="row row-cols-1 row-cols-lg-3 g-4 mb-3">
@@ -32,18 +29,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dev.deployId}, 'DEV', ${deploy.dev.version}, ${deploy.dev.executionDate})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.qa.deployId}, 'QA', ${deploy.qa.version}, ${deploy.qa.executionDate})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.uat.deployId}, 'UAT', ${deploy.uat.version}, ${deploy.uat.executionDate})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.prod.deployId}, 'PROD', ${deploy.prod.version}, ${deploy.prod.executionDate})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dr.deployId}, 'DR', ${deploy.dr.version}, ${deploy.dr.executionDate})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dev.deployId}, 'DEV', ${deploy.dev.version}, ${deploy.dev.executionDate}, ${deploy.dev.rfc})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.qa.deployId}, 'QA', ${deploy.qa.version}, ${deploy.qa.executionDate}, ${deploy.qa.rfc})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.uat.deployId}, 'UAT', ${deploy.uat.version}, ${deploy.uat.executionDate}, ${deploy.uat.rfc})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.prod.deployId}, 'PROD', ${deploy.prod.version}, ${deploy.prod.executionDate}, ${deploy.prod.rfc})}"></tr>
+                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dr.deployId}, 'DR', ${deploy.dr.version}, ${deploy.dr.executionDate}, ${deploy.dr.rfc})}"></tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="card-footer text-center">
                     <button class="btn btn-danger btn-sm"><i class="bi-unlock"></i> Unlock</button>
                     <button class="btn btn-secondary btn-sm"><i class="bi-clock"></i> History</button>
-                    <button class="btn btn-primary btn-sm"><i class="bi-plus-circle"></i> Deploy</button>
+                    <a th:href="@{/deploys/add/{softwareId}(softwareId=${deploy.softwareId})}" class="btn btn-primary btn-sm"><i class="bi-plus-circle"></i> Deploy</a>
                 </div>
             </div>
         </div>

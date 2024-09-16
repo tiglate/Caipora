@@ -4,26 +4,25 @@
       lang="en"
       layout:decorate="~{layout}">
 <body>
+    <!--/*@thymesVar id="mode" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="version" type="br.dev.ampliar.caipora.model.VersionDTO"*/-->
+    <!--/*@thymesVar id="softwareValues" type="java.util.Map"*/-->
     <th:block th:fragment="versionForm(mode, version, softwareValues)" th:object="${version}">
         <div class="row mb-3" th:if="${mode != 'add'}">
-            <label for="id" class="col-md-2 col-form-label">
-                <span>[[#{version.id.label}]]</span>
-            </label>
+            <label for="id" class="col-md-2 col-form-label">Id</label>
             <div class="col-md-10">
                 <input type="number" id="id" th:field="*{id}" disabled="disabled" class="form-control" />
             </div>
         </div>
         <div class="row mb-3">
-            <label for="software" class="col-md-2 col-form-label">
-                <span>[[#{version.software.label}]]*</span>
-            </label>
+            <label for="software" class="col-md-2 col-form-label">Software*</label>
             <div class="col-md-10">
                 <select id="software"
                         class="form-select"
                         th:field="*{softwareId}"
                         th:disabled="${mode == 'view'}"
                         th:classappend="${#fields.hasErrors('softwareId') ? 'is-invalid' : ''}">
-                    <option value="">[[#{select.empty.label}]]</option>
+                    <option value="">Please select</option>
                     <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
                 </select>
                 <div th:if="${#fields.hasErrors('softwareId')}" class="invalid-feedback d-block">
@@ -32,9 +31,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="name" class="col-md-2 col-form-label">
-                <span>[[#{version.name.label}]]*</span>
-            </label>
+            <label for="name" class="col-md-2 col-form-label">Name*</label>
             <div class="col-md-10">
                 <input type="text"
                        id="name"
@@ -48,9 +45,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="file" class="col-md-2 col-form-label">
-                <span>[[#{version.fileName.label}]]*</span>
-            </label>
+            <label for="file" class="col-md-2 col-form-label">File Name*</label>
             <div class="col-md-10">
                 <input type="file"
                        id="file"
@@ -70,9 +65,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="releaseDate" class="col-md-2 col-form-label">
-                <span>[[#{version.releaseDate.label}]]*</span>
-            </label>
+            <label for="releaseDate" class="col-md-2 col-form-label">Release Date*</label>
             <div class="col-md-10">
                 <input type="text"
                        id="releaseDate"
@@ -86,9 +79,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="changelog" class="col-md-2 col-form-label">
-                <span>[[#{version.changelog.label}]]</span>
-            </label>
+            <label for="changelog" class="col-md-2 col-form-label">Changelog</label>
             <div class="col-md-10">
                 <textarea id="changelog"
                           class="form-control tinymce-editor"
@@ -101,9 +92,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="comments" class="col-md-2 col-form-label">
-                <span>[[#{version.comments.label}]]</span>
-            </label>
+            <label for="comments" class="col-md-2 col-form-label">Comments</label>
             <div class="col-md-10">
                 <textarea id="comments"
                           class="form-control tinymce-editor"

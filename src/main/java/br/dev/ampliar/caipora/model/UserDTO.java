@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.EAN;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -12,7 +13,7 @@ public class UserDTO {
 
     private Integer id;
 
-    @NotNull(groups = OnCreate.class)
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     @Size(max = 255)
     private String name;
 
@@ -20,10 +21,10 @@ public class UserDTO {
     @Email
     private String email;
 
-    @NotNull(groups = OnCreate.class)
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     private Gender gender;
 
-    @NotNull(groups = OnCreate.class)
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     @Size(max = 50)
     @UserUsernameUnique
     private String username;
@@ -32,20 +33,26 @@ public class UserDTO {
     @Size(max = 255)
     private String password;
 
-    @NotNull(groups = OnCreate.class)
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     private Boolean enabled;
 
-    @NotNull(groups = OnCreate.class)
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     private Integer departmentId;
 
     private String departmentName;
 
     private List<Integer> roles;
 
+    private OffsetDateTime createdAt;
+
+    private OffsetDateTime updatedAt;
+
     public UserDTO() {
     }
 
-    public UserDTO(Integer id, String name, String email, Gender gender, String username, String password, Boolean enabled, Integer departmentId, String departmentName) {
+    public UserDTO(Integer id, String name, String email, Gender gender, String username, String password,
+                   Boolean enabled, Integer departmentId, String departmentName, OffsetDateTime createdAt,
+                   OffsetDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -55,6 +62,8 @@ public class UserDTO {
         this.enabled = enabled;
         this.departmentId = departmentId;
         this.departmentName = departmentName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Integer getId() {
@@ -131,5 +140,21 @@ public class UserDTO {
 
     public String getDepartmentName() {
         return departmentName;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

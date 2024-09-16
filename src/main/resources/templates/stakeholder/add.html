@@ -4,21 +4,15 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{stakeholder.add.headline}]]</title>
+    <title>Add Stakeholder</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
-        <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">[[#{stakeholder.add.headline}]]</h1>
-            <div>
-                <a th:href="@{/stakeholders}" class="btn btn-secondary">[[#{stakeholder.add.back}]]</a>
-            </div>
-        </div>
+        <div th:replace="~{fragments/header :: header('add', 'Add Stakeholder', 'stakeholderForm', @{/stakeholders})}"></div>
         <div th:replace="~{fragments/forms::globalErrors('stakeholder')}"></div>
-        <form th:action="${requestUri}" method="post">
+        <form th:action="${requestUri}" method="post" id="stakeholderForm">
             <th:block th:replace="~{stakeholder/_form :: stakeholderForm('add', ${stakeholder}, ${departmentValues}, ${genderValues})}"></th:block>
-            <input type="submit" th:value="#{global.form.save}" class="btn btn-primary mt-4" />
         </form>
     </div>
 </body>

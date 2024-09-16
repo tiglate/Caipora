@@ -77,6 +77,8 @@ public class StakeholderServiceImpl implements StakeholderService {
         stakeholderDTO.setEmail(stakeholder.getEmail());
         stakeholderDTO.setGender(stakeholder.getGender());
         stakeholderDTO.setDepartmentId(stakeholder.getDepartment() == null ? null : stakeholder.getDepartment().getId());
+        stakeholderDTO.setCreatedAt(stakeholder.getCreatedAt());
+        stakeholderDTO.setUpdatedAt(stakeholder.getUpdatedAt());
         return stakeholderDTO;
     }
 

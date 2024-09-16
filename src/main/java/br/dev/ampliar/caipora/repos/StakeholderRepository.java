@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface StakeholderRepository extends JpaRepository<Stakeholder, Integer> {
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.StakeholderDTO(s.id, s.name, s.email, s.gender, d.id, d.name) " +
+    @Query("SELECT new br.dev.ampliar.caipora.model.StakeholderDTO(s.id, s.name, s.email, s.gender, d.id, d.name, s.createdAt, s.updatedAt) " +
             "FROM Stakeholder s " +
             "LEFT JOIN s.department d " +
             "WHERE (:name IS NULL OR s.name LIKE %:name%) " +

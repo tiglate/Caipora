@@ -25,7 +25,7 @@
                         th:classappend="${inputClassappend}" class="form-control" />
                 <select th:if="${type == 'select' || type == 'multiselect'}" th:field="*{__${field}__}" th:disabled="${disabled}"
                         th:multiple="${type == 'multiselect'}" th:classappend="${inputClassappend}" class="form-select">
-                    <option th:if="${type == 'select'}" value="">[[#{select.empty.label}]]</option>
+                    <option th:if="${type == 'select'}" value="">Please select</option>
                     <option th:if="${!(__${field}__Values instanceof T(java.util.Map))}"
                             th:each="optionValue : ${__${field}__Values}" th:value="${optionValue}">[[${optionValue}]]</option>
                     <option th:if="${__${field}__Values instanceof T(java.util.Map)}"
@@ -34,7 +34,7 @@
                 <div th:if="${type == 'radio' && required != true}" class="form-check form-check-inline pt-2">
                     <input value="" th:checked="*{__${field}__} == null" th:name="${field}" th:disabled="${disabled}"
                             th:classappend="${inputClassappend}" type="radio" class="form-check-input" />
-                    <label class="form-check-label">[[#{select.empty.label}]]</label>
+                    <label class="form-check-label">Please select</label>
                 </div>
                 <div th:if="${type == 'radio'}" th:each="radioValue : ${__${field}__Values}" class="form-check form-check-inline pt-2">
                     <input th:field="*{__${field}__}" th:value="${radioValue}" th:disabled="${disabled}"

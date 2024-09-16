@@ -2,10 +2,7 @@ package br.dev.ampliar.caipora.controller;
 
 import br.dev.ampliar.caipora.model.DepartmentDTO;
 import br.dev.ampliar.caipora.service.DepartmentService;
-import br.dev.ampliar.caipora.util.ReferencedWarning;
-import br.dev.ampliar.caipora.util.SortUtils;
-import br.dev.ampliar.caipora.util.UserRoles;
-import br.dev.ampliar.caipora.util.WebUtils;
+import br.dev.ampliar.caipora.util.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +30,7 @@ import static java.util.Map.entry;
 @RequestMapping("/departments")
 public class DepartmentController {
 
+    private final static String ENTITY_NAME = "Department";
     private final DepartmentService departmentService;
 
     public DepartmentController(final DepartmentService departmentService) {
@@ -55,7 +53,6 @@ public class DepartmentController {
         model.addAttribute("departments", departments);
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(departments));
-
         return "department/list";
     }
 
@@ -73,7 +70,7 @@ public class DepartmentController {
             return "department/add";
         }
         departmentService.create(departmentDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("department.create.success"));
+        FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/departments";
     }
 
@@ -100,7 +97,7 @@ public class DepartmentController {
             return "department/edit";
         }
         departmentService.update(id, departmentDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("department.update.success"));
+        FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/departments";
     }
 
@@ -114,7 +111,7 @@ public class DepartmentController {
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             departmentService.delete(id);
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("department.delete.success"));
+            FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
         return "redirect:/departments";
     }

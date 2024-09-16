@@ -4,27 +4,16 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{deploy.add.headline}]]</title>
+    <title>New Deploy</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">[[#{deploy.add.headline}]]</h1>
-        <div>
-            <a th:href="@{/deploys}" class="btn btn-secondary">[[#{deploy.add.back}]]</a>
-        </div>
+    <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <div layout:fragment="content">
+        <div th:replace="~{fragments/header :: header('add', 'New Deploy', 'deployForm', @{/deploys})}"></div>
+        <div th:replace="~{fragments/forms::globalErrors('deploy')}"></div>
+        <form th:action="${requestUri}" method="post" id="deployForm">
+            <th:block th:replace="~{deploy/_form :: deployForm('add', ${deploy}, ${versionValues}, ${environmentValues}, ${authorizerValues})}"></th:block>
+        </form>
     </div>
-    <div th:replace="~{fragments/forms::globalErrors('deploy')}" />
-    <form th:action="${requestUri}" method="post">
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='environment', required=true, type='select')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='isActive', type='checkbox')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='rfc', required=true)}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='executionDate', required=true, inputClass='js-datetimepicker')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='version', required=true, type='select')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='operator', required=true, type='select')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='deploy', field='authorizer', required=true, type='select')}" />
-        <input type="submit" th:value="#{deploy.add.headline}" class="btn btn-primary mt-4" />
-    </form>
-</div>
 </body>
 </html>

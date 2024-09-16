@@ -4,9 +4,9 @@
     <table>
         <thead>
         <tr>
-            <th th:fragment="sortableColumnHeader(labelKey, sortLink, sortDirection, property)" scope="col">
+            <th th:fragment="sortableColumnHeader(label, sortLink, sortDirection, property)" scope="col">
                 <a th:href="${sortLink}">
-                    [[#{__${labelKey}__}]]
+                    [[${label}]]
                     <span th:if="${sortDirection != null}"
                           th:class="${#strings.equals(sortDirection, 'asc') ? 'bi bi-caret-up-fill' : 'bi bi-caret-down-fill'}"> </span>
                 </a>

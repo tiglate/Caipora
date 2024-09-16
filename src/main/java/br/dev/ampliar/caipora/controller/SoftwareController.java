@@ -33,6 +33,7 @@ import static java.util.Map.entry;
 @RequestMapping("/softwares")
 public class SoftwareController {
 
+    private final static String ENTITY_NAME = "Application";
     private final SoftwareService softwareService;
     private final StakeholderRepository stakeholderRepository;
 
@@ -83,7 +84,7 @@ public class SoftwareController {
             return "software/add";
         }
         softwareService.create(softwareDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("software.create.success"));
+        FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/softwares";
     }
 
@@ -110,7 +111,7 @@ public class SoftwareController {
             return "software/edit";
         }
         softwareService.update(id, softwareDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("software.update.success"));
+        FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
         return "redirect:/softwares";
     }
 
@@ -124,7 +125,7 @@ public class SoftwareController {
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             softwareService.delete(id);
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("software.delete.success"));
+            FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
         return "redirect:/softwares";
     }

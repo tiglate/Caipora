@@ -4,16 +4,11 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>[[#{software.view.headline}]]</title>
+    <title>View Application</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">[[#{software.view.headline}]]</h1>
-            <div>
-                <a th:href="@{/softwares}" class="btn btn-secondary">[[#{software.view.back}]]</a>
-            </div>
-        </div>
+        <div th:replace="~{fragments/header :: header('view', 'View Application', 'applicationForm', @{/softwares})}"></div>
         <th:block th:replace="~{software/_form :: softwareForm('view', ${software}, ${ownerValues})}"></th:block>
     </div>
 </body>

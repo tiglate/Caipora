@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface SoftwareRepository extends JpaRepository<Software, Integer> {
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.SoftwareDTO(d.id, d.code, d.name, o.id, o.name) " +
+    @Query("SELECT new br.dev.ampliar.caipora.model.SoftwareDTO(d.id, d.code, d.name, o.id, o.name, d.createdAt, d.updatedAt) " +
             "FROM Software d " +
             "LEFT JOIN d.owner o " +
             "WHERE (:code IS NULL OR d.code LIKE %:code%) " +
