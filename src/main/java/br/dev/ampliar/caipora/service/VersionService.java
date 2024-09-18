@@ -12,6 +12,7 @@ public interface VersionService {
 
     VersionDTO get(Integer id);
 
+    @SuppressWarnings("UnusedReturnValue")
     Integer create(VersionDTO versionDTO);
 
     void update(Integer id, VersionDTO versionDTO);

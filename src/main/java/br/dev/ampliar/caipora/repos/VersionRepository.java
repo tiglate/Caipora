@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface VersionRepository extends JpaRepository<Version, Integer> {
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.VersionDTO(v.id, v.name, v.fileName, v.releaseDate, s.id, s.name) " +
+    @Query("SELECT new br.dev.ampliar.caipora.model.VersionDTO(v.id, v.name, v.fileName, v.releaseDate, s.id, s.name, s.createdAt, s.updatedAt) " +
             "FROM Version v " +
             "LEFT JOIN v.software s " +
             "WHERE (:name IS NULL OR v.name LIKE %:name%) " +

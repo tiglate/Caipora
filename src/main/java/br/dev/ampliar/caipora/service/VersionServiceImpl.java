@@ -101,6 +101,8 @@ public class VersionServiceImpl implements VersionService {
         versionDTO.setChangelog(version.getChangelog());
         versionDTO.setComments(version.getComments());
         versionDTO.setSoftwareId(version.getSoftware() == null ? null : version.getSoftware().getId());
+        versionDTO.setCreatedAt(version.getCreatedAt());
+        versionDTO.setUpdatedAt(version.getUpdatedAt());
         return versionDTO;
     }
 

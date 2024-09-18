@@ -7,6 +7,7 @@ import br.dev.ampliar.caipora.service.VersionService;
 import br.dev.ampliar.caipora.util.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +21,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -63,8 +58,9 @@ public class VersionController {
                 .collect(CustomCollectors.toSortedMap(Software::getId, Software::getName)));
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.OBSERVER + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_VIEW + "')")
     public String list(@ModelAttribute("versionSearch") VersionDTO filter,
                        @RequestParam(name = "sort", required = false) String sort,
                        @SortDefault(sort = "id", direction = Sort.Direction.DESC) @PageableDefault(size = 20) final Pageable pageable,
@@ -86,14 +82,23 @@ public class VersionController {
         return "version/list";
     }
 
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping("/view/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_VIEW + "')")
+    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
+        model.addAttribute("version", versionService.get(id));
+        return "version/view";
+    }
+
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String add(@ModelAttribute("version") final VersionDTO versionDTO) {
         return "version/add";
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String add(@ModelAttribute("version") @Valid final VersionDTO versionDTO,
                       final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -112,22 +117,16 @@ public class VersionController {
         return "redirect:/versions";
     }
 
-    @GetMapping("/view/{id}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
-    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("version", versionService.get(id));
-        return "version/view";
-    }
-
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("version", versionService.get(id));
         return "version/edit";
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id,
                        @ModelAttribute("version") @Valid final VersionDTO versionDTO,
                        final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
@@ -139,8 +138,9 @@ public class VersionController {
         return "redirect:/versions";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @PostMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String delete(@PathVariable(name = "id") final Integer id,
                          final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = versionService.getReferencedWarning(id);
@@ -155,6 +155,7 @@ public class VersionController {
     }
 
     @GetMapping("/download/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") Integer id) throws IOException {
         VersionDTO versionDTO = versionService.get(id);
         Path filePath = Paths.get(uploadDirectory, versionDTO.getFileName());

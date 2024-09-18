@@ -3,14 +3,15 @@ package br.dev.ampliar.caipora.service;
 import br.dev.ampliar.caipora.domain.User;
 import br.dev.ampliar.caipora.model.WebFormsUserDetails;
 import br.dev.ampliar.caipora.repos.UserRepository;
-import java.util.Collections;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 
 @Service

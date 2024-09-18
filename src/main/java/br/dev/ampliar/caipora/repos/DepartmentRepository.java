@@ -2,8 +2,6 @@ package br.dev.ampliar.caipora.repos;
 
 import br.dev.ampliar.caipora.domain.Department;
 import br.dev.ampliar.caipora.model.DepartmentDTO;
-import br.dev.ampliar.caipora.model.Gender;
-import br.dev.ampliar.caipora.model.StakeholderDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

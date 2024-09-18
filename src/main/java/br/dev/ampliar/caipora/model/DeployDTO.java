@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 
+@SuppressWarnings("unused")
 public class DeployDTO {
 
     private Integer id;

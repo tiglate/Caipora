@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AuthenticationController {
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/login")
     public String login(
             @RequestParam(name = "loginRequired", required = false) final Boolean loginRequired,

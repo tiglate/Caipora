@@ -13,6 +13,7 @@ public class ReferencedWarning {
         params.add(param);
     }
 
+    @SuppressWarnings("unused")
     public String toMessage() {
         String message = key;
         if (!params.isEmpty()) {
@@ -35,6 +36,7 @@ public class ReferencedWarning {
         return params;
     }
 
+    @SuppressWarnings("unused")
     public void setParams(final ArrayList<Object> params) {
         this.params = params;
     }

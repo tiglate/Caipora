@@ -8,7 +8,6 @@ import br.dev.ampliar.caipora.repos.DepartmentRepository;
 import br.dev.ampliar.caipora.service.StakeholderService;
 import br.dev.ampliar.caipora.util.*;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,16 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Map.entry;
@@ -55,8 +47,9 @@ public class StakeholderController {
                 .collect(CustomCollectors.toSortedMap(Department::getId, Department::getName)));
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.OBSERVER + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_VIEW + "')")
     public String list(@ModelAttribute("stakeholderSearch") StakeholderSearchDTO filter,
                        @RequestParam(name = "sort", required = false) String sort,
                        @SortDefault(sort = "id", direction = Sort.Direction.DESC) @PageableDefault(size = 20) final Pageable pageable,
@@ -79,15 +72,24 @@ public class StakeholderController {
         return "stakeholder/list";
     }
 
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping("/view/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_VIEW + "')")
+    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
+        model.addAttribute("stakeholder", stakeholderService.get(id));
+        return "stakeholder/view";
+    }
+
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/add")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String add(@ModelAttribute("stakeholder") final StakeholderDTO stakeholderDTO) {
         stakeholderDTO.setGender(Gender.MALE);
         return "stakeholder/add";
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String add(@ModelAttribute("stakeholder") @Valid final StakeholderDTO stakeholderDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -98,22 +100,16 @@ public class StakeholderController {
         return "redirect:/stakeholders";
     }
 
-    @GetMapping("/view/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
-    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("stakeholder", stakeholderService.get(id));
-        return "stakeholder/view";
-    }
-
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("stakeholder", stakeholderService.get(id));
         return "stakeholder/edit";
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id,
             @ModelAttribute("stakeholder") @Valid final StakeholderDTO stakeholderDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
@@ -125,8 +121,9 @@ public class StakeholderController {
         return "redirect:/stakeholders";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @PostMapping("/delete/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String delete(@PathVariable(name = "id") final Integer id,
             final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = stakeholderService.getReferencedWarning(id);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
     <table>
         <tr th:fragment="cardRow(deployId, environment, version, executionDate, rfc)">
@@ -8,8 +8,8 @@
             <td class="text-center">[[${#temporals.format(executionDate, 'dd-MMM-yy')}]]</td>
             <td class="text-center">
                 <a th:href="@{/deploys/view/{id}(id=${deployId})}" title="View" class="bi-eye-fill"></a>
-                <a href="#" title="Rollback" class="bi-arrow-down-square-fill link-danger"></a>
-                <a href="#" title="Promote" class="bi-arrow-up-square-fill link-success"></a>
+                <a sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')" href="#" title="Rollback" class="bi-arrow-down-square-fill link-danger"></a>
+                <a sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')" href="#" title="Promote" class="bi-arrow-up-square-fill link-success"></a>
             </td>
         </tr>
     </table>

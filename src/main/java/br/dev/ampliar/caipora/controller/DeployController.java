@@ -8,7 +8,6 @@ import br.dev.ampliar.caipora.model.Environment;
 import br.dev.ampliar.caipora.model.WebFormsUserDetails;
 import br.dev.ampliar.caipora.repos.SoftwareRepository;
 import br.dev.ampliar.caipora.repos.StakeholderRepository;
-import br.dev.ampliar.caipora.repos.UserRepository;
 import br.dev.ampliar.caipora.repos.VersionRepository;
 import br.dev.ampliar.caipora.service.DeployService;
 import br.dev.ampliar.caipora.service.SoftwareDeployedService;
@@ -23,11 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -40,20 +35,17 @@ public class DeployController {
     private final static String ENTITY_NAME = "Deploy";
     private final DeployService deployService;
     private final VersionRepository versionRepository;
-    private final UserRepository userRepository;
     private final StakeholderRepository stakeholderRepository;
     private final SoftwareDeployedService softwareDeployedService;
     private final SoftwareRepository softwareRepository;
 
     public DeployController(final DeployService deployService,
                             final VersionRepository versionRepository,
-                            final UserRepository userRepository,
                             final StakeholderRepository stakeholderRepository,
                             final SoftwareDeployedService softwareDeployedService,
                             final SoftwareRepository softwareRepository) {
         this.deployService = deployService;
         this.versionRepository = versionRepository;
-        this.userRepository = userRepository;
         this.stakeholderRepository = stakeholderRepository;
         this.softwareDeployedService = softwareDeployedService;
         this.softwareRepository = softwareRepository;
@@ -67,15 +59,16 @@ public class DeployController {
                 .collect(CustomCollectors.toSortedMap(Stakeholder::getId, Stakeholder::getName)));
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "', '" + UserRoles.OBSERVER + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPLOY_VIEW + "')")
     public String list(final Model model) {
         model.addAttribute("deploys", softwareDeployedService.getSoftwareDeployedDTOs());
         return "deploy/list";
     }
 
     @GetMapping("/add/{softwareId}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPLOY_MANAGE + "')")
     public String add(@PathVariable(name = "softwareId") final Integer softwareId,
                       @ModelAttribute("deploy") final DeployDTO deployDTO,
                       final RedirectAttributes redirectAttributes,
@@ -88,7 +81,7 @@ public class DeployController {
     }
 
     @PostMapping("/add/{softwareId}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPLOY_MANAGE + "')")
     public String add(@PathVariable(name = "softwareId") final Integer softwareId,
                       @ModelAttribute("deploy") @Valid final DeployDTO deployDTO,
                       final BindingResult bindingResult,
@@ -108,7 +101,7 @@ public class DeployController {
     }
 
     @GetMapping("/view/{id}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.ITOPS + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPLOY_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id,
                        final Model model,
                        final RedirectAttributes redirectAttributes) {

@@ -1,10 +1,11 @@
 package br.dev.ampliar.caipora.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.hibernate.envers.Audited;
+
 import java.time.OffsetDateTime;
 
 
@@ -37,6 +38,7 @@ public class Department {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(final Integer id) {
         this.id = id;
     }
@@ -61,6 +63,7 @@ public class Department {
         return createdAt;
     }
 
+    @SuppressWarnings("unused")
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
@@ -69,6 +72,7 @@ public class Department {
         return updatedAt;
     }
 
+    @SuppressWarnings("unused")
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }

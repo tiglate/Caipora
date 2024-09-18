@@ -1,5 +1,6 @@
 package br.dev.ampliar.caipora.model;
 
+@SuppressWarnings("unused")
 public class SoftwareDeployedDTO {
     private Integer softwareId;
     private String code;

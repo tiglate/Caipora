@@ -8,112 +8,126 @@
     <!--/*@thymesVar id="version" type="br.dev.ampliar.caipora.model.VersionDTO"*/-->
     <!--/*@thymesVar id="softwareValues" type="java.util.Map"*/-->
     <th:block th:fragment="versionForm(mode, version, softwareValues)" th:object="${version}">
-        <div class="row mb-3" th:if="${mode != 'add'}">
-            <label for="id" class="col-md-2 col-form-label">Id</label>
-            <div class="col-md-10">
-                <input type="number" id="id" th:field="*{id}" disabled="disabled" class="form-control" />
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                Details
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="software" class="col-md-2 col-form-label">Software*</label>
-            <div class="col-md-10">
-                <select id="software"
-                        class="form-select"
-                        th:field="*{softwareId}"
-                        th:disabled="${mode == 'view'}"
-                        th:classappend="${#fields.hasErrors('softwareId') ? 'is-invalid' : ''}">
-                    <option value="">Please select</option>
-                    <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
-                </select>
-                <div th:if="${#fields.hasErrors('softwareId')}" class="invalid-feedback d-block">
-                    <p th:each="error : ${#fields.errors('softwareId')}" class="mb-0">[[${error}]]</p>
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <label for="cboSoftware" class="form-label">Software*</label>
+                        <select id="cboSoftware"
+                                class="form-select"
+                                th:field="*{softwareId}"
+                                th:disabled="${mode == 'view'}"
+                                th:classappend="${#fields.hasErrors('softwareId') ? 'is-invalid' : ''}">
+                            <option value="">Please select</option>
+                            <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('softwareId')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('softwareId')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="txtName" class="form-label">Name/Version*</label>
+                        <input type="text"
+                               id="txtName"
+                               class="form-control"
+                               th:field="*{name}"
+                               th:disabled="${mode == 'view'}"
+                               th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
+                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="txtReleaseDate" class="form-label">Release Date*</label>
+                        <input type="text"
+                               id="txtReleaseDate"
+                               class="form-control js-datepicker"
+                               th:field="*{releaseDate}"
+                               th:disabled="${mode == 'view'}"
+                               th:classappend="${#fields.hasErrors('releaseDate') ? 'is-invalid' : ''}" />
+                        <div th:if="${#fields.hasErrors('releaseDate')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('releaseDate')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="filFile" class="form-label">File*</label>
+                        <input type="file"
+                               id="filFile"
+                               class="form-control"
+                               th:field="*{file}"
+                               th:disabled="${mode == 'view'}"
+                               th:classappend="${#fields.hasErrors('file') ? 'is-invalid' : ''}"
+                               th:if="${mode == 'add'}" />
+                        <a th:href="@{/versions/download/{id}(id=${version.id})}"
+                           th:if="${mode != 'add'}"
+                           class="btn btn-secondary d-block w-25"
+                           target="_blank"
+                           download>Download</a>
+                        <div th:if="${#fields.hasErrors('file')}" class="invalid-feedback d-block">
+                            <p th:each="error : ${#fields.errors('file')}" class="mb-0">[[${error}]]</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row mb-3">
-            <label for="name" class="col-md-2 col-form-label">Name*</label>
-            <div class="col-md-10">
-                <input type="text"
-                       id="name"
-                       class="form-control"
-                       th:field="*{name}"
-                       th:disabled="${mode == 'view'}"
-                       th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
-                <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
-                    <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
-                </div>
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                <label for="mmoChangelog">Changelog</label>
             </div>
-        </div>
-        <div class="row mb-3">
-            <label for="file" class="col-md-2 col-form-label">File Name*</label>
-            <div class="col-md-10">
-                <input type="file"
-                       id="file"
-                       class="form-control"
-                       th:field="*{file}"
-                       th:disabled="${mode == 'view'}"
-                       th:classappend="${#fields.hasErrors('file') ? 'is-invalid' : ''}"
-                       th:if="${mode == 'add'}" />
-                <a th:href="@{/versions/download/{id}(id=${version.id})}"
-                   th:if="${mode != 'add'}"
-                   class="btn btn-secondary"
-                   target="_blank"
-                   download>Download</a>
-                <div th:if="${#fields.hasErrors('file')}" class="invalid-feedback d-block">
-                    <p th:each="error : ${#fields.errors('file')}" class="mb-0">[[${error}]]</p>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="releaseDate" class="col-md-2 col-form-label">Release Date*</label>
-            <div class="col-md-10">
-                <input type="text"
-                       id="releaseDate"
-                       class="form-control js-datepicker"
-                       th:field="*{releaseDate}"
-                       th:disabled="${mode == 'view'}"
-                       th:classappend="${#fields.hasErrors('releaseDate') ? 'is-invalid' : ''}" />
-                <div th:if="${#fields.hasErrors('releaseDate')}" class="invalid-feedback d-block">
-                    <p th:each="error : ${#fields.errors('releaseDate')}" class="mb-0">[[${error}]]</p>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="changelog" class="col-md-2 col-form-label">Changelog</label>
-            <div class="col-md-10">
-                <textarea id="changelog"
+            <div class="card-body p-0">
+                <textarea id="mmoChangelog"
                           class="form-control tinymce-editor"
                           th:field="*{changelog}"
-                          th:disabled="${mode == 'view'}"
-                          th:classappend="${#fields.hasErrors('changelog') ? 'is-invalid' : ''}"></textarea>
+                          th:classappend="${#fields.hasErrors('changelog') ? 'is-invalid' : ''}"
+                          th:if="${mode != 'view'}"></textarea>
+                <div th:if="${mode == 'view'}" th:utext="${version.changelog}" class="form-control w-100 border-0" style="height: 400px; overflow-y: scroll; resize: both;">&nbsp;</div>
                 <div th:if="${#fields.hasErrors('changelog')}" class="invalid-feedback d-block">
                     <p th:each="error : ${#fields.errors('changelog')}" class="mb-0">[[${error}]]</p>
                 </div>
             </div>
         </div>
-        <div class="row mb-3">
-            <label for="comments" class="col-md-2 col-form-label">Comments</label>
-            <div class="col-md-10">
-                <textarea id="comments"
+        <div class="card shadow mb-3">
+            <div class="card-header">
+                <label for="mmoComments">Comments</label>
+            </div>
+            <div class="card-body p-0">
+                <textarea id="mmoComments"
                           class="form-control tinymce-editor"
                           th:field="*{comments}"
-                          th:disabled="${mode == 'view'}"
-                          th:classappend="${#fields.hasErrors('comments') ? 'is-invalid' : ''}"></textarea>
+                          th:classappend="${#fields.hasErrors('comments') ? 'is-invalid' : ''}"
+                          th:if="${mode != 'view'}"></textarea>
+                <div th:if="${mode == 'view'}" th:utext="${version.comments}" class="form-control w-100 border-0" style="height: 400px; overflow-y: scroll; resize: both;">&nbsp;</div>
                 <div th:if="${#fields.hasErrors('comments')}" class="invalid-feedback d-block">
                     <p th:each="error : ${#fields.errors('comments')}" class="mb-0">[[${error}]]</p>
                 </div>
             </div>
         </div>
-        <script th:inline="javascript">
-            function setEditorReadOnly() {
-                setTimeout(() => {
-                    tinymce.get('changelog').mode.set(/*[[${mode == 'view' ? 'readonly' : 'design'}]]*/);
-                    tinymce.get('comments').mode.set(/*[[${mode == 'view' ? 'readonly' : 'design'}]]*/);
-                }, 500);
-            }
-            document.addEventListener('DOMContentLoaded', setEditorReadOnly);
-            document.addEventListener('htmx:afterSwap', setEditorReadOnly);
-        </script>
+        <div class="card shadow mb-3" th:if="${mode != 'add'}">
+            <div class="card-header">
+                Audit
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="txtId" class="form-label">Id</label>
+                        <input type="number" id="txtId" th:field="*{id}" disabled="disabled" class="form-control" />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="txtCreatedAt" class="form-label">Input Date</label>
+                        <input type="text" id="txtCreatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(version.createdAt, 'dd-MMM-yy hh:mm:ss')}"  />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="txtUpdatedAt" class="form-label">Last Update</label>
+                        <input type="text" id="txtUpdatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(version.updatedAt, 'dd-MMM-yy hh:mm:ss')}"  />
+                    </div>
+                </div>
+            </div>
+        </div>
     </th:block>
 </body>
 </html>

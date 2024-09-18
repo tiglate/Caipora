@@ -13,6 +13,7 @@ public interface StakeholderService {
 
     StakeholderDTO get(Integer id);
 
+    @SuppressWarnings("UnusedReturnValue")
     Integer create(StakeholderDTO stakeholderDTO);
 
     void update(Integer id, StakeholderDTO stakeholderDTO);

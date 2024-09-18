@@ -71,6 +71,7 @@ public abstract class Person {
         return createdAt;
     }
 
+    @SuppressWarnings("unused")
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
@@ -79,6 +80,7 @@ public abstract class Person {
         return updatedAt;
     }
 
+    @SuppressWarnings("unused")
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }

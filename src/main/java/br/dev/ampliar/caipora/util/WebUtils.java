@@ -3,9 +3,6 @@ package br.dev.ampliar.caipora.util;
 import br.dev.ampliar.caipora.model.PaginationModel;
 import br.dev.ampliar.caipora.model.PaginationStep;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Objects;
-
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -13,10 +10,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 
 @Component
 public class WebUtils {
 
+    @SuppressWarnings("unused")
     public static final String MSG_SUCCESS = "MSG_SUCCESS";
     public static final String MSG_INFO = "MSG_INFO";
     public static final String MSG_ERROR = "MSG_ERROR";

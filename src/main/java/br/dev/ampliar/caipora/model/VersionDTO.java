@@ -5,8 +5,10 @@ import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 
+@SuppressWarnings("unused")
 public class VersionDTO {
 
     private Integer id;
@@ -32,16 +34,22 @@ public class VersionDTO {
 
     private MultipartFile file;
 
+    private OffsetDateTime createdAt;
+
+    private OffsetDateTime updatedAt;
+
     public VersionDTO() {
     }
 
-    public VersionDTO(Integer id, String name, String fileName, LocalDate releaseDate, Integer softwareId, String softwareName) {
+    public VersionDTO(Integer id, String name, String fileName, LocalDate releaseDate, Integer softwareId, String softwareName, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.softwareId = softwareId;
         this.softwareName = softwareName;
         this.releaseDate = releaseDate;
         this.fileName = fileName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Integer getId() {
@@ -114,5 +122,21 @@ public class VersionDTO {
 
     public void setFile(MultipartFile file) {
         this.file = file;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

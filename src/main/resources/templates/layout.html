@@ -20,11 +20,11 @@
     <script th:src="@{/js/app.js}" defer></script>
 </head>
 <body hx-boost="true">
-    <header class="bg-dark-subtle">
+    <header id="main-header" data-bs-theme="dark">
         <div class="container">
-            <nav class="navbar navbar-light navbar-expand-md">
+            <nav class="navbar navbar-expand-md">
                 <a th:href="@{/}" class="navbar-brand">
-                    <img th:src="@{/images/logo.png}" alt="Caipora" width="30" height="30" class="d-inline-block align-top">
+                    <img th:src="@{/images/logo.svg}" alt="Caipora" width="30" height="30" class="d-inline-block align-top" style="filter: invert(100%);">
                     <span class="ps-1">Caipora</span>
                 </a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarToggle"
@@ -36,9 +36,9 @@
                         <li class="navbar-item">
                             <a th:href="@{/}" class="nav-link">Home</a>
                         </li>
-                        <li class="navbar-item dropdown">
+                        <li class="navbar-item dropdown" sec:authorize="isAuthenticated()">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="navbarEntitiesLink" role="button"
-                                    aria-expanded="false">Entities</a>
+                                    aria-expanded="false">Menu</a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarEntitiesLink">
                                 <li><a th:href="@{/departments}" class="dropdown-item">Departments</a></li>
                                 <li><a th:href="@{/users}" class="dropdown-item">Users</a></li>

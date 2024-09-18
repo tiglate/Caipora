@@ -12,6 +12,7 @@ public interface DepartmentService {
 
     DepartmentDTO get(Integer id);
 
+    @SuppressWarnings("UnusedReturnValue")
     Integer create(DepartmentDTO departmentDTO);
 
     void update(Integer id, DepartmentDTO departmentDTO);

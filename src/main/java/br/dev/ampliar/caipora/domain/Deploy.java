@@ -62,6 +62,7 @@ public class Deploy {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(Integer id) {
         this.id = id;
     }
@@ -134,14 +135,17 @@ public class Deploy {
         return createdAt;
     }
 
+    @SuppressWarnings("unused")
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
+    @SuppressWarnings("unused")
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
+    @SuppressWarnings("unused")
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }

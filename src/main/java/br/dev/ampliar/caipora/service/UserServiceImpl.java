@@ -13,15 +13,14 @@ import br.dev.ampliar.caipora.repos.UserRepository;
 import br.dev.ampliar.caipora.util.NotFoundException;
 import br.dev.ampliar.caipora.util.ReferencedWarning;
 import jakarta.transaction.Transactional;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 
 @Service

@@ -25,10 +25,12 @@ public class CustomRevisionEntity {
     @Column(name = "id_user")
     private Integer userId;
 
+    @SuppressWarnings("unused")
     public Integer getId() {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(Integer id) {
         this.id = id;
     }

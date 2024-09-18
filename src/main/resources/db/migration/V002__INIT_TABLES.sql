@@ -15,9 +15,20 @@ END
 
 IF NOT EXISTS(SELECT 1 FROM tb_role)
 BEGIN
-    INSERT INTO tb_role (name) VALUES ('ADMIN');
-    INSERT INTO tb_role (name) VALUES ('ITOPS');
-    INSERT INTO tb_role (name) VALUES ('OBSERVER');
+    INSERT INTO tb_role (name) VALUES ('ROLE_DEPARTMENT_VIEW');
+    INSERT INTO tb_role (name) VALUES ('ROLE_DEPARTMENT_MANAGE');
+    INSERT INTO tb_role (name) VALUES ('ROLE_USER_VIEW');
+    INSERT INTO tb_role (name) VALUES ('ROLE_USER_MANAGE');
+    INSERT INTO tb_role (name) VALUES ('ROLE_VERSION_VIEW');
+    INSERT INTO tb_role (name) VALUES ('ROLE_VERSION_MANAGE');
+    INSERT INTO tb_role (name) VALUES ('ROLE_STAKEHOLDER_VIEW');
+    INSERT INTO tb_role (name) VALUES ('ROLE_STAKEHOLDER_MANAGE');
+    INSERT INTO tb_role (name) VALUES ('ROLE_APPLICATION_VIEW');
+    INSERT INTO tb_role (name) VALUES ('ROLE_APPLICATION_MANAGE');
+    INSERT INTO tb_role (name) VALUES ('ROLE_DEPLOY_VIEW');
+    INSERT INTO tb_role (name) VALUES ('ROLE_DEPLOY_MANAGE');
+    INSERT INTO tb_role (name) VALUES ('ROLE_SWAGGER_ACCESS');
+    INSERT INTO tb_role (name) VALUES ('ROLE_ACTUATOR_ACCESS');
 END
 
 IF NOT EXISTS(SELECT 1 FROM tb_user)
@@ -53,8 +64,6 @@ BEGIN
         id_role
     FROM
         tb_role
-    WHERE
-        name = 'ADMIN'
 
     INSERT INTO tb_user (id_department, name, email, gender, username, password, enabled) VALUES
     (1, 'Deodoro da Fonseca', 'deodoro.fonseca@example.com', 'MALE', 'deodoro.fonseca', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
@@ -99,12 +108,14 @@ BEGIN
 
     INSERT INTO tb_user_role (id_user, id_role)
     SELECT
-        id_user,
-        (SELECT id_role FROM tb_role WHERE name = 'OBSERVER')
+        usr.id_user,
+        rol.id_role
     FROM
-        tb_user
+        tb_user AS usr
+
+        CROSS APPLY (SELECT id_role FROM tb_role WHERE name LIKE '%_VIEW') AS rol
     WHERE
-        username <> 'admin'
+        usr.username <> 'admin'
 END
 
 IF NOT EXISTS(SELECT 1 FROM tb_stakeholder)

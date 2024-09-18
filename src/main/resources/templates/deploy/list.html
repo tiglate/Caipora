@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       lang="en"
       layout:decorate="~{layout}">
 <head>
@@ -38,9 +39,12 @@
                     </table>
                 </div>
                 <div class="card-footer text-center">
-                    <button class="btn btn-danger btn-sm"><i class="bi-unlock"></i> Unlock</button>
+                    <button class="btn btn-danger btn-sm"
+                            sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')"><i class="bi-unlock"></i> Unlock</button>
                     <button class="btn btn-secondary btn-sm"><i class="bi-clock"></i> History</button>
-                    <a th:href="@{/deploys/add/{softwareId}(softwareId=${deploy.softwareId})}" class="btn btn-primary btn-sm"><i class="bi-plus-circle"></i> Deploy</a>
+                    <a class="btn btn-primary btn-sm"
+                       th:href="@{/deploys/add/{softwareId}(softwareId=${deploy.softwareId})}"
+                       sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')"><i class="bi-plus-circle"></i> Deploy</a>
                 </div>
             </div>
         </div>

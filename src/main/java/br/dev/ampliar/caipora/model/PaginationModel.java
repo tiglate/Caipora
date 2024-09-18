@@ -16,6 +16,7 @@ public class PaginationModel {
         this.steps = steps;
     }
 
+    @SuppressWarnings("unused")
     public String getElements() {
         return elements;
     }

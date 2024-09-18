@@ -24,6 +24,7 @@ public class PaginationStep {
         this.disabled = disabled;
     }
 
+    @SuppressWarnings("unused")
     public String getLabel() {
         return label;
     }

@@ -2,7 +2,6 @@ package br.dev.ampliar.caipora.repos;
 
 import br.dev.ampliar.caipora.domain.Software;
 import br.dev.ampliar.caipora.domain.Stakeholder;
-import br.dev.ampliar.caipora.model.DepartmentDTO;
 import br.dev.ampliar.caipora.model.SoftwareDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

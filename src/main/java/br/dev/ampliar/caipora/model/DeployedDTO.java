@@ -1,8 +1,8 @@
 package br.dev.ampliar.caipora.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+@SuppressWarnings("unused")
 public class DeployedDTO {
     private Integer deployId;
     private LocalDate executionDate;

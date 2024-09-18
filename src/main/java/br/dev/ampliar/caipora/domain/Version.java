@@ -52,6 +52,7 @@ public class Version {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(final Integer id) {
         this.id = id;
     }
@@ -108,6 +109,7 @@ public class Version {
         return createdAt;
     }
 
+    @SuppressWarnings("unused")
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
@@ -116,6 +118,7 @@ public class Version {
         return updatedAt;
     }
 
+    @SuppressWarnings("unused")
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }

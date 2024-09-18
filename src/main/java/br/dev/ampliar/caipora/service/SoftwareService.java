@@ -12,6 +12,7 @@ public interface SoftwareService {
 
     SoftwareDTO get(Integer id);
 
+    @SuppressWarnings("UnusedReturnValue")
     Integer create(SoftwareDTO softwareDTO);
 
     void update(Integer id, SoftwareDTO softwareDTO);

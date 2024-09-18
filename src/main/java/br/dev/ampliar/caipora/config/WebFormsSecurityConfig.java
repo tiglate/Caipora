@@ -1,9 +1,6 @@
 package br.dev.ampliar.caipora.config;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import br.dev.ampliar.caipora.util.UserRoles;
-import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +13,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
+import java.time.Duration;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
@@ -40,8 +41,8 @@ public class WebFormsSecurityConfig {
         return http.cors(withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/actuator/**"))
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(EndpointRequest.to("health")).hasAnyAuthority(UserRoles.ADMIN, UserRoles.OBSERVER)
-                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").hasAnyAuthority(UserRoles.ADMIN, UserRoles.OBSERVER)
+                    .requestMatchers(EndpointRequest.to("health")).hasAnyAuthority(UserRoles.ROLE_ACTUATOR_ACCESS)
+                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").hasAnyAuthority(UserRoles.ROLE_SWAGGER_ACCESS)
                     .anyRequest().permitAll())
                 .formLogin(form -> form
                     .loginPage("/login")

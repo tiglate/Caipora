@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 
 
+@SuppressWarnings("unused")
 public class SoftwareDTO {
 
     private Integer id;

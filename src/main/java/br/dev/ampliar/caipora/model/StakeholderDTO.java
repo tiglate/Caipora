@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 
 
+@SuppressWarnings("unused")
 public class StakeholderDTO {
 
     private Integer id;

@@ -6,18 +6,14 @@ import br.dev.ampliar.caipora.util.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
@@ -38,11 +34,14 @@ public class DepartmentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ADMIN + "', '" + UserRoles.OBSERVER + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
     public String list(@ModelAttribute("departmentSearch") DepartmentDTO filter,
                        @RequestParam(name = "sort", required = false) String sort,
-                       @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
+                       @SortDefault(sort = "id", direction = Sort.Direction.DESC) @PageableDefault(size = 20) final Pageable pageable,
                        final Model model) {
+        if (sort == null) {
+            sort = "id,desc";
+        }
         final var sortOrder = SortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
             entry("id", "sortById"),
             entry("name", "sortByName"),
@@ -56,14 +55,28 @@ public class DepartmentController {
         return "department/list";
     }
 
+    @GetMapping("/view/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
+    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
+        model.addAttribute("department", departmentService.get(id));
+        return "department/view";
+    }
+
+    @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
+    public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
+        model.addAttribute("department", departmentService.get(id));
+        return "department/edit";
+    }
+
     @GetMapping("/add")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_MANAGE + "')")
     public String add(@ModelAttribute("department") final DepartmentDTO departmentDTO) {
         return "department/add";
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_MANAGE + "')")
     public String add(@ModelAttribute("department") @Valid final DepartmentDTO departmentDTO,
                       final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -74,22 +87,8 @@ public class DepartmentController {
         return "redirect:/departments";
     }
 
-    @GetMapping("/view/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
-    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("department", departmentService.get(id));
-        return "department/view";
-    }
-
-    @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
-    public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("department", departmentService.get(id));
-        return "department/edit";
-    }
-
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id,
                        @ModelAttribute("department") @Valid final DepartmentDTO departmentDTO,
                        final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
@@ -102,7 +101,7 @@ public class DepartmentController {
     }
 
     @PostMapping("/delete/{id}")
-    @PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_MANAGE + "')")
     public String delete(@PathVariable(name = "id") final Integer id,
                          final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = departmentService.getReferencedWarning(id);

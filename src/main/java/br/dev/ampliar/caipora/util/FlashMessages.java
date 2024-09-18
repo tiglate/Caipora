@@ -2,6 +2,7 @@ package br.dev.ampliar.caipora.util;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@SuppressWarnings("unused")
 public class FlashMessages {
 
     public static final String MSG_SUCCESS = "MSG_SUCCESS";

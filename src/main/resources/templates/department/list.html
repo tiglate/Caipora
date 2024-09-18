@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       lang="en"
       layout:decorate="~{layout}">
 <head>
@@ -18,7 +19,9 @@
         <div class="d-flex flex-wrap mb-4">
             <h1 class="flex-grow-1">Departments</h1>
             <div>
-                <a th:href="@{/departments/add}" class="btn btn-primary ms-2"><i class="bi-plus-circle"></i> Add</a>
+                <a class="btn btn-primary ms-2"
+                   th:href="@{/departments/add}"
+                   sec:authorize="hasRole('ROLE_DEPARTMENT_MANAGE')"><i class="bi-plus-circle"></i> Add</a>
             </div>
         </div>
 
@@ -77,9 +80,11 @@
                                        class="btn btn-sm btn-secondary bi-eye"
                                        title="View"></a>
                                     <a th:href="@{/departments/edit/{id}(id=${department.id})}"
+                                       sec:authorize="hasRole('ROLE_DEPARTMENT_MANAGE')"
                                        class="btn btn-sm btn-secondary bi-pencil-square"
                                        title="Edit"></a>
                                     <form th:action="@{/departments/delete/{id}(id=${department.id})}"
+                                          sec:authorize="hasRole('ROLE_DEPARTMENT_MANAGE')"
                                           th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
                                         <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
                                         </button>

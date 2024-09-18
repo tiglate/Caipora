@@ -7,7 +7,6 @@ import br.dev.ampliar.caipora.repos.DepartmentRepository;
 import br.dev.ampliar.caipora.repos.RoleRepository;
 import br.dev.ampliar.caipora.service.UserService;
 import br.dev.ampliar.caipora.util.*;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,12 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
@@ -34,7 +28,6 @@ import static java.util.Map.entry;
 
 @Controller
 @RequestMapping("/users")
-@PreAuthorize("hasAuthority('" + UserRoles.ADMIN + "')")
 public class UserController {
 
     private final static String ENTITY_NAME = "User";
@@ -60,7 +53,9 @@ public class UserController {
                 .collect(CustomCollectors.toSortedMap(Role::getId, Role::getName)));
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_VIEW + "')")
     public String list(@ModelAttribute("userSearch") UserSearchDTO filter,
                        @RequestParam(name = "sort", required = false) String sort,
                        @SortDefault(sort = "id", direction = Sort.Direction.DESC) @PageableDefault(size = 20) final Pageable pageable,
@@ -85,7 +80,17 @@ public class UserController {
         return "user/list";
     }
 
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping("/view/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_VIEW + "')")
+    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
+        model.addAttribute("user", userService.get(id));
+        return "user/view";
+    }
+
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/add")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_MANAGE + "')")
     public String add(@ModelAttribute("user") final UserDTO userDTO) {
         userDTO.setGender(Gender.MALE);
         userDTO.setEnabled(true);
@@ -93,6 +98,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_MANAGE + "')")
     public String add(@ModelAttribute("user") @Validated(OnCreate.class) final UserDTO userDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -103,19 +109,16 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @GetMapping("/view/{id}")
-    public String view(@PathVariable(name = "id") final Integer id, final Model model) {
-        model.addAttribute("user", userService.get(id));
-        return "user/view";
-    }
-
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("user", userService.get(id));
         return "user/edit";
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id,
                        @ModelAttribute("user") @Validated(OnUpdate.class) final UserDTO userDTO,
                        final BindingResult bindingResult,
@@ -128,7 +131,9 @@ public class UserController {
         return "redirect:/users";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @PostMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_MANAGE + "')")
     public String delete(@PathVariable(name = "id") final Integer id,
             final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = userService.getReferencedWarning(id);
@@ -141,5 +146,4 @@ public class UserController {
         }
         return "redirect:/users";
     }
-
 }

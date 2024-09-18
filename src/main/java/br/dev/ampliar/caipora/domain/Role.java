@@ -35,6 +35,7 @@ public class Role {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(final Integer id) {
         this.id = id;
     }
@@ -43,22 +44,27 @@ public class Role {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(final String name) {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
+    @SuppressWarnings("unused")
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
+    @SuppressWarnings("unused")
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
+    @SuppressWarnings("unused")
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }

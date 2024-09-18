@@ -13,6 +13,7 @@ public interface UserService {
 
     UserDTO get(Integer id);
 
+    @SuppressWarnings("UnusedReturnValue")
     Integer create(UserDTO userDTO);
 
     void update(Integer id, UserDTO userDTO);

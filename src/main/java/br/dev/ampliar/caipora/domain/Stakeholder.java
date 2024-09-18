@@ -18,6 +18,7 @@ public class Stakeholder extends Person {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(final Integer id) {
         this.id = id;
     }

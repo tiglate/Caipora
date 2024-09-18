@@ -117,7 +117,7 @@
                                   th:field="*{notes}"
                                   th:classappend="${#fields.hasErrors('notes') ? 'is-invalid' : ''}"
                                   th:if="${mode == 'add'}"></textarea>
-                        <div id="notes" th:if="${mode == 'view'}" th:utext="${deploy.notes}" class="form-control w-100" style="height: 180px; overflow-y: scroll; resize: both;">&nbsp;</div>
+                        <div th:if="${mode == 'view'}" th:utext="${deploy.notes}" class="form-control w-100" style="height: 180px; overflow-y: scroll; resize: both;">&nbsp;</div>
                         <div th:if="${#fields.hasErrors('notes')}" class="invalid-feedback d-block">
                             <p th:each="error : ${#fields.errors('notes')}" class="mb-0">[[${error}]]</p>
                         </div>
