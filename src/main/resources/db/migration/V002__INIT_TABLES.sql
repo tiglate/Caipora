@@ -66,45 +66,45 @@ BEGIN
         tb_role
 
     INSERT INTO tb_user (id_department, name, email, gender, username, password, enabled) VALUES
-    (1, 'Deodoro da Fonseca', 'deodoro.fonseca@example.com', 'MALE', 'deodoro.fonseca', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (2, 'Floriano Peixoto', 'floriano.peixoto@example.com', 'MALE', 'floriano.peixoto', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (3, 'Prudente de Morais', 'prudente.morais@example.com', 'MALE', 'prudente.morais', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (4, 'Campos Sales', 'campos.sales@example.com', 'MALE', 'campos.sales', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (5, 'Rodrigues Alves', 'rodrigues.alves@example.com', 'MALE', 'rodrigues.alves', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (6, 'Afonso Pena', 'afonso.pena@example.com', 'MALE', 'afonso.pena', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (7, 'Nilo Peçanha', 'nilo.pecanha@example.com', 'MALE', 'nilo.pecanha', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (8, 'Hermes da Fonseca', 'hermes.fonseca@example.com', 'MALE', 'hermes.fonseca', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (9, 'Venceslau Brás', 'venceslau.bras@example.com', 'MALE', 'venceslau.bras', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (10, 'Delfim Moreira', 'delfim.moreira@example.com', 'MALE', 'delfim.moreira', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (11, 'Epitácio Pessoa', 'epitacio.pessoa@example.com', 'MALE', 'epitacio.pessoa', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (1, 'Artur Bernardes', 'artur.bernardes@example.com', 'MALE', 'artur.bernardes', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (2, 'Washington Luís', 'washington.luis@example.com', 'MALE', 'washington.luis', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (3, 'Getúlio Vargas', 'getulio.vargas@example.com', 'MALE', 'getulio.vargas', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (4, 'José Linhares', 'jose.linhares@example.com', 'MALE', 'jose.linhares', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (5, 'Eurico Gaspar Dutra', 'eurico.dutra@example.com', 'MALE', 'eurico.dutra', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (6, 'Getúlio Vargas', 'getulio.vargas2@example.com', 'MALE', 'getulio.vargas2', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (7, 'Café Filho', 'cafe.filho@example.com', 'MALE', 'cafe.filho', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (8, 'Carlos Luz', 'carlos.luz@example.com', 'MALE', 'carlos.luz', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (9, 'Nereu Ramos', 'nereu.ramos@example.com', 'MALE', 'nereu.ramos', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (10, 'Juscelino Kubitschek', 'juscelino.kubitschek@example.com', 'MALE', 'juscelino.kubitschek', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (11, 'Jânio Quadros', 'janio.quadros@example.com', 'MALE', 'janio.quadros', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (1, 'Ranieri Mazzilli', 'ranieri.mazzilli@example.com', 'MALE', 'ranieri.mazzilli', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (2, 'João Goulart', 'joao.goulart@example.com', 'MALE', 'joao.goulart', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (3, 'Ranieri Mazzilli', 'ranieri.mazzilli2@example.com', 'MALE', 'ranieri.mazzilli2', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (4, 'Humberto Castelo Branco', 'humberto.brancho@example.com', 'MALE', 'humberto.brancho', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (5, 'Artur da Costa e Silva', 'artur.silva@example.com', 'MALE', 'artur.silva', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (6, 'Emílio Médici', 'emilio.medici@example.com', 'MALE', 'emilio.medici', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (7, 'Ernesto Geisel', 'ernesto.geisel@example.com', 'MALE', 'ernesto.geisel', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (8, 'João Figueiredo', 'joao.figueiredo@example.com', 'MALE', 'joao.figueiredo', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (9, 'José Sarney', 'jose.sarney@example.com', 'MALE', 'jose.sarney', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (10, 'Fernando Collor de Mello', 'fernando.mello@example.com', 'MALE', 'fernando.mello', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (11, 'Itamar Franco', 'itamar.franco@example.com', 'MALE', 'itamar.franco', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (1, 'Fernando Henrique Cardoso', 'fernando.cardoso@example.com', 'MALE', 'fernando.cardoso', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (2, 'Luiz Inácio Lula da Silva', 'luiz.silva@example.com', 'MALE', 'luiz.silva', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (3, 'Dilma Rousseff', 'dilma.rousseff@example.com', 'FEMALE', 'dilma.rousseff', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (4, 'Michel Temer', 'michel.temer@example.com', 'MALE', 'michel.temer', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
-    (5, 'Jair Bolsonaro', 'jair.bolsonaro@example.com', 'MALE', 'jair.bolsonaro', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
-    (6, 'Luiz Inácio Lula da Silva', 'luiz.silva2@example.com', 'MALE', 'luiz.silva2', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1);
+    (1, N'Deodoro da Fonseca', 'deodoro.fonseca@example.com', 'MALE', 'deodoro.fonseca', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (2, N'Floriano Peixoto', 'floriano.peixoto@example.com', 'MALE', 'floriano.peixoto', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (3, N'Prudente de Morais', 'prudente.morais@example.com', 'MALE', 'prudente.morais', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (4, N'Campos Sales', 'campos.sales@example.com', 'MALE', 'campos.sales', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (5, N'Rodrigues Alves', 'rodrigues.alves@example.com', 'MALE', 'rodrigues.alves', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (6, N'Afonso Pena', 'afonso.pena@example.com', 'MALE', 'afonso.pena', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (7, N'Nilo Peçanha', 'nilo.pecanha@example.com', 'MALE', 'nilo.pecanha', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (8, N'Hermes da Fonseca', 'hermes.fonseca@example.com', 'MALE', 'hermes.fonseca', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (9, N'Venceslau Brás', 'venceslau.bras@example.com', 'MALE', 'venceslau.bras', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (10, N'Delfim Moreira', 'delfim.moreira@example.com', 'MALE', 'delfim.moreira', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (11, N'Epitácio Pessoa', 'epitacio.pessoa@example.com', 'MALE', 'epitacio.pessoa', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (1, N'Artur Bernardes', 'artur.bernardes@example.com', 'MALE', 'artur.bernardes', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (2, N'Washington Luís', 'washington.luis@example.com', 'MALE', 'washington.luis', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (3, N'Getúlio Vargas', 'getulio.vargas@example.com', 'MALE', 'getulio.vargas', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (4, N'José Linhares', 'jose.linhares@example.com', 'MALE', 'jose.linhares', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (5, N'Eurico Gaspar Dutra', 'eurico.dutra@example.com', 'MALE', 'eurico.dutra', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (6, N'Getúlio Vargas', 'getulio.vargas2@example.com', 'MALE', 'getulio.vargas2', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (7, N'Café Filho', 'cafe.filho@example.com', 'MALE', 'cafe.filho', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (8, N'Carlos Luz', 'carlos.luz@example.com', 'MALE', 'carlos.luz', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (9, N'Nereu Ramos', 'nereu.ramos@example.com', 'MALE', 'nereu.ramos', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (10, N'Juscelino Kubitschek', 'juscelino.kubitschek@example.com', 'MALE', 'juscelino.kubitschek', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (11, N'Jânio Quadros', 'janio.quadros@example.com', 'MALE', 'janio.quadros', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (1, N'Ranieri Mazzilli', 'ranieri.mazzilli@example.com', 'MALE', 'ranieri.mazzilli', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (2, N'João Goulart', 'joao.goulart@example.com', 'MALE', 'joao.goulart', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (3, N'Ranieri Mazzilli', 'ranieri.mazzilli2@example.com', 'MALE', 'ranieri.mazzilli2', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (4, N'Humberto Castelo Branco', 'humberto.brancho@example.com', 'MALE', 'humberto.brancho', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (5, N'Artur da Costa e Silva', 'artur.silva@example.com', 'MALE', 'artur.silva', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (6, N'Emílio Médici', 'emilio.medici@example.com', 'MALE', 'emilio.medici', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (7, N'Ernesto Geisel', 'ernesto.geisel@example.com', 'MALE', 'ernesto.geisel', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (8, N'João Figueiredo', 'joao.figueiredo@example.com', 'MALE', 'joao.figueiredo', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (9, N'José Sarney', 'jose.sarney@example.com', 'MALE', 'jose.sarney', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (10, N'Fernando Collor de Mello', 'fernando.mello@example.com', 'MALE', 'fernando.mello', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (11, N'Itamar Franco', 'itamar.franco@example.com', 'MALE', 'itamar.franco', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (1, N'Fernando Henrique Cardoso', 'fernando.cardoso@example.com', 'MALE', 'fernando.cardoso', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (2, N'Luiz Inácio Lula da Silva', 'luiz.silva@example.com', 'MALE', 'luiz.silva', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (3, N'Dilma Rousseff', 'dilma.rousseff@example.com', 'FEMALE', 'dilma.rousseff', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (4, N'Michel Temer', 'michel.temer@example.com', 'MALE', 'michel.temer', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1),
+    (5, N'Jair Bolsonaro', 'jair.bolsonaro@example.com', 'MALE', 'jair.bolsonaro', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 0),
+    (6, N'Luiz Inácio Lula da Silva', 'luiz.silva2@example.com', 'MALE', 'luiz.silva2', '{bcrypt}$2a$10$e0MYzXyjpJS7Pd0RVvHwHeFx4r1eH1B2d9uTQ9z5e5G8y5FzFQF92', 1);
 
     INSERT INTO tb_user_role (id_user, id_role)
     SELECT
@@ -120,53 +120,53 @@ END
 
 IF NOT EXISTS(SELECT 1 FROM tb_stakeholder)
 BEGIN
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  'George Washington'      , 'george.washington@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  'John Adams'             , 'john.adams@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  'Thomas Jefferson'       , 'thomas.jefferson@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  'James Madison'          , 'james.madison@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  'James Monroe'           , 'james.monroe@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  'John Quincy Adams'      , 'john.quincy.adams@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  'Andrew Jackson'         , 'andrew.jackson@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  'Martin Van Buren'       , 'martin.van.buren@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  'William Henry Harrison' , 'william.henry.harrison@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, 'John Tyler'             , 'john.tyler@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, 'James Polk'             , 'james.polk@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  'Zachary Taylor'         , 'zachary.taylor@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  'Millard Fillmore'       , 'millard.fillmore@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  'Franklin Pierce'        , 'franklin.pierce@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  'James Buchanan'         , 'james.buchanan@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  'Abraham Lincoln'        , 'abraham.lincoln@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  'Andrew Johnson'         , 'andrew.johnson@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  'Ulysses Grant'          , 'ulysses.grant@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  'Rutherford Hayes'       , 'rutherford.hayes@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  'James Garfield'         , 'james.garfield@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, 'Chester Arthur'         , 'chester.arthur@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, 'Grover Cleveland'       , 'grover.cleveland@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  'Benjamin Harrison'      , 'benjamin.harrison@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  'Grover Cleveland'       , 'grover.cleveland@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  'William McKinley'       , 'william.mckinley@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  'Theodore Roosevelt'     , 'theodore.roosevelt@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  'William Howard Taft'    , 'william.howard.taft@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  'Woodrow Wilson'         , 'woodrow.wilson@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  'Warren Harding'         , 'warren.harding@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  'Calvin Coolidge'        , 'calvin.coolidge@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  'Herbert Hoover'         , 'herbert.hoover@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, 'Franklin Roosevelt'     , 'franklin.roosevelt@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, 'Harry Truman'           , 'harry.truman@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  'Dwight Eisenhower'      , 'dwight.eisenhower@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  'John Kennedy'           , 'john.kennedy@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  'Lyndon Johnson'         , 'lyndon.johnson@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  'Richard Nixon'          , 'richard.nixon@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  'Gerald Ford'            , 'gerald.ford@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  'Jimmy Carter'           , 'jimmy.carter@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  'Ronald Reagan'          , 'ronald.reagan@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  'George Bush'            , 'george.bush@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  'Bill Clinton'           , 'bill.clinton@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, 'George Bush'            , 'george.bush@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, 'Barack Obama'           , 'barack.obama@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  'Donald Trump'           , 'donald.trump@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  'Joe Biden'              , 'joe.biden@fakedomain.com', 'MALE');
-    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  'Kamala Devi Harris'     , 'kamala.devi.harris', 'FEMALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  N'George Washington'      , 'george.washington@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  N'John Adams'             , 'john.adams@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  N'Thomas Jefferson'       , 'thomas.jefferson@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  N'James Madison'          , 'james.madison@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  N'James Monroe'           , 'james.monroe@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  N'John Quincy Adams'      , 'john.quincy.adams@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  N'Andrew Jackson'         , 'andrew.jackson@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  N'Martin Van Buren'       , 'martin.van.buren@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  N'William Henry Harrison' , 'william.henry.harrison@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, N'John Tyler'             , 'john.tyler@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, N'James Polk'             , 'james.polk@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  N'Zachary Taylor'         , 'zachary.taylor@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  N'Millard Fillmore'       , 'millard.fillmore@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  N'Franklin Pierce'        , 'franklin.pierce@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  N'James Buchanan'         , 'james.buchanan@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  N'Abraham Lincoln'        , 'abraham.lincoln@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  N'Andrew Johnson'         , 'andrew.johnson@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  N'Ulysses Grant'          , 'ulysses.grant@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  N'Rutherford Hayes'       , 'rutherford.hayes@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  N'James Garfield'         , 'james.garfield@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, N'Chester Arthur'         , 'chester.arthur@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, N'Grover Cleveland'       , 'grover.cleveland@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  N'Benjamin Harrison'      , 'benjamin.harrison@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  N'Grover Cleveland'       , 'grover.cleveland@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  N'William McKinley'       , 'william.mckinley@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  N'Theodore Roosevelt'     , 'theodore.roosevelt@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  N'William Howard Taft'    , 'william.howard.taft@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  N'Woodrow Wilson'         , 'woodrow.wilson@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  N'Warren Harding'         , 'warren.harding@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  N'Calvin Coolidge'        , 'calvin.coolidge@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  N'Herbert Hoover'         , 'herbert.hoover@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, N'Franklin Roosevelt'     , 'franklin.roosevelt@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, N'Harry Truman'           , 'harry.truman@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  N'Dwight Eisenhower'      , 'dwight.eisenhower@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  N'John Kennedy'           , 'john.kennedy@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  N'Lyndon Johnson'         , 'lyndon.johnson@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (4,  N'Richard Nixon'          , 'richard.nixon@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (5,  N'Gerald Ford'            , 'gerald.ford@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (6,  N'Jimmy Carter'           , 'jimmy.carter@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (7,  N'Ronald Reagan'          , 'ronald.reagan@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (8,  N'George Bush'            , 'george.bush@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (9,  N'Bill Clinton'           , 'bill.clinton@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (10, N'George Bush'            , 'george.bush@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (11, N'Barack Obama'           , 'barack.obama@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (1,  N'Donald Trump'           , 'donald.trump@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (2,  N'Joe Biden'              , 'joe.biden@fakedomain.com', 'MALE');
+    INSERT INTO tb_stakeholder (id_department, name, email, gender) VALUES (3,  N'Kamala Devi Harris'     , 'kamala.devi.harris', 'FEMALE');
 END
 
 IF NOT EXISTS(SELECT 1 FROM tb_software)
@@ -320,8 +320,8 @@ FROM
     LEFT JOIN #tb_last_version AS lvr
            ON lvr.id_software = ver.id_software
 ORDER BY
-    ver.id_software ASC,
-    ver.release_date ASC
+    ver.id_software,
+    ver.release_date
 
 INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
 SELECT
@@ -338,8 +338,8 @@ FROM
     LEFT JOIN #tb_last_version AS lvr
            ON lvr.id_software = ver.id_software
 ORDER BY
-    ver.id_software ASC,
-    ver.release_date ASC
+    ver.id_software,
+    ver.release_date
 
 INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
 SELECT
@@ -356,8 +356,8 @@ FROM
     LEFT JOIN #tb_last_version AS lvr
            ON lvr.id_software = ver.id_software
 ORDER BY
-    ver.id_software ASC,
-    ver.release_date ASC
+    ver.id_software,
+    ver.release_date
 
 INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
 SELECT
@@ -374,8 +374,8 @@ FROM
     LEFT JOIN #tb_last_version AS lvr
            ON lvr.id_software = ver.id_software
 ORDER BY
-    ver.id_software ASC,
-    ver.release_date ASC
+    ver.id_software,
+    ver.release_date
 
 INSERT INTO tb_deploy (id_version, id_operator, id_authorizer, is_active, environment, rfc, execution_date)
 SELECT
@@ -392,8 +392,8 @@ FROM
     LEFT JOIN #tb_last_version AS lvr
            ON lvr.id_software = ver.id_software
 ORDER BY
-    ver.id_software ASC,
-    ver.release_date ASC
+    ver.id_software,
+    ver.release_date
 
 IF OBJECT_ID('tempdb..#tb_last_version') IS NOT NULL
 BEGIN
