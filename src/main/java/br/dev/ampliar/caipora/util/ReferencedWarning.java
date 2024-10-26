@@ -1,13 +1,14 @@
 package br.dev.ampliar.caipora.util;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class ReferencedWarning {
 
     private String key = null;
-    private ArrayList<Object> params = new ArrayList<>();
+    private List<Object> params = new ArrayList<>();
 
     public void addParam(final Object param) {
         params.add(param);
@@ -32,12 +33,12 @@ public class ReferencedWarning {
         this.key = key;
     }
 
-    public ArrayList<Object> getParams() {
+    public List<Object> getParams() {
         return params;
     }
 
     @SuppressWarnings("unused")
-    public void setParams(final ArrayList<Object> params) {
+    public void setParams(final List<Object> params) {
         this.params = params;
     }
 

@@ -10,7 +10,7 @@
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
         <div th:replace="~{fragments/header :: header('edit', 'Edit User', 'userForm', @{/users})}"></div>
-        <div th:replace="~{fragments/forms::globalErrors('user')}"></div>
+        <div th:replace="~{fragments/form-utils::globalErrors('user')}"></div>
         <form th:action="${requestUri}" th:object="${user}" method="post" id="userForm">
             <th:block th:replace="~{user/_form :: userForm('edit', ${user}, ${genderValues}, ${departmentValues}, ${rolesValues})}"></th:block>
         </form>

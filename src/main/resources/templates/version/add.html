@@ -10,7 +10,7 @@
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
         <div th:replace="~{fragments/header :: header('add', 'Add Version', 'versionForm', @{/versions})}"></div>
-        <div th:replace="~{fragments/forms::globalErrors('version')}"></div>
+        <div th:replace="~{fragments/form-utils::globalErrors('version')}"></div>
         <form th:action="${requestUri}" method="post" enctype="multipart/form-data" id="versionForm">
             <th:block th:replace="~{version/_form :: versionForm('add', ${version}, ${softwareValues})}"></th:block>
         </form>

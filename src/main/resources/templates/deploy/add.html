@@ -10,7 +10,7 @@
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
         <div th:replace="~{fragments/header :: header('add', 'New Deploy', 'deployForm', @{/deploys})}"></div>
-        <div th:replace="~{fragments/forms::globalErrors('deploy')}"></div>
+        <div th:replace="~{fragments/form-utils::globalErrors('deploy')}"></div>
         <form th:action="${requestUri}" method="post" id="deployForm">
             <th:block th:replace="~{deploy/_form :: deployForm('add', ${deploy}, ${versionValues}, ${environmentValues}, ${authorizerValues})}"></th:block>
         </form>
