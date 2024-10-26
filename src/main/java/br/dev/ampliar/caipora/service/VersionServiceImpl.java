@@ -140,6 +140,10 @@ public class VersionServiceImpl implements VersionService {
         var uniqueFilename = UUID.randomUUID() + "_" + FilenameUtils.getName(originalFilename); // Generate a unique filename
         var filePath = Paths.get(uploadDirectory).resolve(uniqueFilename).normalize();
 
+        if (!filePath.startsWith(uploadDirectory)) {
+            throw new IOException("Entry is outside of the target directory");
+        }
+
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return uniqueFilename;
