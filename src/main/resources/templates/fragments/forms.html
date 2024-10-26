@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Form Utils</title>
+</head>
     <body>
         <div th:fragment="inputRow(object, field)" th:with="type=${type} ?: 'text', required=${required}, disabled=${disabled},
                 inputClassappend=${#fields.hasErrors(field) || (type == 'textarea' && #fields.hasErrors(field + '*')) ? 'is-invalid ' : ''} + ${inputClass ?: ''}"
