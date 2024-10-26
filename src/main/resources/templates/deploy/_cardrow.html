@@ -5,16 +5,26 @@
 </head>
 <body>
     <table>
-        <tr th:fragment="cardRow(deployId, environment, version, executionDate, rfc)">
-            <td>[[${environment}]]</td>
-            <td class="text-truncate" data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-title="${rfc}"><div class="text-truncate" style="max-width: 130px;">[[${version}]]</div></td>
-            <td class="text-center">[[${#temporals.format(executionDate, 'dd-MMM-yy')}]]</td>
-            <td class="text-center">
-                <a th:href="@{/deploys/view/{id}(id=${deployId})}" title="View" class="bi-eye-fill"></a>
-                <a sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')" href="#" title="Rollback" class="bi-arrow-down-square-fill link-danger"></a>
-                <a sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')" href="#" title="Promote" class="bi-arrow-up-square-fill link-success"></a>
-            </td>
-        </tr>
+        <thead>
+            <tr>
+                <th scope="col">Env</th>
+                <th scope="col">Version</th>
+                <th scope="col" class="text-center">Deploy</th>
+                <th scope="col" class="text-center"><i class="bi-list"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:fragment="cardRow(deployId, environment, version, executionDate, rfc)">
+                <td>[[${environment}]]</td>
+                <td class="text-truncate" data-bs-toggle="tooltip" data-bs-placement="top" th:data-bs-title="${rfc}"><div class="text-truncate" style="max-width: 130px;">[[${version}]]</div></td>
+                <td class="text-center">[[${#temporals.format(executionDate, 'dd-MMM-yy')}]]</td>
+                <td class="text-center">
+                    <a th:href="@{/deploys/view/{id}(id=${deployId})}" title="View" class="bi-eye-fill"></a>
+                    <a sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')" href="#" title="Rollback" class="bi-arrow-down-square-fill link-danger"></a>
+                    <a sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')" href="#" title="Promote" class="bi-arrow-up-square-fill link-success"></a>
+                </td>
+            </tr>
+        </tbody>
     </table>
 </body>
 </html>
