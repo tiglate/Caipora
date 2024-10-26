@@ -59,7 +59,7 @@ public class VersionServiceImpl implements VersionService {
     }
 
     @Override
-    public Integer create(final VersionDTO versionDTO) {
+    public Integer create(final VersionDTO versionDTO) throws IOException {
         validateFile(versionDTO.getFile());
         final Version version = mapToEntity(versionDTO);
         version.setFileName(saveFile(versionDTO.getFile()));
@@ -77,20 +77,16 @@ public class VersionServiceImpl implements VersionService {
     }
 
     @Override
-    public void delete(final Integer id) {
+    public void delete(final Integer id) throws IOException {
         Version version = versionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         deleteFile(version.getFileName());
         versionRepository.deleteById(id);
     }
 
-    private void deleteFile(String fileName) {
+    private void deleteFile(String fileName) throws IOException {
         Path filePath = Paths.get(uploadDirectory, fileName);
-        try {
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to delete file: " + fileName, e);
-        }
+        Files.deleteIfExists(filePath);
     }
 
     private VersionDTO mapToDTO(final Version version, final VersionDTO versionDTO) {
@@ -136,20 +132,15 @@ public class VersionServiceImpl implements VersionService {
         return null;
     }
 
-    private String saveFile(MultipartFile file) {
+    private String saveFile(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is required");
         }
+        var originalFilename = file.getOriginalFilename();
+        var uniqueFilename = UUID.randomUUID() + "_" + FilenameUtils.getName(originalFilename); // Generate a unique filename
+        var filePath = Paths.get(uploadDirectory).resolve(uniqueFilename).normalize();
 
-        String originalFilename = file.getOriginalFilename();
-        String uniqueFilename = UUID.randomUUID() + "_" + originalFilename; // Generate a unique filename
-        Path filePath = Paths.get(uploadDirectory, uniqueFilename);
-
-        try {
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save uploaded file", e);
-        }
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return uniqueFilename;
     }

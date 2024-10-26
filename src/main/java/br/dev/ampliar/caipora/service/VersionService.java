@@ -5,6 +5,8 @@ import br.dev.ampliar.caipora.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+
 
 public interface VersionService {
 
@@ -13,11 +15,11 @@ public interface VersionService {
     VersionDTO get(Integer id);
 
     @SuppressWarnings("UnusedReturnValue")
-    Integer create(VersionDTO versionDTO);
+    Integer create(VersionDTO versionDTO) throws IOException;
 
     void update(Integer id, VersionDTO versionDTO);
 
-    void delete(Integer id);
+    void delete(Integer id) throws IOException;
 
     ReferencedWarning getReferencedWarning(Integer id);
 

@@ -111,7 +111,7 @@ public class VersionController {
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("file", "error.file", e.getMessage());
             return "version/add";
-        } catch (RuntimeException e) {
+        } catch (IOException e) {
             FlashMessages.error(redirectAttributes, e);
             return "version/add";
         }
@@ -149,8 +149,12 @@ public class VersionController {
             redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
-            versionService.delete(id);
-            FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
+            try {
+                versionService.delete(id);
+                FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
+            } catch (IOException e) {
+                redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR, e.getMessage());
+            }
         }
         return REDIRECT_TO_CONTROLLER_INDEX;
     }
