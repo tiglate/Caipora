@@ -26,7 +26,8 @@ import static java.util.Map.entry;
 @RequestMapping("/departments")
 public class DepartmentController {
 
-    private final static String ENTITY_NAME = "Department";
+    private static final String ENTITY_NAME = "Department";
+    private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/departments";
     private final DepartmentService departmentService;
 
     public DepartmentController(final DepartmentService departmentService) {
@@ -84,7 +85,7 @@ public class DepartmentController {
         }
         departmentService.create(departmentDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/departments";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @PostMapping("/edit/{id}")
@@ -97,7 +98,7 @@ public class DepartmentController {
         }
         departmentService.update(id, departmentDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/departments";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @PostMapping("/delete/{id}")
@@ -112,7 +113,7 @@ public class DepartmentController {
             departmentService.delete(id);
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
-        return "redirect:/departments";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
 }

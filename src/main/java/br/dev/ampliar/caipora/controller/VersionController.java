@@ -38,7 +38,8 @@ import static java.util.Map.entry;
 @RequestMapping("/versions")
 public class VersionController {
 
-    private final static String ENTITY_NAME = "Version";
+    private static final String ENTITY_NAME = "Version";
+    private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/versions";
     private final VersionService versionService;
     private final SoftwareRepository softwareRepository;
     private final String uploadDirectory;
@@ -114,7 +115,7 @@ public class VersionController {
             FlashMessages.error(redirectAttributes, e);
             return "version/add";
         }
-        return "redirect:/versions";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -135,7 +136,7 @@ public class VersionController {
         }
         versionService.update(id, versionDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/versions";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -151,7 +152,7 @@ public class VersionController {
             versionService.delete(id);
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
-        return "redirect:/versions";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @GetMapping("/download/{id}")

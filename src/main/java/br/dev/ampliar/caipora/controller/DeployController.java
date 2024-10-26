@@ -32,7 +32,8 @@ import java.time.LocalDate;
 @RequestMapping("/deploys")
 public class DeployController {
 
-    private final static String ENTITY_NAME = "Deploy";
+    private static final String ENTITY_NAME = "Deploy";
+    private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/deploys";
     private final DeployService deployService;
     private final VersionRepository versionRepository;
     private final StakeholderRepository stakeholderRepository;
@@ -74,7 +75,7 @@ public class DeployController {
                       final RedirectAttributes redirectAttributes,
                       final Model model) {
         if (loadSoftwareVersions(softwareId, deployDTO, redirectAttributes, model)) {
-            return "redirect:/deploys";
+            return REDIRECT_TO_CONTROLLER_INDEX;
         }
         deployDTO.setExecutionDate(LocalDate.now());
         return "deploy/add";
@@ -88,7 +89,7 @@ public class DeployController {
                       final RedirectAttributes redirectAttributes,
                       final Model model) {
         if (loadSoftwareVersions(softwareId, deployDTO, redirectAttributes, model)) {
-            return "redirect:/deploys";
+            return REDIRECT_TO_CONTROLLER_INDEX;
         }
         deployDTO.setOperatorId(getCurrentUserId());
         deployDTO.setIsActive(true);
@@ -97,7 +98,7 @@ public class DeployController {
         }
         deployService.create(deployDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/deploys";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @GetMapping("/view/{id}")
@@ -107,7 +108,7 @@ public class DeployController {
                        final RedirectAttributes redirectAttributes) {
         final var deployDTO = deployService.get(id);
         if (loadSoftwareVersions(deployDTO.getSoftwareId(), deployDTO, redirectAttributes, model)) {
-            return "redirect:/deploys";
+            return REDIRECT_TO_CONTROLLER_INDEX;
         }
         model.addAttribute("deploy", deployDTO);
         return "deploy/view";
@@ -136,11 +137,8 @@ public class DeployController {
 
     private Integer getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication.getPrincipal() instanceof WebFormsUserDetails principal) {
-                return principal.id;
-            }
-        }
-        return null;
+        return authentication != null &&
+               authentication.isAuthenticated() &&
+               authentication.getPrincipal() instanceof WebFormsUserDetails principal ? principal.id : null;
     }
 }

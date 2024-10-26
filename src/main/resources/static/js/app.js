@@ -52,10 +52,9 @@ function clearForm() {
             input.checked = false;
         } else if (input.tagName.toLowerCase() === 'select') {
             // Deselect all options first
-            for (let i = 0; i < input.options.length; i++) {
-                input.options[i].selected = false;
+            for (let option of input.options) {
+                option.selected = false;
             }
-
             const emptyOption = input.querySelector('option[value=""]');
             if (emptyOption) {
                 emptyOption.selected = true;
@@ -129,7 +128,7 @@ function clearForm() {
 
     function initTooltips() {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     }
 
     document.addEventListener('DOMContentLoaded', initTooltips);

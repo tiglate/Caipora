@@ -9,6 +9,10 @@ import java.util.Map;
 
 public class SortUtils {
 
+    private SortUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Sort addSortAttributesToModel(Model model, String sort, Pageable pageable, Map<String, String> sortAttributes) {
         Sort sortOrder = Sort.unsorted();
         if (sort != null && !sort.isEmpty()) {

@@ -27,7 +27,8 @@ import static java.util.Map.entry;
 @RequestMapping("/softwares")
 public class SoftwareController {
 
-    private final static String ENTITY_NAME = "Application";
+    private static final String ENTITY_NAME = "Application";
+    private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/softwares";
     private final SoftwareService softwareService;
     private final StakeholderRepository stakeholderRepository;
 
@@ -89,7 +90,7 @@ public class SoftwareController {
         }
         softwareService.create(softwareDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/softwares";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -110,7 +111,7 @@ public class SoftwareController {
         }
         softwareService.update(id, softwareDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/softwares";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -126,7 +127,7 @@ public class SoftwareController {
             softwareService.delete(id);
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
-        return "redirect:/softwares";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
 }

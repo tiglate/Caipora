@@ -29,7 +29,8 @@ import static java.util.Map.entry;
 @RequestMapping("/stakeholders")
 public class StakeholderController {
 
-    private final static String ENTITY_NAME = "Stakeholder";
+    private static final String ENTITY_NAME = "Stakeholder";
+    private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/stakeholders";
     private final StakeholderService stakeholderService;
     private final DepartmentRepository departmentRepository;
 
@@ -97,7 +98,7 @@ public class StakeholderController {
         }
         stakeholderService.create(stakeholderDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/stakeholders";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -118,7 +119,7 @@ public class StakeholderController {
         }
         stakeholderService.update(id, stakeholderDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/stakeholders";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -134,6 +135,6 @@ public class StakeholderController {
             stakeholderService.delete(id);
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
-        return "redirect:/stakeholders";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 }

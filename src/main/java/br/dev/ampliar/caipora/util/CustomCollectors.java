@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 
 public class CustomCollectors {
 
+    private CustomCollectors() {
+        throw new AssertionError("No instances for you!");
+    }
+
     /**
      * Provide a Collector for collecting values from a stream into a LinkedHashMap,
      * thus keeping the order.

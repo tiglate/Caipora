@@ -30,7 +30,8 @@ import static java.util.Map.entry;
 @RequestMapping("/users")
 public class UserController {
 
-    private final static String ENTITY_NAME = "User";
+    private static final String ENTITY_NAME = "User";
+    private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/users";
     private final UserService userService;
     private final DepartmentRepository departmentRepository;
     private final RoleRepository roleRepository;
@@ -106,7 +107,7 @@ public class UserController {
         }
         userService.create(userDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/users";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -128,7 +129,7 @@ public class UserController {
         }
         userService.update(id, userDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
-        return "redirect:/users";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -144,6 +145,6 @@ public class UserController {
             userService.delete(id);
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
-        return "redirect:/users";
+        return REDIRECT_TO_CONTROLLER_INDEX;
     }
 }

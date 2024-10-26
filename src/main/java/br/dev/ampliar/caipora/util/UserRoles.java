@@ -3,6 +3,10 @@ package br.dev.ampliar.caipora.util;
 
 public class UserRoles {
 
+    private UserRoles() {
+        throw new AssertionError("No instances for you!");
+    }
+
     public static final String ROLE_DEPARTMENT_VIEW = "ROLE_DEPARTMENT_VIEW";
     public static final String ROLE_DEPARTMENT_MANAGE = "ROLE_DEPARTMENT_MANAGE";
     public static final String ROLE_USER_VIEW = "ROLE_USER_VIEW";
