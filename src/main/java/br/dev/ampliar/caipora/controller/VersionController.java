@@ -150,14 +150,14 @@ public class VersionController {
                          final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = versionService.getReferencedWarning(id);
         if (referencedWarning != null) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
+            redirectAttributes.addFlashAttribute(FlashMessages.MSG_ERROR,
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             try {
                 versionService.delete(id);
                 FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
             } catch (IOException e) {
-                redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR, e.getMessage());
+                redirectAttributes.addFlashAttribute(FlashMessages.MSG_ERROR, e.getMessage());
             }
         }
         return REDIRECT_TO_CONTROLLER_INDEX;

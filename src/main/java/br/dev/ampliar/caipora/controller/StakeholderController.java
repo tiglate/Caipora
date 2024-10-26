@@ -133,7 +133,7 @@ public class StakeholderController {
             final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = stakeholderService.getReferencedWarning(id);
         if (referencedWarning != null) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
+            redirectAttributes.addFlashAttribute(FlashMessages.MSG_ERROR,
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             stakeholderService.delete(id);

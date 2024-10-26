@@ -111,7 +111,7 @@ public class DepartmentController {
                          final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = departmentService.getReferencedWarning(id);
         if (referencedWarning != null) {
-            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
+            redirectAttributes.addFlashAttribute(FlashMessages.MSG_ERROR,
                     WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
         } else {
             departmentService.delete(id);

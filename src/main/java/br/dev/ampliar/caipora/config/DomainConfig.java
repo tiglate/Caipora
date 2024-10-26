@@ -1,10 +1,6 @@
 package br.dev.ampliar.caipora.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.cfg.MappingSettings;
-import org.hibernate.type.format.jackson.JacksonJsonFormatMapper;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.auditing.DateTimeProvider;
@@ -22,11 +18,6 @@ import java.util.Optional;
 @EnableJpaRepositories("br.dev.ampliar.caipora.repos")
 @EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
 public class DomainConfig {
-
-    @Bean
-    public HibernatePropertiesCustomizer jsonFormatMapper(final ObjectMapper objectMapper) {
-        return properties -> properties.put(MappingSettings.JSON_FORMAT_MAPPER, new JacksonJsonFormatMapper(objectMapper));
-    }
 
     @Bean(name = "auditingDateTimeProvider")
     public DateTimeProvider dateTimeProvider() {
