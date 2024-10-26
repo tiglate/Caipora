@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 
-public class CaiporaApplicationTest extends BaseIT {
+class CaiporaApplicationTest extends BaseIT {
 
     @Test
     void contextLoads() {

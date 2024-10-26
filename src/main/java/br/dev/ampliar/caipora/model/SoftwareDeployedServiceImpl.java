@@ -62,6 +62,7 @@ public class SoftwareDeployedServiceImpl implements SoftwareDeployedService {
                 case "UAT" -> softwareDTO.setUat(deployedDTO);
                 case "PRODUCTION" -> softwareDTO.setProd(deployedDTO);
                 case "DR" -> softwareDTO.setDr(deployedDTO);
+                default -> throw new IllegalArgumentException("Invalid environment: " + item.getEnvironment());
             }
         }
 
