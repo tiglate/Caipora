@@ -27,6 +27,10 @@ import static java.util.Map.entry;
 public class DepartmentController {
 
     private static final String ENTITY_NAME = "Department";
+    private static final String CONTROLLER_ADD = "department/add";
+    private static final String CONTROLLER_EDIT = "department/edit";
+    private static final String CONTROLLER_VIEW = "department/view";
+    private static final String CONTROLLER_LIST = "department/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/departments";
     private final DepartmentService departmentService;
 
@@ -53,27 +57,27 @@ public class DepartmentController {
         model.addAttribute("departments", departments);
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(departments));
-        return "department/list";
+        return CONTROLLER_LIST;
     }
 
     @GetMapping("/view/{id}")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("department", departmentService.get(id));
-        return "department/view";
+        return CONTROLLER_VIEW;
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("department", departmentService.get(id));
-        return "department/edit";
+        return CONTROLLER_EDIT;
     }
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_MANAGE + "')")
     public String add(@ModelAttribute("department") final DepartmentDTO departmentDTO) {
-        return "department/add";
+        return CONTROLLER_ADD;
     }
 
     @PostMapping("/add")
@@ -81,7 +85,7 @@ public class DepartmentController {
     public String add(@ModelAttribute("department") @Valid final DepartmentDTO departmentDTO,
                       final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "department/add";
+            return CONTROLLER_ADD;
         }
         departmentService.create(departmentDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
@@ -94,7 +98,7 @@ public class DepartmentController {
                        @ModelAttribute("department") @Valid final DepartmentDTO departmentDTO,
                        final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "department/edit";
+            return CONTROLLER_EDIT;
         }
         departmentService.update(id, departmentDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);

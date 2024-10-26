@@ -33,6 +33,9 @@ import java.time.LocalDate;
 public class DeployController {
 
     private static final String ENTITY_NAME = "Deploy";
+    private static final String CONTROLLER_ADD = "deploy/add";
+    private static final String CONTROLLER_VIEW = "deploy/view";
+    private static final String CONTROLLER_LIST = "deploy/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/deploys";
     private final DeployService deployService;
     private final VersionRepository versionRepository;
@@ -65,7 +68,7 @@ public class DeployController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPLOY_VIEW + "')")
     public String list(final Model model) {
         model.addAttribute("deploys", softwareDeployedService.getSoftwareDeployedDTOs());
-        return "deploy/list";
+        return CONTROLLER_LIST;
     }
 
     @GetMapping("/add/{softwareId}")
@@ -78,7 +81,7 @@ public class DeployController {
             return REDIRECT_TO_CONTROLLER_INDEX;
         }
         deployDTO.setExecutionDate(LocalDate.now());
-        return "deploy/add";
+        return CONTROLLER_ADD;
     }
 
     @PostMapping("/add/{softwareId}")
@@ -94,7 +97,7 @@ public class DeployController {
         deployDTO.setOperatorId(getCurrentUserId());
         deployDTO.setIsActive(true);
         if (bindingResult.hasErrors()) {
-            return "deploy/add";
+            return CONTROLLER_ADD;
         }
         deployService.create(deployDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
@@ -111,7 +114,7 @@ public class DeployController {
             return REDIRECT_TO_CONTROLLER_INDEX;
         }
         model.addAttribute("deploy", deployDTO);
-        return "deploy/view";
+        return CONTROLLER_VIEW;
     }
 
     private boolean loadSoftwareVersions(final Integer softwareId,

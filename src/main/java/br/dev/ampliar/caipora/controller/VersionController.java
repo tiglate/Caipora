@@ -39,6 +39,10 @@ import static java.util.Map.entry;
 public class VersionController {
 
     private static final String ENTITY_NAME = "Version";
+    private static final String CONTROLLER_ADD = "version/add";
+    private static final String CONTROLLER_EDIT = "version/edit";
+    private static final String CONTROLLER_VIEW = "version/view";
+    private static final String CONTROLLER_LIST = "version/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/versions";
     private final VersionService versionService;
     private final SoftwareRepository softwareRepository;
@@ -80,7 +84,7 @@ public class VersionController {
         model.addAttribute("versions", versions);
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(versions));
-        return "version/list";
+        return CONTROLLER_LIST;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -88,14 +92,14 @@ public class VersionController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("version", versionService.get(id));
-        return "version/view";
+        return CONTROLLER_VIEW;
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String add(@ModelAttribute("version") final VersionDTO versionDTO) {
-        return "version/add";
+        return CONTROLLER_ADD;
     }
 
     @PostMapping("/add")
@@ -103,17 +107,17 @@ public class VersionController {
     public String add(@ModelAttribute("version") @Valid final VersionDTO versionDTO,
                       final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "version/add";
+            return CONTROLLER_ADD;
         }
         try {
             versionService.create(versionDTO);
             FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("file", "error.file", e.getMessage());
-            return "version/add";
+            return CONTROLLER_ADD;
         } catch (IOException e) {
             FlashMessages.error(redirectAttributes, e);
-            return "version/add";
+            return CONTROLLER_ADD;
         }
         return REDIRECT_TO_CONTROLLER_INDEX;
     }
@@ -123,7 +127,7 @@ public class VersionController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("version", versionService.get(id));
-        return "version/edit";
+        return CONTROLLER_EDIT;
     }
 
     @PostMapping("/edit/{id}")
@@ -132,7 +136,7 @@ public class VersionController {
                        @ModelAttribute("version") @Valid final VersionDTO versionDTO,
                        final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "version/edit";
+            return CONTROLLER_EDIT;
         }
         versionService.update(id, versionDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);

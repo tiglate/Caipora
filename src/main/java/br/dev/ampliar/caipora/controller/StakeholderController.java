@@ -30,6 +30,10 @@ import static java.util.Map.entry;
 public class StakeholderController {
 
     private static final String ENTITY_NAME = "Stakeholder";
+    private static final String CONTROLLER_ADD = "stakeholder/add";
+    private static final String CONTROLLER_EDIT = "stakeholder/edit";
+    private static final String CONTROLLER_VIEW = "stakeholder/view";
+    private static final String CONTROLLER_LIST = "stakeholder/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/stakeholders";
     private final StakeholderService stakeholderService;
     private final DepartmentRepository departmentRepository;
@@ -70,7 +74,7 @@ public class StakeholderController {
         model.addAttribute("stakeholders", stakeholders);
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(stakeholders));
-        return "stakeholder/list";
+        return CONTROLLER_LIST;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -78,7 +82,7 @@ public class StakeholderController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("stakeholder", stakeholderService.get(id));
-        return "stakeholder/view";
+        return CONTROLLER_VIEW;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -86,7 +90,7 @@ public class StakeholderController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String add(@ModelAttribute("stakeholder") final StakeholderDTO stakeholderDTO) {
         stakeholderDTO.setGender(Gender.MALE);
-        return "stakeholder/add";
+        return CONTROLLER_ADD;
     }
 
     @PostMapping("/add")
@@ -94,7 +98,7 @@ public class StakeholderController {
     public String add(@ModelAttribute("stakeholder") @Valid final StakeholderDTO stakeholderDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "stakeholder/add";
+            return CONTROLLER_ADD;
         }
         stakeholderService.create(stakeholderDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
@@ -106,7 +110,7 @@ public class StakeholderController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_STAKEHOLDER_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("stakeholder", stakeholderService.get(id));
-        return "stakeholder/edit";
+        return CONTROLLER_EDIT;
     }
 
     @PostMapping("/edit/{id}")
@@ -115,7 +119,7 @@ public class StakeholderController {
             @ModelAttribute("stakeholder") @Valid final StakeholderDTO stakeholderDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "stakeholder/edit";
+            return CONTROLLER_EDIT;
         }
         stakeholderService.update(id, stakeholderDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);

@@ -28,6 +28,10 @@ import static java.util.Map.entry;
 public class SoftwareController {
 
     private static final String ENTITY_NAME = "Application";
+    private static final String CONTROLLER_ADD = "software/add";
+    private static final String CONTROLLER_EDIT = "software/edit";
+    private static final String CONTROLLER_VIEW = "software/view";
+    private static final String CONTROLLER_LIST = "software/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/softwares";
     private final SoftwareService softwareService;
     private final StakeholderRepository stakeholderRepository;
@@ -63,7 +67,7 @@ public class SoftwareController {
         model.addAttribute("softwares", softwares);
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(softwares));
-        return "software/list";
+        return CONTROLLER_LIST;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -71,14 +75,14 @@ public class SoftwareController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_APPLICATION_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("software", softwareService.get(id));
-        return "software/view";
+        return CONTROLLER_VIEW;
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_APPLICATION_MANAGE + "')")
     public String add(@ModelAttribute("software") final SoftwareDTO softwareDTO) {
-        return "software/add";
+        return CONTROLLER_ADD;
     }
 
     @PostMapping("/add")
@@ -86,7 +90,7 @@ public class SoftwareController {
     public String add(@ModelAttribute("software") @Valid final SoftwareDTO softwareDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "software/add";
+            return CONTROLLER_ADD;
         }
         softwareService.create(softwareDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
@@ -98,7 +102,7 @@ public class SoftwareController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_APPLICATION_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("software", softwareService.get(id));
-        return "software/edit";
+        return CONTROLLER_EDIT;
     }
 
     @PostMapping("/edit/{id}")
@@ -107,7 +111,7 @@ public class SoftwareController {
             @ModelAttribute("software") @Valid final SoftwareDTO softwareDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "software/edit";
+            return CONTROLLER_EDIT;
         }
         softwareService.update(id, softwareDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);

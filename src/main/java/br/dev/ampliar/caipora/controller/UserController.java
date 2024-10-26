@@ -31,10 +31,14 @@ import static java.util.Map.entry;
 public class UserController {
 
     private static final String ENTITY_NAME = "User";
+    private static final String CONTROLLER_ADD = "user/add";
+    private static final String CONTROLLER_EDIT = "user/edit";
+    private static final String CONTROLLER_VIEW = "user/view";
+    private static final String CONTROLLER_LIST = "user/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/users";
     private final UserService userService;
-    private final DepartmentRepository departmentRepository;
     private final RoleRepository roleRepository;
+    private final DepartmentRepository departmentRepository;
 
     public UserController(final UserService userService,
             final DepartmentRepository departmentRepository, final RoleRepository roleRepository) {
@@ -78,7 +82,7 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(users));
-        return "user/list";
+        return CONTROLLER_LIST;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -86,7 +90,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("user", userService.get(id));
-        return "user/view";
+        return CONTROLLER_VIEW;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -95,7 +99,7 @@ public class UserController {
     public String add(@ModelAttribute("user") final UserDTO userDTO) {
         userDTO.setGender(Gender.MALE);
         userDTO.setEnabled(true);
-        return "user/add";
+        return CONTROLLER_ADD;
     }
 
     @PostMapping("/add")
@@ -103,7 +107,7 @@ public class UserController {
     public String add(@ModelAttribute("user") @Validated(OnCreate.class) final UserDTO userDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "user/add";
+            return CONTROLLER_ADD;
         }
         userService.create(userDTO);
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
@@ -115,7 +119,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_USER_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("user", userService.get(id));
-        return "user/edit";
+        return CONTROLLER_EDIT;
     }
 
     @PostMapping("/edit/{id}")
@@ -125,7 +129,7 @@ public class UserController {
                        final BindingResult bindingResult,
                        final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "user/edit";
+            return CONTROLLER_EDIT;
         }
         userService.update(id, userDTO);
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
