@@ -310,7 +310,7 @@ SELECT
     id_version     = ver.id_version,
     id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
     id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
-    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    is_active      = IIF(lvr.id_version = ver.id_version, 1, 0),
     environment    = 'DEVELOPMENT',
     rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
     execution_date = DATEADD(DAY, 1, ver.release_date)
@@ -328,7 +328,7 @@ SELECT
     id_version     = ver.id_version,
     id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
     id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
-    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    is_active      = IIF(lvr.id_version = ver.id_version, 1, 0),
     environment    = 'QA',
     rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
     execution_date = DATEADD(DAY, 2, ver.release_date)
@@ -346,7 +346,7 @@ SELECT
     id_version     = ver.id_version,
     id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
     id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
-    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    is_active      = IIF(lvr.id_version = ver.id_version, 1, 0),
     environment    = 'UAT',
     rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
     execution_date = DATEADD(DAY, 3, ver.release_date)
@@ -364,7 +364,7 @@ SELECT
     id_version     = ver.id_version,
     id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
     id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
-    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    is_active      = IIF(lvr.id_version = ver.id_version, 1, 0),
     environment    = 'PRODUCTION',
     rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
     execution_date = DATEADD(DAY, 4, ver.release_date)
@@ -382,7 +382,7 @@ SELECT
     id_version     = ver.id_version,
     id_operator    = ABS(CHECKSUM(NEWID())) % @MaxUsers + 1,
     id_authorizer  = ABS(CHECKSUM(NEWID())) % @MaxStakeholders + 1,
-    is_active      = CASE WHEN lvr.id_version = ver.id_version THEN 1 ELSE 0 END,
+    is_active      = IIF(lvr.id_version = ver.id_version, 1, 0),
     environment    = 'DR',
     rfc            = 'RFC' + RIGHT('000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000 AS VARCHAR(6)), 6),
     execution_date = DATEADD(DAY, 5, ver.release_date)

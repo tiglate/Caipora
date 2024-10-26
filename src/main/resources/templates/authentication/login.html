@@ -5,18 +5,6 @@
       layout:decorate="~{layout}">
 <head>
     <title>Login</title>
-    <style>
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: calc(100vh - 270px);
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-        }
-    </style>
 </head>
 <body>
     <div layout:fragment="content" class="login-container">
@@ -36,7 +24,6 @@
                                        id="txtUsername"
                                        class="form-control"
                                        th:field="*{name}"
-                                       th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"
                                        placeholder="Enter your username"
                                        autofocus required />
                             </div>
@@ -49,7 +36,6 @@
                                        id="txtPassword"
                                        class="form-control"
                                        th:field="*{password}"
-                                       th:classappend="${#fields.hasErrors('password') ? 'is-invalid' : ''}"
                                        placeholder="Enter your password"
                                        required />
                             </div>
