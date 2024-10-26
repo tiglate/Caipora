@@ -2,7 +2,6 @@ package br.dev.ampliar.caipora.controller;
 
 import br.dev.ampliar.caipora.model.AuthenticationRequest;
 import br.dev.ampliar.caipora.util.FlashMessages;
-import br.dev.ampliar.caipora.util.WebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
