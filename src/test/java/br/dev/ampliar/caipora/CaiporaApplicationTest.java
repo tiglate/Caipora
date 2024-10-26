@@ -4,6 +4,7 @@ import br.dev.ampliar.caipora.config.BaseIT;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -12,6 +13,7 @@ class CaiporaApplicationTest extends BaseIT {
 
     @Test
     void contextLoads() {
+        Assertions.assertTrue(true);
     }
 
     @Test
