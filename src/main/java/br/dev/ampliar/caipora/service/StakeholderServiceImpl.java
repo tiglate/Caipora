@@ -38,6 +38,7 @@ public class StakeholderServiceImpl implements StakeholderService {
     public Page<StakeholderDTO> findAll(StakeholderSearchDTO searchDTO, Pageable pageable) {
         return stakeholderRepository.findAllBySearchCriteria(
                 searchDTO.getName(),
+                searchDTO.getEmail(),
                 searchDTO.getDepartment(),
                 searchDTO.getGender(),
                 pageable

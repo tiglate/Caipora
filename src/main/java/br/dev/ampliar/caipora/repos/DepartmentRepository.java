@@ -8,13 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 
 public interface DepartmentRepository extends JpaRepository<Department, Integer> {
 
     @Query("SELECT new br.dev.ampliar.caipora.model.DepartmentDTO(d.id, d.name, d.email, d.createdAt, d.updatedAt) " +
             "FROM Department d " +
             "WHERE (:name IS NULL OR d.name LIKE %:name%) " +
-            "AND (:email IS NULL OR d.name LIKE %:email%)")
+            "AND (:email IS NULL OR d.email LIKE %:email%)")
     Page<DepartmentDTO> findAllBySearchCriteria(
             @Param("name") String name,
             @Param("email") String email,
@@ -23,4 +25,5 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
 
     boolean existsByNameIgnoreCase(String name);
 
+    Optional<Department> findByNameIgnoreCase(String name);
 }

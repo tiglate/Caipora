@@ -17,10 +17,12 @@ public interface StakeholderRepository extends JpaRepository<Stakeholder, Intege
             "FROM Stakeholder s " +
             "LEFT JOIN s.department d " +
             "WHERE (:name IS NULL OR s.name LIKE %:name%) " +
+            "AND (:email IS NULL OR s.email LIKE %:email%) " +
             "AND (:department IS NULL OR d.id = :department) " +
             "AND (:gender IS NULL OR s.gender = :gender)")
     Page<StakeholderDTO> findAllBySearchCriteria(
             @Param("name") String name,
+            @Param("email") String email,
             @Param("department") Integer department,
             @Param("gender") Gender gender,
             Pageable pageable
