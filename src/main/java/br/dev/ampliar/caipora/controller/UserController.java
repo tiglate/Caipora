@@ -39,12 +39,15 @@ public class UserController {
     private final UserService userService;
     private final RoleRepository roleRepository;
     private final DepartmentRepository departmentRepository;
+    private final SortUtils sortUtils;
 
     public UserController(final UserService userService,
-            final DepartmentRepository departmentRepository, final RoleRepository roleRepository) {
+                          final DepartmentRepository departmentRepository,
+                          final RoleRepository roleRepository) {
         this.userService = userService;
         this.departmentRepository = departmentRepository;
         this.roleRepository = roleRepository;
+        this.sortUtils = new SortUtils();
     }
 
     @ModelAttribute
@@ -68,7 +71,7 @@ public class UserController {
         if (sort == null) {
             sort = "id,desc";
         }
-        final var sortOrder = SortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
+        final var sortOrder = this.sortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
                 entry("id", "sortById"),
                 entry("name", "sortByName"),
                 entry("email", "sortByEmail"),

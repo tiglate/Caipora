@@ -1,6 +1,5 @@
 package br.dev.ampliar.caipora.service;
 
-import br.dev.ampliar.caipora.domain.User;
 import br.dev.ampliar.caipora.model.WebFormsUserDetails;
 import br.dev.ampliar.caipora.repos.UserRepository;
 import org.slf4j.Logger;
@@ -27,12 +26,12 @@ public class WebFormsUserDetailsService implements UserDetailsService {
 
     @Override
     public WebFormsUserDetails loadUserByUsername(final String username) {
-        final User user = userRepository.findByUsernameIgnoreCase(username);
+        final var user = userRepository.findByUsernameIgnoreCase(username);
         if (user == null) {
             log.warn("user not found: {}", username);
             throw new UsernameNotFoundException("User " + username + " not found");
         }
-        final List<SimpleGrantedAuthority> authorities = user.getRoles() == null ? Collections.emptyList() : 
+        final List<SimpleGrantedAuthority> authorities = user.getRoles() == null ? Collections.emptyList() :
                 user.getRoles()
                 .stream()
                 .map(roleRef -> new SimpleGrantedAuthority(roleRef.getName()))

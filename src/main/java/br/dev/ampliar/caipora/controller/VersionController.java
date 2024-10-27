@@ -47,6 +47,7 @@ public class VersionController {
     private final VersionService versionService;
     private final SoftwareRepository softwareRepository;
     private final String uploadDirectory;
+    private final SortUtils sortUtils;
 
     public VersionController(final VersionService versionService,
                              final SoftwareRepository softwareRepository,
@@ -54,6 +55,7 @@ public class VersionController {
         this.versionService = versionService;
         this.softwareRepository = softwareRepository;
         this.uploadDirectory = uploadDirectory;
+        this.sortUtils = new SortUtils();
     }
 
     @ModelAttribute
@@ -73,7 +75,7 @@ public class VersionController {
         if (sort == null) {
             sort = "id,desc";
         }
-        final var sortOrder = SortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
+        final var sortOrder = this.sortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
                 entry("id", "sortById"),
                 entry("name", "sortByName"),
                 entry("releaseDate", "sortByReleaseDate"),

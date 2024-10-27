@@ -3,9 +3,7 @@ package br.dev.ampliar.caipora.repos;
 import br.dev.ampliar.caipora.CaiporaApplication;
 import br.dev.ampliar.caipora.config.DomainConfig;
 import br.dev.ampliar.caipora.domain.Department;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = {CaiporaApplication.class, DomainConfig.class})
 class DepartmentRepositoryTest {
 

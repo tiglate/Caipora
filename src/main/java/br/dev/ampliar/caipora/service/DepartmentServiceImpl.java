@@ -1,8 +1,6 @@
 package br.dev.ampliar.caipora.service;
 
 import br.dev.ampliar.caipora.domain.Department;
-import br.dev.ampliar.caipora.domain.Stakeholder;
-import br.dev.ampliar.caipora.domain.User;
 import br.dev.ampliar.caipora.model.DepartmentDTO;
 import br.dev.ampliar.caipora.repos.DepartmentRepository;
 import br.dev.ampliar.caipora.repos.StakeholderRepository;
@@ -90,21 +88,24 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public ReferencedWarning getReferencedWarning(final Integer id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Department department = departmentRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final Stakeholder departmentStakeholder = stakeholderRepository.findFirstByDepartment(department);
+        final var referencedWarning     = new ReferencedWarning();
+        final var department            = departmentRepository.findById(id).orElseThrow(NotFoundException::new);
+        final var departmentStakeholder = stakeholderRepository.findFirstByDepartment(department);
+
         if (departmentStakeholder != null) {
             referencedWarning.setKey("department.person.department.referenced");
             referencedWarning.addParam(departmentStakeholder.getId());
             return referencedWarning;
         }
-        final User departmentUser = userRepository.findFirstByDepartment(department);
+
+        final var departmentUser = userRepository.findFirstByDepartment(department);
+
         if (departmentUser != null) {
             referencedWarning.setKey("department.person.department.referenced");
             referencedWarning.addParam(departmentUser.getId());
             return referencedWarning;
         }
+
         return null;
     }
 

@@ -35,11 +35,13 @@ public class SoftwareController {
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/softwares";
     private final SoftwareService softwareService;
     private final StakeholderRepository stakeholderRepository;
+    private final SortUtils sortUtils;
 
     public SoftwareController(final SoftwareService softwareService,
-            final StakeholderRepository stakeholderRepository) {
+                              final StakeholderRepository stakeholderRepository) {
         this.softwareService = softwareService;
         this.stakeholderRepository = stakeholderRepository;
+        this.sortUtils = new SortUtils();
     }
 
     @ModelAttribute
@@ -56,7 +58,7 @@ public class SoftwareController {
                        @RequestParam(name = "sort", required = false) String sort,
                        @SortDefault(sort = "id") @PageableDefault(size = 20) final Pageable pageable,
                        final Model model) {
-        final var sortOrder = SortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
+        final var sortOrder = this.sortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
                 entry("id", "sortById"),
                 entry("code", "sortByCode"),
                 entry("name", "sortByName"),

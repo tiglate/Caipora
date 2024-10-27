@@ -37,11 +37,13 @@ public class StakeholderController {
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/stakeholders";
     private final StakeholderService stakeholderService;
     private final DepartmentRepository departmentRepository;
+    private final SortUtils sortUtils;
 
     public StakeholderController(final StakeholderService stakeholderService,
-            final DepartmentRepository departmentRepository) {
+                                 final DepartmentRepository departmentRepository) {
         this.stakeholderService = stakeholderService;
         this.departmentRepository = departmentRepository;
+        this.sortUtils = new SortUtils();
     }
 
     @ModelAttribute
@@ -62,7 +64,7 @@ public class StakeholderController {
         if (sort == null) {
             sort = "id,desc";
         }
-        final var sortOrder = SortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
+        final var sortOrder = this.sortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
                 entry("id", "sortById"),
                 entry("name", "sortByName"),
                 entry("email", "sortByEmail"),

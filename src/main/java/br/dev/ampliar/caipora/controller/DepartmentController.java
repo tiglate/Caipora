@@ -33,9 +33,11 @@ public class DepartmentController {
     private static final String CONTROLLER_LIST = "department/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/departments";
     private final DepartmentService departmentService;
+    private final SortUtils sortUtils;
 
     public DepartmentController(final DepartmentService departmentService) {
         this.departmentService = departmentService;
+        this.sortUtils = new SortUtils();
     }
 
     @GetMapping
@@ -47,7 +49,7 @@ public class DepartmentController {
         if (sort == null) {
             sort = "id,desc";
         }
-        final var sortOrder = SortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
+        final var sortOrder = this.sortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
             entry("id", "sortById"),
             entry("name", "sortByName"),
             entry("email", "sortByEmail")
