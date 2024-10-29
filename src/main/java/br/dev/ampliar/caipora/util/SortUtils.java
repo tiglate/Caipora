@@ -45,7 +45,10 @@ public class SortUtils {
         if (currentSort != null && currentSort.startsWith(property + ",")) {
             direction = currentSort.endsWith(",asc") ? "desc" : "asc";
         }
-        return (uriComponentsBuilder == null ? ServletUriComponentsBuilder.fromCurrentRequest() : uriComponentsBuilder)
+        if (uriComponentsBuilder == null) {
+            uriComponentsBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
+        }
+        return uriComponentsBuilder
                 .replaceQueryParam("sort", property + "," + direction)
                 .replaceQueryParam("page", pageable.getPageNumber())
                 .toUriString();
