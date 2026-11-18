@@ -100,7 +100,7 @@ function clearForm() {
         });
     }
 
-    document.addEventListener('htmx:afterSwap', initDatepicker);
+    document.addEventListener('htmx:after:swap', initDatepicker);
     initDatepicker();
 
     function initializeTinyMCE() {
@@ -108,6 +108,7 @@ function clearForm() {
 
         setTimeout(() => {
             tinymce.init({
+                license_key: 'gpl',
                 license_key: 'gpl',
                 selector: 'textarea.tinymce-editor',
                 plugins: 'lists link image table code help wordcount',
@@ -124,7 +125,7 @@ function clearForm() {
     }
 
     document.addEventListener('DOMContentLoaded', initializeTinyMCE);
-    document.body.addEventListener('htmx:afterSwap', initializeTinyMCE);
+    document.body.addEventListener('htmx:after:swap', initializeTinyMCE);
 
     function initTooltips() {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -132,5 +133,5 @@ function clearForm() {
     }
 
     document.addEventListener('DOMContentLoaded', initTooltips);
-    document.body.addEventListener('htmx:afterSwap', initTooltips);
+    document.body.addEventListener('htmx:after:swap', initTooltips);
 })();

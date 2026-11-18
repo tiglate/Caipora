@@ -27,11 +27,11 @@ public class Department {
     private String email;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "datetime2")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "timestamp")
     private OffsetDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false, columnDefinition = "datetime2")
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamp")
     private OffsetDateTime updatedAt;
 
     public Integer getId() {

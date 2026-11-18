@@ -19,7 +19,7 @@ public class CustomRevisionEntity {
     private Integer id;
 
     @RevisionTimestamp
-    @Column(name = "event_timestamp", columnDefinition = "DATETIME2")
+    @Column(name = "event_timestamp", columnDefinition = "timestamp")
     private LocalDateTime timestamp;
 
     @Column(name = "id_user")

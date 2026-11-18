@@ -10,9 +10,9 @@ SELECT
     dep.execution_date,
     dep.rfc,
     --
-    ver.name AS [version],
-    usr.name AS [operator],
-    stk.name AS [authorizer]
+    ver.name AS "version",
+    usr.name AS "operator",
+    stk.name AS "authorizer"
 FROM
     tb_deploy AS dep
 
@@ -28,5 +28,4 @@ FROM
     LEFT JOIN tb_stakeholder AS stk
               ON stk.id_stakeholder = dep.id_authorizer
 WHERE
-    dep.is_active = 1
-GO
+    dep.is_active = TRUE;

@@ -30,10 +30,10 @@ public class Version {
     @Column(nullable = false)
     private LocalDate releaseDate;
 
-    @Column(columnDefinition = "varchar(max)")
+    @Column(columnDefinition = "text")
     private String changelog;
 
-    @Column(columnDefinition = "varchar(max)")
+    @Column(columnDefinition = "text")
     private String comments;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,11 +41,11 @@ public class Version {
     private Software software;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "datetime2")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "timestamp")
     private OffsetDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false, columnDefinition = "datetime2")
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamp")
     private OffsetDateTime updatedAt;
 
     public Integer getId() {

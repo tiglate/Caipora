@@ -1,49 +1,24 @@
 # Caipora
 
-This app was created with Bootify.io - tips on working with the code [can be found here](https://bootify.io/next-steps/).
+Caipora is a web application for managing software, versions, deployments, users, departments, and stakeholders. It is licensed under the [GNU GPL v3](LICENSE.txt).
 
 ## Development
 
-Update your local database connection in `application.properties` or create your own `application-local.properties` file to override
-settings for development.
+Install Java 26 and Docker with Compose. Copy `.env.example` to `.env` and adjust the database credentials. Start PostgreSQL and export the same variables for the application (Compose does not export `.env` to your shell):
 
-During development it is recommended to use the profile `local`. In IntelliJ `-Dspring.profiles.active=local` can be
-added in the VM options of the Run Configuration after enabling this property in "Modify options".
-
-After starting the application it is accessible under `localhost:8080`.
-
-## Testing requirements
-
-To run the tests and build, [Docker](https://www.docker.com/get-started/) must be available on the current system. Due
-to the reuse flag, the container will not shut down after the tests. It can be stopped manually if needed.
-
-## Build
-
-The application can be tested and built using the following command:
-
-```
-mvnw clean package
+```sh
+cp .env.example .env
+# Edit .env as needed
+set -a; . ./.env; set +a
+docker compose up -d
 ```
 
-Start your application with the following command - here with the profile `production`:
+Compile, test, and package using the Maven wrapper:
 
-```
-java -Dspring.profiles.active=production -jar ./target/Caipora-0.0.1-SNAPSHOT.jar
-```
-
-If required, a Docker image can be created with the Spring Boot plugin. Add `SPRING_PROFILES_ACTIVE=production` as
-environment variable when running the container.
-
-```
-mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=br.dev.ampliar/caipora
+```sh
+bash mvnw compile
+bash mvnw test
+bash mvnw clean package
 ```
 
-## Further readings
-
-* [Maven docs](https://maven.apache.org/guides/index.html)  
-* [Spring Boot reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)  
-* [Spring Data JPA reference](https://docs.spring.io/spring-data/jpa/reference/jpa.html)
-* [Thymeleaf docs](https://www.thymeleaf.org/documentation.html)  
-* [Bootstrap docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/)  
-* [Htmx in a nutshell](https://htmx.org/docs/)  
-* [Learn Spring Boot with Thymeleaf](https://www.wimdeblauwe.com/books/taming-thymeleaf/)  
+Run the application with `bash mvnw spring-boot:run` or `java -jar target/Caipora-0.0.1-SNAPSHOT.jar`, then open <http://localhost:8080>. Flyway initializes a fresh PostgreSQL database; existing SQL Server data requires a separate migration. The initial data includes sample records and an `admin` account with password `12345`; change these credentials before exposing the application. Mailpit is available at <http://localhost:8025>. Stop the services with `docker compose down`.
