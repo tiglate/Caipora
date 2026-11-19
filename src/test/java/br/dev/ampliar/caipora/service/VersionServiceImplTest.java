@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -156,5 +157,33 @@ class VersionServiceImplTest {
 
         assertNotNull(warning);
         assertEquals("version.deploy.version.referenced", warning.getKey());
+    }
+
+    @Test
+    void testGetStoredFile_RejectsPathTraversal() {
+        var version = new Version();
+        version.setId(1);
+        version.setFileName("../../etc/passwd");
+        when(versionRepository.findById(1)).thenReturn(Optional.of(version));
+
+        assertThrows(IllegalArgumentException.class, () -> versionService.getStoredFile(1));
+    }
+
+    @Test
+    void testDelete_RejectsPathTraversal() {
+        var version = new Version();
+        version.setId(1);
+        version.setFileName("../outside.zip");
+        when(versionRepository.findById(1)).thenReturn(Optional.of(version));
+
+        assertThrows(IllegalArgumentException.class, () -> versionService.delete(1));
+    }
+
+    @Test
+    void testSafeOriginalName_StripsDirectoriesAndUnsafeCharacters() {
+        assertEquals("passwd", VersionServiceImpl.safeOriginalName("../../etc/passwd"));
+        assertEquals("evil.zip", VersionServiceImpl.safeOriginalName("C:\\temp\\evil.zip"));
+        assertEquals("my_file__1_.zip", VersionServiceImpl.safeOriginalName("my file (1).zip"));
+        assertEquals("package", VersionServiceImpl.safeOriginalName(null));
     }
 }
