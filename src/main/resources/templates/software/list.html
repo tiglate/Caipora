@@ -8,99 +8,80 @@
     <title>Applications</title>
 </head>
 <body>
-<!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByIdLink" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByIdDirection" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByCodeLink" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByCodeDirection" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByNameLink" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByNameDirection" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByOwnerLink" type="java.lang.String"*/-->
-<!--/*@thymesVar id="sortByOwnerDirection" type="java.lang.String"*/-->
-<div layout:fragment="content">
-    <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">Applications</h1>
-        <div>
-            <a class="btn btn-primary ms-2"
-               th:href="@{/softwares/add}"
-               sec:authorize="hasRole('ROLE_APPLICATION_MANAGE')"><i class="bi-plus-circle"></i> Add</a>
-        </div>
-    </div>
-
-    <div class="card shadow mb-3">
-        <div class="card-header">
-            Filters
-        </div>
-        <div class="card-body">
-            <div class="card-text">
-                <form id="searchForm" th:action="${requestUri}" th:object="${softwareSearch}" method="get">
-                    <div class="row mb-3">
-                        <div class="col-md-2">
-                            <label for="txtCode" class="form-label">Code</label>
-                            <input type="text" id="txtCode" th:field="*{code}" class="form-control"/>
-                        </div>
-                        <div class="col-md-5">
-                            <label for="txtName" class="form-label">Name</label>
-                            <input type="text" id="txtName" th:field="*{name}" class="form-control"/>
-                        </div>
-                        <div class="col-md-5">
-                            <label for="cboOwner" class="form-label">Owner</label>
-                            <select id="cboOwner" th:field="*{ownerId}" class="form-select">
-                                <option value=""></option>
-                                <option th:each="optionValue : ${ownerValues}" th:value="${optionValue.key}">
-                                    [[${optionValue.value}]]
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col d-flex justify-content-end">
-                            <input type="reset" value="Clear" class="btn btn-secondary me-2"
-                                   onClick="return clearForm();" onKeyDown="return clearForm();"/>
-                            <input type="submit" value="Search" class="btn btn-primary"/>
-                        </div>
-                    </div>
-                </form>
+    <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <div layout:fragment="content" th:with="filtered=${softwareSearch.code != null or softwareSearch.name != null or softwareSearch.ownerId != null}">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Applications</h1>
+                <p class="page-subtitle">Software systems whose versions and deployments are tracked.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" th:href="@{/softwares/add}" sec:authorize="hasAuthority('ROLE_APPLICATION_MANAGE')">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i> New application
+                </a>
             </div>
         </div>
-    </div>
-    <div class="card shadow mb-3">
-        <div class="card-header">
-            Results
-        </div>
-        <div class="card-body">
-            <p class="card-text" th:if="${#lists.isEmpty(softwares)}">No records found</p>
-            <div th:if="${not #lists.isEmpty(softwares)}" class="table-responsive">
-                <table class="table table-sm table-striped table-hover align-middle">
+
+        <div class="card">
+            <form id="searchForm" class="filter-bar" th:action="${requestUri}" th:object="${softwareSearch}" method="get" role="search">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                        <label for="txtCode" class="form-label">Code</label>
+                        <input type="search" id="txtCode" th:field="*{code}" class="form-control" placeholder="Code" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="txtName" class="form-label">Name</label>
+                        <div class="input-icon">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <input type="search" id="txtName" th:field="*{name}" class="form-control" placeholder="Search by name" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cboOwner" class="form-label">Owner</label>
+                        <select id="cboOwner" th:field="*{ownerId}" class="form-select">
+                            <option value="">Any owner</option>
+                            <option th:each="optionValue : ${ownerValues}" th:value="${optionValue.key}" th:text="${optionValue.value}">Option</option>
+                        </select>
+                    </div>
+                    <div class="col-md d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">Search</button>
+                        <a th:href="${requestUri}" class="btn btn-secondary" th:if="${filtered}">Clear</a>
+                    </div>
+                </div>
+            </form>
+
+            <th:block th:if="${softwares.empty}">
+                <div th:replace="~{fragments/form-utils :: emptyState('bi-boxes', 'No applications yet', ${filtered})}"></div>
+            </th:block>
+
+            <div th:unless="${softwares.empty}" class="table-responsive">
+                <table class="table table-hover align-middle data-table">
                     <thead>
                     <tr>
-                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Id', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Code', ${sortByCodeLink}, ${sortByCodeDirection}, 'email')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('ID', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Code', ${sortByCodeLink}, ${sortByCodeDirection}, 'code')}"></th>
                         <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Name', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
                         <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Owner', ${sortByOwnerLink}, ${sortByOwnerDirection}, 'owner.name')}"></th>
-                        <th></th>
+                        <th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th>
                     </tr>
                     </thead>
-                    <tbody class="table-group-divider">
+                    <tbody>
                     <tr th:each="software : ${softwares}">
-                        <td>[[${software.id}]]</td>
-                        <td>[[${software.code}]]</td>
-                        <td>[[${software.name}]]</td>
-                        <td>[[${software.ownerName}]]</td>
-                        <td>
-                            <div class="float-end text-nowrap">
-                                <a th:href="@{/softwares/view/{id}(id=${software.id})}"
-                                   class="btn btn-sm btn-secondary bi-eye"
-                                   title="View"></a>
-                                <a th:href="@{/softwares/edit/{id}(id=${software.id})}"
-                                   sec:authorize="hasRole('ROLE_APPLICATION_MANAGE')"
-                                   class="btn btn-sm btn-secondary bi-pencil-square"
-                                   title="Edit"></a>
-                                <form th:action="@{/softwares/delete/{id}(id=${software.id})}"
-                                      th:hx-confirm="#{delete.confirm}" method="post" class="d-inline"
-                                      sec:authorize="hasRole('ROLE_APPLICATION_MANAGE')">
-                                    <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
-                                    </button>
+                        <td class="col-id">[[${software.id}]]</td>
+                        <td><span class="code-pill">[[${software.code}]]</span></td>
+                        <td><a th:href="@{/softwares/view/{id}(id=${software.id})}" class="row-title">[[${software.name}]]</a></td>
+                        <td><th:block th:if="${software.ownerName}">[[${software.ownerName}]]</th:block><span th:unless="${software.ownerName}" class="text-body-secondary">—</span></td>
+                        <td class="col-actions">
+                            <div class="row-actions">
+                                <a th:href="@{/softwares/view/{id}(id=${software.id})}" class="btn btn-icon"
+                                   title="View" th:aria-label="|View ${software.name}|"><i class="bi bi-eye" aria-hidden="true"></i></a>
+                                <a th:href="@{/softwares/edit/{id}(id=${software.id})}" class="btn btn-icon"
+                                   sec:authorize="hasAuthority('ROLE_APPLICATION_MANAGE')"
+                                   title="Edit" th:aria-label="|Edit ${software.name}|"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                                <form th:action="@{/softwares/delete/{id}(id=${software.id})}" method="post"
+                                      sec:authorize="hasAuthority('ROLE_APPLICATION_MANAGE')" th:hx-confirm="#{delete.confirm}">
+                                    <button type="submit" class="btn btn-icon btn-icon-danger" title="Delete"
+                                            th:aria-label="|Delete ${software.name}|"><i class="bi bi-trash3" aria-hidden="true"></i></button>
                                 </form>
                             </div>
                         </td>
@@ -108,11 +89,8 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="card-footer d-flex flex-column flex-md-row align-items-center justify-content-between">
-            <nav th:replace="~{fragments/form-utils::pagination()}"></nav>
+            <div th:replace="~{fragments/form-utils :: pagination()}"></div>
         </div>
     </div>
-</div>
 </body>
 </html>

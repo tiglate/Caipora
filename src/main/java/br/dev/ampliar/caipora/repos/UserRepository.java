@@ -10,6 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
+
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
@@ -20,11 +23,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     boolean existsByUsernameIgnoreCase(String username);
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.UserDTO(u.id, u.name, u.email, u.gender, u.username, u.password, u.enabled, d.id, d.name, u.createdAt, u.updatedAt) " +
+    /**
+     * @return whether an enabled account holding the given role exists
+     */
+    boolean existsByEnabledTrueAndRolesName(String roleName);
+
+    /**
+     * @return pairs of (user id, role id) for the given users
+     */
+    @Query("SELECT u.id, r.id FROM User u JOIN u.roles r WHERE u.id IN :ids")
+    List<Object[]> findRoleIdsByUserIds(@Param("ids") Collection<Integer> ids);
+
+    @Query("SELECT new br.dev.ampliar.caipora.model.UserDTO(u.id, u.name, u.email, u.gender, u.username, u.enabled, d.id, d.name, u.createdAt, u.updatedAt) " +
             "FROM User u " +
             "LEFT JOIN u.department d " +
-            "WHERE (:username IS NULL OR u.username LIKE %:username%) " +
-            "AND (:name IS NULL OR u.name LIKE %:name%) " +
+            "WHERE (:username IS NULL OR LOWER(u.username) LIKE CONCAT('%', LOWER(CAST(:username AS String)), '%')) " +
+            "AND (:name IS NULL OR LOWER(u.name) LIKE CONCAT('%', LOWER(CAST(:name AS String)), '%')) " +
             "AND (:department IS NULL OR d.id = :department) " +
             "AND (:enabled IS NULL OR u.enabled = :enabled) ")
     Page<UserDTO> findAllBySearchCriteria(

@@ -2,6 +2,7 @@ package br.dev.ampliar.caipora.domain;
 
 import jakarta.persistence.*;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.Set;
 
@@ -19,11 +20,17 @@ public class User extends Person {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
+    // password hashes are not copied to the audit table
+    @NotAudited
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private Boolean enabled;
+
+    /** When true, the user must choose a new password before using the application. */
+    @Column(name = "password_change_required", nullable = false)
+    private Boolean passwordChangeRequired = false;
 
     @ManyToMany
     @JoinTable(
@@ -64,6 +71,14 @@ public class User extends Person {
 
     public void setEnabled(final Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Boolean getPasswordChangeRequired() {
+        return passwordChangeRequired;
+    }
+
+    public void setPasswordChangeRequired(final Boolean passwordChangeRequired) {
+        this.passwordChangeRequired = passwordChangeRequired;
     }
 
     public Set<Role> getRoles() {

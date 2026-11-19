@@ -4,20 +4,50 @@
     <title>Page Header</title>
 </head>
 <body>
+    <!--/*
+        Header of add / edit / view pages.
+        mode: 'add' | 'edit' | 'view'; formId: id of the form submitted by the Save button;
+        backLink: URL of the list page.
+    */-->
     <!--/*@thymesVar id="mode" type="java.lang.String"*/-->
     <!--/*@thymesVar id="headerTitle" type="java.lang.String"*/-->
     <!--/*@thymesVar id="formId" type="java.lang.String"*/-->
     <!--/*@thymesVar id="backLink" type="java.lang.String"*/-->
-    <div th:fragment="header(mode, headerTitle, formId, backLink)" class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">[[${headerTitle}]]</h1>
+    <div th:fragment="header(mode, headerTitle, formId, backLink)" class="page-header">
         <div>
-            <a th:href="${backLink}" class="btn btn-secondary"><i class="bi-arrow-left"></i> Back</a>
-            <button type="button" class="btn btn-warning" onclick="resetForm(this)" th:data-form-id="${formId}" th:if="${mode != 'view'}">
-                <i class="bi-arrow-counterclockwise"></i> Reset
+            <a th:href="${backLink}" class="small text-body-secondary d-inline-flex align-items-center gap-1 mb-1">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list
+            </a>
+            <h1 class="page-title">[[${headerTitle}]]</h1>
+        </div>
+        <div class="page-actions" th:if="${mode != 'view'}">
+            <a th:href="${backLink}" class="btn btn-secondary">Cancel</a>
+            <button type="reset" class="btn btn-secondary" th:form="${formId}" th:if="${mode == 'edit'}">
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Undo changes
             </button>
-            <button type="button" class="btn btn-primary" onclick="submitForm(this)" th:data-form-id="${formId}" th:if="${mode != 'view'}">
-                <i class="bi-save"></i> Save
+            <button type="submit" class="btn btn-primary" th:form="${formId}">
+                <i class="bi bi-check2" aria-hidden="true"></i> Save
             </button>
+        </div>
+    </div>
+
+    <!--/*
+        Header of view pages, with an optional Edit button shown only to users holding editAuthority.
+    */-->
+    <!--/*@thymesVar id="editLink" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="editAuthority" type="java.lang.String"*/-->
+    <div th:fragment="viewHeader(headerTitle, backLink, editLink, editAuthority)" class="page-header">
+        <div>
+            <a th:href="${backLink}" class="small text-body-secondary d-inline-flex align-items-center gap-1 mb-1">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list
+            </a>
+            <h1 class="page-title">[[${headerTitle}]]</h1>
+        </div>
+        <div class="page-actions">
+            <a th:href="${editLink}" class="btn btn-primary"
+               th:if="${editLink != null and #authorization.expression('hasAuthority(''' + editAuthority + ''')')}">
+                <i class="bi bi-pencil" aria-hidden="true"></i> Edit
+            </a>
         </div>
     </div>
 </body>

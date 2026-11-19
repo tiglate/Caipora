@@ -15,9 +15,11 @@ import br.dev.ampliar.caipora.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional(readOnly = true)
 public class StakeholderServiceImpl implements StakeholderService {
 
     private final StakeholderRepository stakeholderRepository;
@@ -53,12 +55,14 @@ public class StakeholderServiceImpl implements StakeholderService {
     }
 
     @Override
+    @Transactional
     public Integer create(final StakeholderDTO stakeholderDTO) {
         final Stakeholder stakeholder = mapToEntity(stakeholderDTO);
         return stakeholderRepository.save(stakeholder).getId();
     }
 
     @Override
+    @Transactional
     public void update(final Integer id, final StakeholderDTO stakeholderDTO) {
         final Stakeholder stakeholder = stakeholderRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -67,6 +71,7 @@ public class StakeholderServiceImpl implements StakeholderService {
     }
 
     @Override
+    @Transactional
     public void delete(final Integer id) {
         stakeholderRepository.deleteById(id);
     }

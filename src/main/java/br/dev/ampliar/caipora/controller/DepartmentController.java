@@ -6,9 +6,7 @@ import br.dev.ampliar.caipora.util.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,32 +30,28 @@ public class DepartmentController {
     private static final String CONTROLLER_VIEW = "department/view";
     private static final String CONTROLLER_LIST = "department/list";
     private static final String REDIRECT_TO_CONTROLLER_INDEX = "redirect:/departments";
+    private static final Map<String, String> SORTABLE_COLUMNS = Map.ofEntries(
+            entry("id", "sortById"),
+            entry("name", "sortByName"),
+            entry("email", "sortByEmail"));
+
     private final DepartmentService departmentService;
-    private final SortUtils sortUtils;
+    private final SortUtils sortUtils = new SortUtils();
 
     public DepartmentController(final DepartmentService departmentService) {
         this.departmentService = departmentService;
-        this.sortUtils = new SortUtils();
     }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
-    public String list(@ModelAttribute("departmentSearch") DepartmentDTO filter,
-                       @RequestParam(name = "sort", required = false) String sort,
-                       @SortDefault(sort = "id", direction = Sort.Direction.DESC) @PageableDefault(size = 20) final Pageable pageable,
+    public String list(@ModelAttribute("departmentSearch") final DepartmentDTO filter,
+                       @RequestParam(name = "sort", required = false) final String sort,
+                       @PageableDefault(size = 20) final Pageable pageable,
                        final Model model) {
-        if (sort == null) {
-            sort = "id,desc";
-        }
-        final var sortOrder = this.sortUtils.addSortAttributesToModel(model, sort, pageable, Map.ofEntries(
-            entry("id", "sortById"),
-            entry("name", "sortByName"),
-            entry("email", "sortByEmail")
-        ));
+        final var sortOrder = sortUtils.addSortAttributesToModel(model, sort, "id,desc", SORTABLE_COLUMNS);
         final var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
         final var departments = departmentService.findAll(filter, pageRequest);
         model.addAttribute("departments", departments);
-        model.addAttribute("filter", filter);
         model.addAttribute("paginationModel", WebUtils.getPaginationModel(departments));
         return CONTROLLER_LIST;
     }
@@ -70,7 +64,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_VIEW + "')")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_DEPARTMENT_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("department", departmentService.get(id));
         return CONTROLLER_EDIT;
@@ -100,6 +94,7 @@ public class DepartmentController {
                        @ModelAttribute("department") @Valid final DepartmentDTO departmentDTO,
                        final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            departmentDTO.setId(id);
             return CONTROLLER_EDIT;
         }
         departmentService.update(id, departmentDTO);
@@ -113,8 +108,7 @@ public class DepartmentController {
                          final RedirectAttributes redirectAttributes) {
         final ReferencedWarning referencedWarning = departmentService.getReferencedWarning(id);
         if (referencedWarning != null) {
-            redirectAttributes.addFlashAttribute(FlashMessages.MSG_ERROR,
-                    WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
+            FlashMessages.referencedWarning(redirectAttributes, referencedWarning);
         } else {
             departmentService.delete(id);
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);

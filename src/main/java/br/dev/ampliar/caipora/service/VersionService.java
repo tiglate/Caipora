@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 
 public interface VersionService {
@@ -21,6 +22,18 @@ public interface VersionService {
 
     void delete(Integer id) throws IOException;
 
+    /**
+     * @return the package file of the given version, already validated to be inside the upload directory
+     */
+    StoredFile getStoredFile(Integer id);
+
     ReferencedWarning getReferencedWarning(Integer id);
+
+    /**
+     * @param path         absolute path of the stored file
+     * @param downloadName name suggested to the browser (the original upload name, without the internal UUID prefix)
+     */
+    record StoredFile(Path path, String downloadName) {
+    }
 
 }

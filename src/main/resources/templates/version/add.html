@@ -4,15 +4,19 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>Add Version</title>
+    <title>New version</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('add', 'Add Version', 'versionForm', @{/versions})}"></div>
-        <div th:replace="~{fragments/form-utils::globalErrors('version')}"></div>
-        <form th:action="${requestUri}" method="post" enctype="multipart/form-data" id="versionForm">
+        <div th:replace="~{fragments/header :: header('add', 'New version', 'versionForm', @{/versions})}"></div>
+        <div th:replace="~{fragments/form-utils :: globalErrors('version')}"></div>
+        <form th:action="${requestUri}" method="post" id="versionForm" enctype="multipart/form-data" hx-boost="false" novalidate>
             <th:block th:replace="~{version/_form :: versionForm('add', ${version}, ${softwareValues})}"></th:block>
+            <div class="form-actions">
+                <a th:href="@{/versions}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> Save</button>
+            </div>
         </form>
     </div>
 </body>

@@ -6,6 +6,7 @@ import br.dev.ampliar.caipora.service.SoftwareDeployedService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,9 @@ public class SoftwareDeployedServiceImpl implements SoftwareDeployedService {
             }
         }
 
-        return new ArrayList<>(softwareDTOMap.values());
+        // stable, predictable order for the cards (HashMap iteration order is arbitrary)
+        final List<SoftwareDeployedDTO> result = new ArrayList<>(softwareDTOMap.values());
+        result.sort(Comparator.comparing(SoftwareDeployedDTO::getCode, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+        return result;
     }
 }

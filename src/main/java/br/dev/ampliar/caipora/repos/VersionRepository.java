@@ -15,10 +15,10 @@ import java.util.List;
 
 public interface VersionRepository extends JpaRepository<Version, Integer> {
 
-    @Query("SELECT new br.dev.ampliar.caipora.model.VersionDTO(v.id, v.name, v.fileName, v.releaseDate, s.id, s.name, s.createdAt, s.updatedAt) " +
+    @Query("SELECT new br.dev.ampliar.caipora.model.VersionDTO(v.id, v.name, v.fileName, v.releaseDate, s.id, s.name, v.createdAt, v.updatedAt) " +
             "FROM Version v " +
             "LEFT JOIN v.software s " +
-            "WHERE (:name IS NULL OR v.name LIKE %:name%) " +
+            "WHERE (:name IS NULL OR LOWER(v.name) LIKE CONCAT('%', LOWER(CAST(:name AS String)), '%')) " +
             "AND (:software IS NULL OR v.software.id = :software)")
     Page<VersionDTO> findAllBySearchCriteria(
             @Param("name") String name,

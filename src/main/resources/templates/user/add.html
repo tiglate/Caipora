@@ -4,15 +4,19 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>Add User</title>
+    <title>New user</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('add', 'Add User', 'userForm', @{/users})}"></div>
-        <div th:replace="~{fragments/form-utils::globalErrors('user')}"></div>
-        <form th:action="${requestUri}" method="post" id="userForm">
+        <div th:replace="~{fragments/header :: header('add', 'New user', 'userForm', @{/users})}"></div>
+        <div th:replace="~{fragments/form-utils :: globalErrors('user')}"></div>
+        <form th:action="${requestUri}" method="post" id="userForm" hx-boost="false" novalidate>
             <th:block th:replace="~{user/_form :: userForm('add', ${user}, ${genderValues}, ${departmentValues}, ${rolesValues})}"></th:block>
+            <div class="form-actions">
+                <a th:href="@{/users}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> Save</button>
+            </div>
         </form>
     </div>
 </body>

@@ -9,13 +9,14 @@ import br.dev.ampliar.caipora.repos.DeployRepository;
 import br.dev.ampliar.caipora.repos.StakeholderRepository;
 import br.dev.ampliar.caipora.repos.UserRepository;
 import br.dev.ampliar.caipora.repos.VersionRepository;
+import br.dev.ampliar.caipora.util.HtmlSanitizer;
 import br.dev.ampliar.caipora.util.NotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class DeployServiceImpl implements DeployService {
 
     private final DeployRepository deployRepository;
@@ -40,6 +41,7 @@ public class DeployServiceImpl implements DeployService {
     }
 
     @Override
+    @Transactional
     public Integer create(final DeployDTO deployDTO) {
         final var deploy = mapToEntity(deployDTO);
         return deployRepository.save(deploy).getId();
@@ -52,7 +54,7 @@ public class DeployServiceImpl implements DeployService {
         deployDTO.setRfc(deploy.getRfc());
         deployDTO.setExecutionDate(deploy.getExecutionDate());
         deployDTO.setCreatedAt(deploy.getCreatedAt());
-        deployDTO.setNotes(deploy.getNotes());
+        deployDTO.setNotes(HtmlSanitizer.sanitize(deploy.getNotes()));
         deployDTO.setAuthorizerId(deploy.getAuthorizer() == null ? null : deploy.getAuthorizer().getId());
         if (deploy.getOperator() != null) {
             final var operator = deploy.getOperator();
@@ -87,7 +89,7 @@ public class DeployServiceImpl implements DeployService {
         deploy.setIsActive(deployDTO.getIsActive());
         deploy.setRfc(deployDTO.getRfc());
         deploy.setExecutionDate(deployDTO.getExecutionDate());
-        deploy.setNotes(deployDTO.getNotes());
+        deploy.setNotes(HtmlSanitizer.sanitize(deployDTO.getNotes()));
         final Version version = deployDTO.getVersionId() == null ? null : versionRepository.findById(deployDTO.getVersionId())
                 .orElseThrow(() -> new NotFoundException("version not found"));
         deploy.setVersion(version);

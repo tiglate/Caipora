@@ -10,9 +10,11 @@ import br.dev.ampliar.caipora.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
@@ -44,12 +46,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional
     public Integer create(final DepartmentDTO departmentDTO) {
         var department = mapToEntity(departmentDTO);
         return departmentRepository.save(department).getId();
     }
 
     @Override
+    @Transactional
     public void update(final Integer id, final DepartmentDTO departmentDTO) {
         final Department department = departmentRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -58,6 +62,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional
     public void delete(final Integer id) {
         departmentRepository.deleteById(id);
     }
@@ -95,6 +100,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (departmentStakeholder != null) {
             referencedWarning.setKey("department.person.department.referenced");
             referencedWarning.addParam(departmentStakeholder.getId());
+            referencedWarning.addParam("Stakeholder");
             return referencedWarning;
         }
 
@@ -103,6 +109,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (departmentUser != null) {
             referencedWarning.setKey("department.person.department.referenced");
             referencedWarning.addParam(departmentUser.getId());
+            referencedWarning.addParam("User");
             return referencedWarning;
         }
 

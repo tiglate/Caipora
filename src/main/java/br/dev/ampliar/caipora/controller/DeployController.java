@@ -96,6 +96,14 @@ public class DeployController {
         }
         deployDTO.setOperatorId(getCurrentUserId());
         deployDTO.setIsActive(true);
+        // the version must belong to the application in the URL (the form only lists those, but the request
+        // could be forged)
+        if (deployDTO.getVersionId() != null && versionRepository.findById(deployDTO.getVersionId())
+                .map(version -> version.getSoftware() == null || !softwareId.equals(version.getSoftware().getId()))
+                .orElse(true)) {
+            bindingResult.rejectValue("versionId", "deploy.version.invalid",
+                    "Please select a version of this application.");
+        }
         if (bindingResult.hasErrors()) {
             return CONTROLLER_ADD;
         }

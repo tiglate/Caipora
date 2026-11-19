@@ -4,15 +4,19 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>Edit Department</title>
+    <title>Edit department</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('edit', 'Edit Department', 'departmentForm', @{/departments})}"></div>
-        <div th:replace="~{fragments/form-utils::globalErrors('department')}"></div>
-        <form th:action="${requestUri}" method="post" id="departmentForm">
+        <div th:replace="~{fragments/header :: header('edit', 'Edit department', 'departmentForm', @{/departments})}"></div>
+        <div th:replace="~{fragments/form-utils :: globalErrors('department')}"></div>
+        <form th:action="${requestUri}" method="post" id="departmentForm" hx-boost="false" novalidate>
             <th:block th:replace="~{department/_form :: departmentForm('edit', ${department})}"></th:block>
+            <div class="form-actions">
+                <a th:href="@{/departments}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> Save</button>
+            </div>
         </form>
     </div>
 </body>

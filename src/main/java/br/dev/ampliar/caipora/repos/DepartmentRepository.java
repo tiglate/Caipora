@@ -15,8 +15,8 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
 
     @Query("SELECT new br.dev.ampliar.caipora.model.DepartmentDTO(d.id, d.name, d.email, d.createdAt, d.updatedAt) " +
             "FROM Department d " +
-            "WHERE (:name IS NULL OR d.name LIKE %:name%) " +
-            "AND (:email IS NULL OR d.email LIKE %:email%)")
+            "WHERE (:name IS NULL OR LOWER(d.name) LIKE CONCAT('%', LOWER(CAST(:name AS String)), '%')) " +
+            "AND (:email IS NULL OR LOWER(d.email) LIKE CONCAT('%', LOWER(CAST(:email AS String)), '%'))")
     Page<DepartmentDTO> findAllBySearchCriteria(
             @Param("name") String name,
             @Param("email") String email,

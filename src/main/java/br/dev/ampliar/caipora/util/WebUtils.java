@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -33,15 +34,23 @@ public class WebUtils {
         return messageSource.getMessage(code, args, code, localeResolver.resolveLocale(getRequest()));
     }
 
+    /**
+     * Creates a <em>relative</em> URI builder (path + query string) for the current request. Relative links are used
+     * on purpose: an absolute link would be derived from the client-controlled {@code Host} header.
+     * The query string is kept as received (already encoded), so search filters survive pagination and sorting.
+     */
+    public static UriComponentsBuilder currentRequestUriBuilder() {
+        final HttpServletRequest request = getRequest();
+        final String path = request.getRequestURI() == null ? "" : request.getRequestURI();
+        return UriComponentsBuilder.fromPath(path).query(request.getQueryString());
+    }
+
     private static String getStepUrl(final Page<?> page, final int targetPage) {
-        String stepUrl = "?page=" + targetPage + "&size=" + page.getSize();
-        if (getRequest().getParameter("sort") != null) {
-            stepUrl += "&sort=" + getRequest().getParameter("sort");
-        }
-        if (getRequest().getParameter("filter") != null) {
-            stepUrl += "&filter=" + getRequest().getParameter("filter");
-        }
-        return stepUrl;
+        return currentRequestUriBuilder()
+                .replaceQueryParam("page", targetPage)
+                .replaceQueryParam("size", page.getSize())
+                .build()
+                .toUriString();
     }
 
     public static PaginationModel getPaginationModel(final Page<?> page) {
@@ -61,7 +70,7 @@ public class WebUtils {
         for (int i = startAt; i < endAt; i++) {
             final PaginationStep step = new PaginationStep();
             step.setActive(i == page.getNumber());
-            step.setLabel("" + (i + 1));
+            step.setLabel(String.valueOf(i + 1));
             step.setUrl(getStepUrl(page, i));
             steps.add(step);
         }
@@ -73,10 +82,10 @@ public class WebUtils {
 
         final long rangeStart = (long) page.getNumber() * page.getSize() + 1L;
         final long rangeEnd = Math.min(rangeStart + page.getSize() - 1, page.getTotalElements());
-        final String range = rangeStart == rangeEnd ? "" + rangeStart : rangeStart + " - " + rangeEnd;
+        final String range = rangeStart == rangeEnd ? String.valueOf(rangeStart) : rangeStart + " - " + rangeEnd;
         final PaginationModel paginationModel = new PaginationModel();
         paginationModel.setSteps(steps);
-        paginationModel.setElements("Item %s of %d".formatted(range, page.getTotalElements()));
+        paginationModel.setElements("Showing %s of %d".formatted(range, page.getTotalElements()));
         return paginationModel;
     }
 

@@ -4,15 +4,19 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>Edit Stakeholder</title>
+    <title>Edit stakeholder</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('edit', 'Edit Stakeholder', 'stakeholderForm', @{/stakeholders})}"></div>
-        <div th:replace="~{fragments/form-utils::globalErrors('stakeholder')}"></div>
-        <form th:action="${requestUri}" method="post" id="stakeholderForm">
+        <div th:replace="~{fragments/header :: header('edit', 'Edit stakeholder', 'stakeholderForm', @{/stakeholders})}"></div>
+        <div th:replace="~{fragments/form-utils :: globalErrors('stakeholder')}"></div>
+        <form th:action="${requestUri}" method="post" id="stakeholderForm" hx-boost="false" novalidate>
             <th:block th:replace="~{stakeholder/_form :: stakeholderForm('edit', ${stakeholder}, ${departmentValues}, ${genderValues})}"></th:block>
+            <div class="form-actions">
+                <a th:href="@{/stakeholders}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> Save</button>
+            </div>
         </form>
     </div>
 </body>

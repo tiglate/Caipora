@@ -1,5 +1,10 @@
 package br.dev.ampliar.caipora.model;
 
-public interface OnUpdate {
-    // This interface is empty; its sole purpose is to serve as a marker for the validation group
+import jakarta.validation.groups.Default;
+
+/**
+ * Validation group for updates. Extends {@link Default} so that constraints without an explicit group
+ * (e.g. {@code @Size}, {@code @Email}, uniqueness checks) are validated as well.
+ */
+public interface OnUpdate extends Default {
 }

@@ -9,104 +9,83 @@
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortByIdLink" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortByIdDirection" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortByNameLink" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortByNameDirection" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortByReleaseDateLink" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortByReleaseDateDirection" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortBySoftwareLink" type="java.lang.String"*/-->
-    <!--/*@thymesVar id="sortBySoftwareDirection" type="java.lang.String"*/-->
-    <div layout:fragment="content">
-        <div class="d-flex flex-wrap mb-4">
-            <h1 class="flex-grow-1">Versions</h1>
+    <div layout:fragment="content" th:with="filtered=${versionSearch.softwareId != null or versionSearch.name != null}">
+        <div class="page-header">
             <div>
-                <a class="btn btn-primary ms-2"
-                   th:href="@{/versions/add}"
-                   sec:authorize="hasRole('ROLE_VERSION_MANAGE')"><i class="bi-plus-circle"></i> Add</a>
+                <h1 class="page-title">Versions</h1>
+                <p class="page-subtitle">Released packages of each application, ready to be deployed.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" th:href="@{/versions/add}" sec:authorize="hasAuthority('ROLE_VERSION_MANAGE')">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i> New version
+                </a>
             </div>
         </div>
 
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                Filters
-            </div>
-            <div class="card-body">
-                <form id="searchForm" th:action="${requestUri}" th:object="${versionSearch}" method="get">
-                    <div class="row mb-3">
-                        <div class="col-md-7">
-                            <label for="cboSoftware" class="form-label">Application</label>
-                            <select id="cboSoftware" th:field="*{softwareId}" class="form-select">
-                                <option value=""></option>
-                                <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">
-                                    [[${optionValue.value}]]
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-5">
-                            <label for="txtName" class="form-label">Name</label>
-                            <input type="text" id="txtName" th:field="*{name}" class="form-control"/>
+        <div class="card">
+            <form id="searchForm" class="filter-bar" th:action="${requestUri}" th:object="${versionSearch}" method="get" role="search">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-5">
+                        <label for="cboSoftware" class="form-label">Application</label>
+                        <select id="cboSoftware" th:field="*{softwareId}" class="form-select">
+                            <option value="">All applications</option>
+                            <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}" th:text="${optionValue.value}">Option</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="txtName" class="form-label">Version</label>
+                        <div class="input-icon">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <input type="search" id="txtName" th:field="*{name}" class="form-control" placeholder="e.g. 2.4" />
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col d-flex justify-content-end">
-                            <input type="reset" value="Clear" class="btn btn-secondary me-2"
-                                   onClick="return clearForm();" onKeyDown="return clearForm();"/>
-                            <input type="submit" value="Search" class="btn btn-primary"/>
-                        </div>
+                    <div class="col-md d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">Search</button>
+                        <a th:href="${requestUri}" class="btn btn-secondary" th:if="${filtered}">Clear</a>
                     </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                Results
-            </div>
-            <div class="card-body">
-                <p class="card-text" th:if="${#lists.isEmpty(versions)}">No records found</p>
-                <div th:if="${not #lists.isEmpty(versions)}" class="table-responsive">
-                    <table class="table table-sm table-striped table-hover align-middle">
-                        <thead>
-                        <tr>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Id', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Application', ${sortBySoftwareLink}, ${sortBySoftwareDirection}, 'software.name')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Version', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
-                            <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Release Date', ${sortByReleaseDateLink}, ${sortByReleaseDateDirection}, 'releaseDate')}"></th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                        <tr th:each="version : ${versions}">
-                            <td>[[${version.id}]]</td>
-                            <td>[[${version.softwareName}]]</td>
-                            <td>[[${version.name}]]</td>
-                            <td>[[${version.releaseDate}]]</td>
-                            <td>
-                                <div class="float-end text-nowrap">
-                                    <a th:href="@{/versions/view/{id}(id=${version.id})}"
-                                       class="btn btn-sm btn-secondary bi-eye"
-                                       title="View"></a>
-                                    <a th:href="@{/versions/edit/{id}(id=${version.id})}"
-                                       sec:authorize="hasRole('ROLE_VERSION_MANAGE')"
-                                       class="btn btn-sm btn-secondary bi-pencil-square"
-                                       title="Edit"></a>
-                                    <form th:action="@{/versions/delete/{id}(id=${version.id})}"
-                                          th:hx-confirm="#{delete.confirm}" method="post" class="d-inline"
-                                          sec:authorize="hasRole('ROLE_VERSION_MANAGE')">
-                                        <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
                 </div>
+            </form>
+
+            <th:block th:if="${versions.empty}">
+                <div th:replace="~{fragments/form-utils :: emptyState('bi-tags', 'No versions yet', ${filtered})}"></div>
+            </th:block>
+
+            <div th:unless="${versions.empty}" class="table-responsive">
+                <table class="table table-hover align-middle data-table">
+                    <thead>
+                    <tr>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('ID', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Application', ${sortBySoftwareLink}, ${sortBySoftwareDirection}, 'software.name')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Version', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Release date', ${sortByReleaseDateLink}, ${sortByReleaseDateDirection}, 'releaseDate')}"></th>
+                        <th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="version : ${versions}">
+                        <td class="col-id">[[${version.id}]]</td>
+                        <td>[[${version.softwareName}]]</td>
+                        <td><a th:href="@{/versions/view/{id}(id=${version.id})}" class="row-title">[[${version.name}]]</a></td>
+                        <td class="text-nowrap" th:text="${version.releaseDate != null} ? ${#temporals.format(version.releaseDate, 'dd MMM yyyy')} : ''"></td>
+                        <td class="col-actions">
+                            <div class="row-actions">
+                                <a th:href="@{/versions/view/{id}(id=${version.id})}" class="btn btn-icon"
+                                   title="View" th:aria-label="|View ${version.name}|"><i class="bi bi-eye" aria-hidden="true"></i></a>
+                                <a th:href="@{/versions/edit/{id}(id=${version.id})}" class="btn btn-icon"
+                                   sec:authorize="hasAuthority('ROLE_VERSION_MANAGE')"
+                                   title="Edit" th:aria-label="|Edit ${version.name}|"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                                <form th:action="@{/versions/delete/{id}(id=${version.id})}" method="post"
+                                      sec:authorize="hasAuthority('ROLE_VERSION_MANAGE')" th:hx-confirm="#{delete.confirm}">
+                                    <button type="submit" class="btn btn-icon btn-icon-danger" title="Delete"
+                                            th:aria-label="|Delete ${version.name}|"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="card-footer d-flex flex-column flex-md-row align-items-center justify-content-between">
-                <nav th:replace="~{fragments/form-utils::pagination()}"></nav>
-            </div>
+            <div th:replace="~{fragments/form-utils :: pagination()}"></div>
         </div>
     </div>
 </body>
