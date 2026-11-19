@@ -33,6 +33,14 @@
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+                    <!-- Thymeleaf evaluates expressions with Spring EL in Spring applications: OGNL is never used, and
+                 removing it keeps a vulnerable, unused library off the classpath (GHSA-crwc-vw2r-qr6m). -->
+            <exclusions>
+                <exclusion>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -69,10 +77,26 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                    <!-- Thymeleaf evaluates expressions with Spring EL in Spring applications: OGNL is never used, and
+                 removing it keeps a vulnerable, unused library off the classpath (GHSA-crwc-vw2r-qr6m). -->
+            <exclusions>
+                <exclusion>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
+                    <!-- Thymeleaf evaluates expressions with Spring EL in Spring applications: OGNL is never used, and
+                 removing it keeps a vulnerable, unused library off the classpath (GHSA-crwc-vw2r-qr6m). -->
+            <exclusions>
+                <exclusion>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
