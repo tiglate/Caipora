@@ -1,82 +1,48 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Software Form</title>
+    <title>Application Form</title>
 </head>
 <body>
     <!--/*@thymesVar id="mode" type="java.lang.String"*/-->
     <!--/*@thymesVar id="software" type="br.dev.ampliar.caipora.model.SoftwareDTO"*/-->
     <!--/*@thymesVar id="ownerValues" type="java.util.Map"*/-->
     <th:block th:fragment="softwareForm(mode, software, ownerValues)" th:object="${software}">
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                Details
-            </div>
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-boxes" aria-hidden="true"></i> Details</div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="txtCode" class="form-label">Code*</label>
-                        <input type="text"
-                               id="txtCode"
-                               class="form-control"
-                               th:field="*{code}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('code') ? 'is-invalid' : ''}" />
-                        <div th:if="${#fields.hasErrors('code')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('code')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="txtCode" class="form-label required">Code</label>
+                        <input type="text" id="txtCode" class="form-control font-monospace" maxlength="20" required
+                               th:field="*{code}" th:disabled="${mode == 'view'}" th:autofocus="${mode != 'view'}"
+                               th:errorclass="is-invalid" />
+                        <div class="form-text" th:if="${mode != 'view'}">Short unique identifier, e.g. <code>CRM</code>.</div>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('software', 'code')}"></div>
                     </div>
                     <div class="col-md-5">
-                        <label for="txtName" class="form-label">Name*</label>
-                        <input type="text"
-                               id="txtName"
-                               class="form-control"
-                               th:field="*{name}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
-                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                        <label for="txtName" class="form-label required">Name</label>
+                        <input type="text" id="txtName" class="form-control" maxlength="255" required
+                               th:field="*{name}" th:disabled="${mode == 'view'}" th:errorclass="is-invalid" />
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('software', 'name')}"></div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label for="cboOwner" class="form-label">Owner</label>
-                        <select id="cboOwner"
-                                class="form-select"
-                                th:field="*{ownerId}"
-                                th:disabled="${mode == 'view'}"
-                                th:classappend="${#fields.hasErrors('ownerId') ? 'is-invalid' : ''}">
-                            <option value="">Please select</option>
+                        <select id="cboOwner" class="form-select" th:field="*{ownerId}" th:disabled="${mode == 'view'}"
+                                th:errorclass="is-invalid">
+                            <option value="">— No owner —</option>
                             <option th:each="optionValue : ${ownerValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
                         </select>
-                        <div th:if="${#fields.hasErrors('ownerId')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('ownerId')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                        <div class="form-text" th:if="${mode != 'view'}">Stakeholder accountable for the application.</div>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('software', 'ownerId')}"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow mb-3" th:if="${mode != 'add'}">
-            <div class="card-header">
-                Audit
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="txtId" class="form-label">Id</label>
-                        <input type="number" id="txtId" th:field="*{id}" disabled="disabled" class="form-control" />
-                    </div>
-                    <div class="col-md-5">
-                        <label for="txtCreatedAt" class="form-label">Input Date</label>
-                        <input type="text" id="txtCreatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(software.createdAt, 'dd-MMM-yy hh:mm:ss')}"  />
-                    </div>
-                    <div class="col-md-5">
-                        <label for="txtUpdatedAt" class="form-label">Last Update</label>
-                        <input type="text" id="txtUpdatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(software.updatedAt, 'dd-MMM-yy hh:mm:ss')}"  />
-                    </div>
-                </div>
-            </div>
-        </div>
+        <th:block th:if="${mode != 'add'}">
+            <div th:replace="~{fragments/form-utils :: audit(${software.id}, ${software.createdAt}, ${software.updatedAt})}"></div>
+        </th:block>
     </th:block>
 </body>
 </html>

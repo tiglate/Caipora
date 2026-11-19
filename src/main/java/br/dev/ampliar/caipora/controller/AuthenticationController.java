@@ -2,6 +2,7 @@ package br.dev.ampliar.caipora.controller;
 
 import br.dev.ampliar.caipora.model.AuthenticationRequest;
 import br.dev.ampliar.caipora.util.FlashMessages;
+import br.dev.ampliar.caipora.util.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +19,19 @@ public class AuthenticationController {
             @RequestParam(name = "loginError", required = false) final Boolean loginError,
             @RequestParam(name = "logoutSuccess", required = false) final Boolean logoutSuccess,
             final Model model) {
+        if (SecurityUtils.currentUser().isPresent()) {
+            // already signed in: nothing to do on the login page
+            return "redirect:/";
+        }
         model.addAttribute("authentication", new AuthenticationRequest());
         if (loginRequired == Boolean.TRUE) {
-            model.addAttribute(FlashMessages.MSG_INFO, "Please login to access this area.");
+            model.addAttribute(FlashMessages.MSG_INFO, "Please sign in to continue.");
         }
         if (loginError == Boolean.TRUE) {
-            model.addAttribute(FlashMessages.MSG_ERROR, "Your login was not successful - please try again.");
+            model.addAttribute(FlashMessages.MSG_ERROR, "Invalid username or password. After several failed attempts the account is temporarily locked.");
         }
         if (logoutSuccess == Boolean.TRUE) {
-            model.addAttribute(FlashMessages.MSG_INFO, "Your logout was successful.");
+            model.addAttribute(FlashMessages.MSG_INFO, "You have been signed out.");
         }
         return "authentication/login";
     }

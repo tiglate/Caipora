@@ -7,14 +7,19 @@
     <table>
         <thead>
         <tr>
-            <th th:fragment="sortableColumnHeader(label, sortLink, sortDirection, property)" scope="col">
-                <a th:href="${sortLink}">
+            <!--/* sortDirection: 'asc' / 'desc' for the active column, null otherwise */-->
+            <th th:fragment="sortableColumnHeader(label, sortLink, sortDirection, property)" scope="col"
+                th:attr="aria-sort=${sortDirection == 'asc' ? 'ascending' : (sortDirection == 'desc' ? 'descending' : 'none')}"
+                th:classappend="${property == 'id'} ? 'col-id'">
+                <a th:href="${sortLink}" class="sort-link" th:classappend="${sortDirection != null} ? 'active'"
+                   th:title="|Sort by ${label}|">
                     [[${label}]]
-                    <span th:if="${sortDirection != null}"
-                          th:class="${#strings.equals(sortDirection, 'asc') ? 'bi bi-caret-up-fill' : 'bi bi-caret-down-fill'}"> </span>
+                    <i class="bi" aria-hidden="true"
+                       th:classappend="${sortDirection == null ? 'bi-arrow-down-up' : (sortDirection == 'asc' ? 'bi-sort-up' : 'bi-sort-down')}"></i>
                 </a>
             </th>
         </tr>
+        </thead>
     </table>
 </body>
 </html>

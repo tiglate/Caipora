@@ -12,9 +12,11 @@ import br.dev.ampliar.caipora.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional(readOnly = true)
 public class SoftwareServiceImpl implements SoftwareService {
 
     private final SoftwareRepository softwareRepository;
@@ -47,12 +49,14 @@ public class SoftwareServiceImpl implements SoftwareService {
     }
 
     @Override
+    @Transactional
     public Integer create(final SoftwareDTO softwareDTO) {
         final Software software = mapToEntity(softwareDTO);
         return softwareRepository.save(software).getId();
     }
 
     @Override
+    @Transactional
     public void update(final Integer id, final SoftwareDTO softwareDTO) {
         final Software software = softwareRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -61,6 +65,7 @@ public class SoftwareServiceImpl implements SoftwareService {
     }
 
     @Override
+    @Transactional
     public void delete(final Integer id) {
         softwareRepository.deleteById(id);
     }

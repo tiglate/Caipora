@@ -30,7 +30,7 @@ public class UserDTO {
     private String username;
 
     @NotNull(groups = OnCreate.class)
-    @Size(max = 255)
+    @Size(min = 8, max = 255)
     private String password;
 
     @NotNull(groups = {OnCreate.class, OnUpdate.class})
@@ -50,7 +50,10 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(Integer id, String name, String email, Gender gender, String username, String password,
+    /**
+     * Projection used by the list query; the password hash is intentionally not loaded.
+     */
+    public UserDTO(Integer id, String name, String email, Gender gender, String username,
                    Boolean enabled, Integer departmentId, String departmentName, OffsetDateTime createdAt,
                    OffsetDateTime updatedAt) {
         this.id = id;
@@ -58,7 +61,6 @@ public class UserDTO {
         this.email = email;
         this.gender = gender;
         this.username = username;
-        this.password = password;
         this.enabled = enabled;
         this.departmentId = departmentId;
         this.departmentName = departmentName;
@@ -140,6 +142,10 @@ public class UserDTO {
 
     public String getDepartmentName() {
         return departmentName;
+    }
+
+    public void setDepartmentName(final String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public OffsetDateTime getCreatedAt() {

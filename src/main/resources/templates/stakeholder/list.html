@@ -4,126 +4,98 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       lang="en"
       layout:decorate="~{layout}">
-    <head>
-        <title>Stakeholders</title>
-    </head>
-    <body>
-        <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByIdLink" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByIdDirection" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByNameLink" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByNameDirection" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByEmailLink" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByEmailDirection" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByGenderLink" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByGenderDirection" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByDepartmentNameLink" type="java.lang.String"*/-->
-        <!--/*@thymesVar id="sortByDepartmentNameDirection" type="java.lang.String"*/-->
-        <div layout:fragment="content">
-            <div class="d-flex flex-wrap mb-4">
-                <h1 class="flex-grow-1">Stakeholders</h1>
-                <div>
-                    <a class="btn btn-primary ms-2"
-                       th:href="@{/stakeholders/add}"
-                       sec:authorize="hasRole('ROLE_STAKEHOLDER_MANAGE')"><i class="bi-plus-circle"></i> Add</a>
-                </div>
+<head>
+    <title>Stakeholders</title>
+</head>
+<body>
+    <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <div layout:fragment="content" th:with="filtered=${stakeholderSearch.name != null or stakeholderSearch.email != null or stakeholderSearch.department != null or stakeholderSearch.gender != null}">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Stakeholders</h1>
+                <p class="page-subtitle">People who own applications or authorize deployments.</p>
             </div>
-
-            <div class="card shadow mb-3">
-                <div class="card-header">
-                    Filters
-                </div>
-                <div class="card-body">
-                    <div class="card-text">
-                        <form id="searchForm" th:action="${requestUri}" th:object="${stakeholderSearch}" method="get">
-                            <div class="row mb-3">
-                                <div class="col-md-5">
-                                    <label for="txtName" class="form-label">Name</label>
-                                    <input type="text" id="txtName" th:field="*{name}" class="form-control"/>
-                                </div>
-                                <div class="col-md-5">
-                                    <label for="cboDepartment" class="form-label">Department</label>
-                                    <select id="cboDepartment" th:field="*{department}" class="form-select">
-                                        <option value=""></option>
-                                        <option th:each="optionValue : ${departmentValues}"
-                                                th:value="${optionValue.key}">[[${optionValue.value}]]
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="cboGender" class="form-label">Gender</label>
-                                    <select id="cboGender" th:field="*{gender}" class="form-select">
-                                        <option value=""></option>
-                                        <option th:each="optionValue : ${genderValues}" th:value="${optionValue}">
-                                            [[${optionValue}]]
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col d-flex justify-content-end">
-                                    <input type="reset" value="Clear" class="btn btn-secondary me-2"
-                                           onClick="return clearForm();" onKeyDown="return clearForm();"/>
-                                    <input type="submit" value="Search" class="btn btn-primary"/>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow mb-3">
-                <div class="card-header">
-                    Results
-                </div>
-                <div class="card-body">
-                    <p class="card-text" th:if="${#lists.isEmpty(stakeholders)}">No records found</p>
-
-                    <div th:if="${not #lists.isEmpty(stakeholders)}" class="table-responsive">
-                        <table class="table table-sm table-striped table-hover align-middle">
-                            <thead>
-                            <tr>
-                                <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Id', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
-                                <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Name', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
-                                <th th:replace="~{fragments/table-utils :: sortableColumnHeader('E-mail', ${sortByEmailLink}, ${sortByEmailDirection}, 'email')}"></th>
-                                <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Gender', ${sortByGenderLink}, ${sortByGenderDirection}, 'gender')}"></th>
-                                <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Department', ${sortByDepartmentNameLink}, ${sortByDepartmentNameDirection}, 'department.name')}"></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody class="table-group-divider">
-                            <tr th:each="stakeholder : ${stakeholders}">
-                                <td>[[${stakeholder.id}]]</td>
-                                <td>[[${stakeholder.name}]]</td>
-                                <td>[[${stakeholder.email}]]</td>
-                                <td>[[${stakeholder.gender}]]</td>
-                                <td>[[${stakeholder.departmentName}]]</td>
-                                <td>
-                                    <div class="float-end text-nowrap">
-                                        <a th:href="@{/stakeholders/view/{id}(id=${stakeholder.id})}"
-                                           class="btn btn-sm btn-secondary bi-eye"
-                                           title="View"></a>
-                                        <a th:href="@{/stakeholders/edit/{id}(id=${stakeholder.id})}"
-                                           sec:authorize="hasRole('ROLE_STAKEHOLDER_MANAGE')"
-                                           class="btn btn-sm btn-secondary bi-pencil-square"
-                                           title="Edit"></a>
-                                        <form th:action="@{/stakeholders/delete/{id}(id=${stakeholder.id})}"
-                                              th:hx-confirm="#{delete.confirm}" method="post" class="d-inline"
-                                              sec:authorize="hasRole('ROLE_STAKEHOLDER_MANAGE')">
-                                            <button type="submit" class="btn btn-sm btn-secondary bi-trash" title="Delete">
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer d-flex flex-column flex-md-row align-items-center justify-content-between">
-                    <nav th:replace="~{fragments/form-utils::pagination()}"></nav>
-                </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" th:href="@{/stakeholders/add}" sec:authorize="hasAuthority('ROLE_STAKEHOLDER_MANAGE')">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i> New stakeholder
+                </a>
             </div>
         </div>
-    </body>
+
+        <div class="card">
+            <form id="searchForm" class="filter-bar" th:action="${requestUri}" th:object="${stakeholderSearch}" method="get" role="search">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label for="txtName" class="form-label">Name</label>
+                        <div class="input-icon">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <input type="search" id="txtName" th:field="*{name}" class="form-control" placeholder="Search by name" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cboDepartment" class="form-label">Department</label>
+                        <select id="cboDepartment" th:field="*{department}" class="form-select">
+                            <option value="">Any department</option>
+                            <option th:each="optionValue : ${departmentValues}" th:value="${optionValue.key}" th:text="${optionValue.value}">Option</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="cboGender" class="form-label">Gender</label>
+                        <select id="cboGender" th:field="*{gender}" class="form-select">
+                            <option value="">Any</option>
+                            <option th:each="optionValue : ${genderValues}" th:value="${optionValue}" th:text="${#strings.capitalize(#strings.toLowerCase(optionValue))}">Option</option>
+                        </select>
+                    </div>
+                    <div class="col-md d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">Search</button>
+                        <a th:href="${requestUri}" class="btn btn-secondary" th:if="${filtered}">Clear</a>
+                    </div>
+                </div>
+            </form>
+
+            <th:block th:if="${stakeholders.empty}">
+                <div th:replace="~{fragments/form-utils :: emptyState('bi-person-badge', 'No stakeholders yet', ${filtered})}"></div>
+            </th:block>
+
+            <div th:unless="${stakeholders.empty}" class="table-responsive">
+                <table class="table table-hover align-middle data-table">
+                    <thead>
+                    <tr>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('ID', ${sortByIdLink}, ${sortByIdDirection}, 'id')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Name', ${sortByNameLink}, ${sortByNameDirection}, 'name')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('E-mail', ${sortByEmailLink}, ${sortByEmailDirection}, 'email')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Gender', ${sortByGenderLink}, ${sortByGenderDirection}, 'gender')}"></th>
+                        <th th:replace="~{fragments/table-utils :: sortableColumnHeader('Department', ${sortByDepartmentNameLink}, ${sortByDepartmentNameDirection}, 'department.name')}"></th>
+                        <th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="stakeholder : ${stakeholders}">
+                        <td class="col-id">[[${stakeholder.id}]]</td>
+                        <td><a th:href="@{/stakeholders/view/{id}(id=${stakeholder.id})}" class="row-title">[[${stakeholder.name}]]</a></td>
+                        <td><a th:if="${stakeholder.email}" th:href="|mailto:${stakeholder.email}|">[[${stakeholder.email}]]</a><span th:unless="${stakeholder.email}" class="text-body-secondary">—</span></td>
+                        <td th:text="${stakeholder.gender != null} ? ${#strings.capitalize(#strings.toLowerCase(stakeholder.gender))} : ''"></td>
+                        <td>[[${stakeholder.departmentName}]]</td>
+                        <td class="col-actions">
+                            <div class="row-actions">
+                                <a th:href="@{/stakeholders/view/{id}(id=${stakeholder.id})}" class="btn btn-icon"
+                                   title="View" th:aria-label="|View ${stakeholder.name}|"><i class="bi bi-eye" aria-hidden="true"></i></a>
+                                <a th:href="@{/stakeholders/edit/{id}(id=${stakeholder.id})}" class="btn btn-icon"
+                                   sec:authorize="hasAuthority('ROLE_STAKEHOLDER_MANAGE')"
+                                   title="Edit" th:aria-label="|Edit ${stakeholder.name}|"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                                <form th:action="@{/stakeholders/delete/{id}(id=${stakeholder.id})}" method="post"
+                                      sec:authorize="hasAuthority('ROLE_STAKEHOLDER_MANAGE')" th:hx-confirm="#{delete.confirm}">
+                                    <button type="submit" class="btn btn-icon btn-icon-danger" title="Delete"
+                                            th:aria-label="|Delete ${stakeholder.name}|"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:replace="~{fragments/form-utils :: pagination()}"></div>
+        </div>
+    </div>
+</body>
 </html>

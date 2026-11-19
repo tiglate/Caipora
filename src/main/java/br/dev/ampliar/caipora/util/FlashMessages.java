@@ -16,6 +16,14 @@ public class FlashMessages {
         redirectAttributes.addFlashAttribute(MSG_ERROR, "This entity is still referenced by %s %d via field Software.".formatted(referencedBy, id));
     }
 
+    /**
+     * Adds the localized message of a {@link ReferencedWarning} (entity cannot be deleted because it is in use).
+     */
+    public static void referencedWarning(RedirectAttributes redirectAttributes, ReferencedWarning referencedWarning) {
+        redirectAttributes.addFlashAttribute(MSG_ERROR,
+                WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
+    }
+
     public static void createSuccess(RedirectAttributes redirectAttributes, String entityName) {
         redirectAttributes.addFlashAttribute(MSG_SUCCESS, "%s was created successfully".formatted(entityName));
     }

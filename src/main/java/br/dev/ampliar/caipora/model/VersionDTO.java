@@ -76,6 +76,13 @@ public class VersionDTO {
         this.fileName = fileName;
     }
 
+    /**
+     * @return the stored file name without the internal UUID prefix (the name originally uploaded)
+     */
+    public String getDisplayFileName() {
+        return fileName == null ? null : fileName.replaceFirst("^[0-9a-fA-F-]{36}_", "");
+    }
+
     public LocalDate getReleaseDate() {
         return releaseDate;
     }

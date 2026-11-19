@@ -4,11 +4,12 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>View Version</title>
+    <title>Version</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('view', 'View Version', 'versionForm', @{/versions})}"></div>
+        <div th:replace="~{fragments/header :: viewHeader(|${version.softwareName} ${version.name}|, @{/versions},
+                @{/versions/edit/{id}(id=${version.id})}, 'ROLE_VERSION_MANAGE')}"></div>
         <th:block th:replace="~{version/_form :: versionForm('view', ${version}, ${softwareValues})}"></th:block>
     </div>
 </body>

@@ -1,8 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en"
-      layout:decorate="~{layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Version Form</title>
 </head>
@@ -11,126 +8,79 @@
     <!--/*@thymesVar id="version" type="br.dev.ampliar.caipora.model.VersionDTO"*/-->
     <!--/*@thymesVar id="softwareValues" type="java.util.Map"*/-->
     <th:block th:fragment="versionForm(mode, version, softwareValues)" th:object="${version}">
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                Details
-            </div>
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-tag" aria-hidden="true"></i> Details</div>
             <div class="card-body">
-                <div class="row mb-2">
-                    <div class="col-md-4">
-                        <label for="cboSoftware" class="form-label">Software*</label>
-                        <select id="cboSoftware"
-                                class="form-select"
-                                th:field="*{softwareId}"
-                                th:disabled="${mode == 'view'}"
-                                th:classappend="${#fields.hasErrors('softwareId') ? 'is-invalid' : ''}">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label for="cboSoftware" class="form-label required">Application</label>
+                        <select id="cboSoftware" class="form-select" th:field="*{softwareId}" th:disabled="${mode == 'view'}"
+                                th:errorclass="is-invalid" th:autofocus="${mode == 'add'}">
                             <option value="">Please select</option>
                             <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
                         </select>
-                        <div th:if="${#fields.hasErrors('softwareId')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('softwareId')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'softwareId')}"></div>
                     </div>
                     <div class="col-md-4">
-                        <label for="txtName" class="form-label">Name/Version*</label>
-                        <input type="text"
-                               id="txtName"
-                               class="form-control"
-                               th:field="*{name}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}" />
-                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('name')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                        <label for="txtName" class="form-label required">Version</label>
+                        <input type="text" id="txtName" class="form-control" maxlength="255" required placeholder="e.g. 2.4.1"
+                               th:field="*{name}" th:disabled="${mode == 'view'}" th:errorclass="is-invalid" />
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'name')}"></div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="txtReleaseDate" class="form-label">Release Date*</label>
-                        <input type="text"
-                               id="txtReleaseDate"
-                               class="form-control js-datepicker"
-                               th:field="*{releaseDate}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('releaseDate') ? 'is-invalid' : ''}" />
-                        <div th:if="${#fields.hasErrors('releaseDate')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('releaseDate')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                    <div class="col-md-3">
+                        <label for="txtReleaseDate" class="form-label required">Release date</label>
+                        <input type="text" id="txtReleaseDate" class="form-control js-datepicker" required placeholder="YYYY-MM-DD"
+                               th:field="*{releaseDate}" th:disabled="${mode == 'view'}" th:errorclass="is-invalid" />
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'releaseDate')}"></div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <label for="filFile" class="form-label">File*</label>
-                        <input type="file"
-                               id="filFile"
-                               class="form-control"
-                               th:field="*{file}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('file') ? 'is-invalid' : ''}"
-                               th:if="${mode == 'add'}" />
-                        <a th:href="@{/versions/download/{id}(id=${version.id})}"
-                           th:if="${mode != 'add'}"
-                           class="btn btn-secondary d-block w-25"
-                           target="_blank"
-                           download>Download</a>
-                        <div th:if="${#fields.hasErrors('file')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('file')}" class="mb-0">[[${error}]]</p>
+                    <div class="col-12" th:if="${mode == 'add'}">
+                        <label for="filFile" class="form-label required">Package</label>
+                        <input type="file" id="filFile" name="file" class="form-control" accept=".zip,.msi,.exe" required
+                               th:classappend="${#fields.hasErrors('file')} ? 'is-invalid'" />
+                        <div class="form-text">Accepted formats: .zip, .msi or .exe (up to 1 GB). The package cannot be replaced later.</div>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'file')}"></div>
+                    </div>
+                    <div class="col-12" th:if="${mode != 'add'}">
+                        <span class="form-label d-block">Package</span>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="code-pill text-break" th:text="${version.displayFileName}">file.zip</span>
+                            <a th:href="@{/versions/download/{id}(id=${version.id})}" class="btn btn-secondary btn-sm"
+                               hx-boost="false" sec:authorize="hasAuthority('ROLE_VERSION_MANAGE')">
+                                <i class="bi bi-download" aria-hidden="true"></i> Download
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                <label for="mmoChangelog">Changelog</label>
-            </div>
-            <div class="card-body p-0">
-                <textarea id="mmoChangelog"
-                          class="form-control tinymce-editor"
-                          th:field="*{changelog}"
-                          th:classappend="${#fields.hasErrors('changelog') ? 'is-invalid' : ''}"
-                          th:if="${mode != 'view'}"></textarea>
-                <div th:if="${mode == 'view'}" th:utext="${version.changelog}" class="form-control w-100 border-0" style="height: 400px; overflow-y: scroll; resize: both;">&nbsp;</div>
-                <div th:if="${#fields.hasErrors('changelog')}" class="invalid-feedback d-block">
-                    <p th:each="error : ${#fields.errors('changelog')}" class="mb-0">[[${error}]]</p>
-                </div>
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-journal-text" aria-hidden="true"></i>
+                <label for="mmoChangelog" class="m-0" th:remove="${mode == 'view'} ? 'tag'">Changelog</label></div>
+            <div class="card-body" th:classappend="${mode != 'view'} ? 'p-0'">
+                <textarea id="mmoChangelog" class="form-control tinymce-editor" th:field="*{changelog}"
+                          th:errorclass="is-invalid" th:if="${mode != 'view'}"></textarea>
+                <!--/* sanitized on the server (HtmlSanitizer) before being stored and rendered */-->
+                <div th:if="${mode == 'view' and version.changelog != null}" class="rich-content p-0" th:utext="${version.changelog}"></div>
+                <p th:if="${mode == 'view' and version.changelog == null}" class="text-body-secondary mb-0">Nothing recorded.</p>
+                <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'changelog')}"></div>
             </div>
         </div>
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                <label for="mmoComments">Comments</label>
-            </div>
-            <div class="card-body p-0">
-                <textarea id="mmoComments"
-                          class="form-control tinymce-editor"
-                          th:field="*{comments}"
-                          th:classappend="${#fields.hasErrors('comments') ? 'is-invalid' : ''}"
-                          th:if="${mode != 'view'}"></textarea>
-                <div th:if="${mode == 'view'}" th:utext="${version.comments}" class="form-control w-100 border-0" style="height: 400px; overflow-y: scroll; resize: both;">&nbsp;</div>
-                <div th:if="${#fields.hasErrors('comments')}" class="invalid-feedback d-block">
-                    <p th:each="error : ${#fields.errors('comments')}" class="mb-0">[[${error}]]</p>
-                </div>
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-chat-left-text" aria-hidden="true"></i>
+                <label for="mmoComments" class="m-0" th:remove="${mode == 'view'} ? 'tag'">Comments</label></div>
+            <div class="card-body" th:classappend="${mode != 'view'} ? 'p-0'">
+                <textarea id="mmoComments" class="form-control tinymce-editor" th:field="*{comments}"
+                          th:errorclass="is-invalid" th:if="${mode != 'view'}"></textarea>
+                <!--/* sanitized on the server (HtmlSanitizer) before being stored and rendered */-->
+                <div th:if="${mode == 'view' and version.comments != null}" class="rich-content p-0" th:utext="${version.comments}"></div>
+                <p th:if="${mode == 'view' and version.comments == null}" class="text-body-secondary mb-0">Nothing recorded.</p>
+                <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'comments')}"></div>
             </div>
         </div>
-        <div class="card shadow mb-3" th:if="${mode != 'add'}">
-            <div class="card-header">
-                Audit
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="txtId" class="form-label">Id</label>
-                        <input type="number" id="txtId" th:field="*{id}" disabled="disabled" class="form-control" />
-                    </div>
-                    <div class="col-md-5">
-                        <label for="txtCreatedAt" class="form-label">Input Date</label>
-                        <input type="text" id="txtCreatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(version.createdAt, 'dd-MMM-yy hh:mm:ss')}"  />
-                    </div>
-                    <div class="col-md-5">
-                        <label for="txtUpdatedAt" class="form-label">Last Update</label>
-                        <input type="text" id="txtUpdatedAt" disabled="disabled" class="form-control" th:value="${#temporals.format(version.updatedAt, 'dd-MMM-yy hh:mm:ss')}"  />
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        <th:block th:if="${mode != 'add'}">
+            <div th:replace="~{fragments/form-utils :: audit(${version.id}, ${version.createdAt}, ${version.updatedAt})}"></div>
+        </th:block>
     </th:block>
 </body>
 </html>

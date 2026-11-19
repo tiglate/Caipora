@@ -4,18 +4,31 @@
     <title>Form Utils</title>
 </head>
     <body>
+        <!--/* Footer of list tables: number of items + page links. Links keep the current filters and sort. */-->
         <!--/*@thymesVar id="paginationModel" type="br.dev.ampliar.caipora.model.PaginationModel"*/-->
-        <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
-        <th:block th:fragment="pagination()" th:if="${paginationModel != null}">
-            <nav th:if="${paginationModel.steps.size > 3}">
-                <ul class="pagination m-0">
-                    <li th:each="step : ${paginationModel.steps}" th:classappend="${(step.active ? 'active' : '') + (step.disabled ? ' disabled' : '')}" class="page-item">
-                        <a th:href="${requestUri + step.url}" class="page-link">[[${step.label}]]</a>
+        <div th:fragment="pagination()" th:if="${paginationModel != null}" class="table-footer">
+            <span>[[${paginationModel.elements}]]</span>
+            <nav th:if="${paginationModel.steps.size > 3}" aria-label="Pagination">
+                <ul class="pagination pagination-sm m-0">
+                    <li th:each="step, iter : ${paginationModel.steps}" class="page-item"
+                        th:classappend="${(step.active ? 'active' : '') + (step.disabled ? ' disabled' : '')}">
+                        <a th:href="${step.url}" class="page-link"
+                           th:attr="aria-current=${step.active} ? 'page', aria-label=${step.label}, aria-disabled=${step.disabled} ? 'true'">
+                            <i th:if="${iter.first}" class="bi bi-chevron-left" aria-hidden="true"></i>
+                            <i th:if="${iter.last}" class="bi bi-chevron-right" aria-hidden="true"></i>
+                            <th:block th:unless="${iter.first or iter.last}">[[${step.label}]]</th:block>
+                        </a>
                     </li>
                 </ul>
             </nav>
-            <p class="fw-normal small m-0 d-none d-xl-block d-xxl-block">[[${paginationModel.elements}]]</p>
-        </th:block>
+        </div>
+
+        <!--/* Empty state for lists. filtered: true when search filters are applied. */-->
+        <div th:fragment="emptyState(icon, title, filtered)" class="empty-state">
+            <span class="empty-icon"><i class="bi" th:classappend="${icon}" aria-hidden="true"></i></span>
+            <h2 th:text="${filtered} ? 'No results match your filters' : ${title}">No records</h2>
+            <p class="mb-0" th:text="${filtered} ? 'Try adjusting or clearing the filters.' : 'Records you add will appear here.'"></p>
+        </div>
 
         <div th:fragment="fieldErrors(object, field)" th:object="${__${object}__}" th:remove="tag">
             <div th:if="${#fields.hasErrors(field) || #fields.hasErrors(field + '*')}" class="invalid-feedback d-block">
@@ -25,8 +38,36 @@
         </div>
 
         <div th:fragment="globalErrors(object)" th:object="${__${object}__}" th:remove="tag">
-            <div th:if="${#fields.hasGlobalErrors()}" class="invalid-feedback d-block">
-                <p th:each="globalError : ${#fields.globalErrors()}" class="mb-0">[[${globalError}]]</p>
+            <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <div class="alert-text">
+                    <p th:each="globalError : ${#fields.globalErrors()}" class="mb-0">[[${globalError}]]</p>
+                </div>
+            </div>
+            <div th:if="${#fields.hasErrors('*') and not #fields.hasGlobalErrors()}" class="alert alert-danger mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <span class="alert-text">Please review the highlighted fields.</span>
+            </div>
+        </div>
+
+        <!--/* Read-only audit information (id, creation and last update) */-->
+        <div th:fragment="audit(id, createdAt, updatedAt)" class="card mb-4">
+            <div class="card-header"><i class="bi bi-clock-history" aria-hidden="true"></i> Record information</div>
+            <div class="card-body">
+                <dl class="meta-list">
+                    <div>
+                        <dt>ID</dt>
+                        <dd>#[[${id}]]</dd>
+                    </div>
+                    <div>
+                        <dt>Created</dt>
+                        <dd th:text="${createdAt != null} ? ${#temporals.format(createdAt, 'dd MMM yyyy, HH:mm')} : '—'">—</dd>
+                    </div>
+                    <div>
+                        <dt>Last updated</dt>
+                        <dd th:text="${updatedAt != null} ? ${#temporals.format(updatedAt, 'dd MMM yyyy, HH:mm')} : '—'">—</dd>
+                    </div>
+                </dl>
             </div>
         </div>
     </body>

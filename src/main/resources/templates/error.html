@@ -4,12 +4,24 @@
       lang="en"
       layout:decorate="~{layout}">
     <head>
-        <title>[[${status}]] - [[${error}]]</title>
+        <title>[[${status}]] · [[${error}]]</title>
     </head>
     <body>
-        <div layout:fragment="content">
-            <h1 class="mb-4">[[${status}]] - [[${error}]]</h1>
-            <p>The page you are looking for is not available right now.</p>
+        <div layout:fragment="content" class="error-page">
+            <div class="error-code mb-2">[[${status}]]</div>
+            <h1 class="h3 mb-2" th:switch="${status}">
+                <th:block th:case="403">You don't have access to this page</th:block>
+                <th:block th:case="404">Page not found</th:block>
+                <th:block th:case="401">Please sign in</th:block>
+                <th:block th:case="400">The request could not be processed</th:block>
+                <th:block th:case="*">Something went wrong</th:block>
+            </h1>
+            <p class="text-body-secondary mb-4" th:switch="${status}">
+                <th:block th:case="403">Your account doesn't have the permission required. Ask an administrator if you need it.</th:block>
+                <th:block th:case="404">The page or record you are looking for doesn't exist or was removed.</th:block>
+                <th:block th:case="*">Please try again in a moment. If the problem persists, contact the administrator.</th:block>
+            </p>
+            <a th:href="@{/}" class="btn btn-primary"><i class="bi bi-house" aria-hidden="true"></i> Go to dashboard</a>
         </div>
     </body>
 </html>

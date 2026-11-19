@@ -5,10 +5,12 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       data-bs-theme="light">
 <head>
-    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Caipora</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="color-scheme" content="light dark" />
+    <title layout:title-pattern="$CONTENT_TITLE · $LAYOUT_TITLE">Caipora</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}" />
+    <script th:src="@{/js/theme.js}"></script>
     <link th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}" rel="stylesheet" />
     <link th:href="@{/webjars/bootstrap-icons/1.13.2/font/bootstrap-icons.min.css}" rel="stylesheet" />
     <link th:href="@{/webjars/flatpickr/4.6.13/dist/flatpickr.min.css}" rel="stylesheet" />
@@ -16,59 +18,180 @@
     <script th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}" defer></script>
     <script th:src="@{/webjars/htmx.org/4.0.1/dist/htmx.min.js}" defer></script>
     <script th:src="@{/webjars/flatpickr/4.6.13/dist/flatpickr.min.js}" defer></script>
-    <script th:src="@{/webjars/tinymce/8.10.0/tinymce.min.js}"></script>
+    <script th:src="@{/webjars/tinymce/8.10.0/tinymce.min.js}" defer></script>
     <script th:src="@{/js/app.js}" defer></script>
 </head>
 <body hx-boost:inherited="true">
-    <header id="main-header" data-bs-theme="dark">
-        <div class="container">
-            <nav class="navbar navbar-expand-md">
-                <a th:href="@{/}" class="navbar-brand">
-                    <img th:src="@{/images/logo.svg}" alt="Caipora" width="30" height="30" class="d-inline-block align-top" style="filter: invert(100%);">
-                    <span class="ps-1">Caipora</span>
+    <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="MSG_SUCCESS" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="MSG_INFO" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="MSG_ERROR" type="java.lang.String"*/-->
+    <a class="visually-hidden-focusable skip-link" href="#main-content">Skip to content</a>
+
+    <!-- ===== Application shell (sidebar and top bar only for authenticated users) ===== -->
+    <div class="app-shell" th:with="authenticated=${#authorization.expression('isAuthenticated()')}"
+         th:classappend="${authenticated} ? 'has-sidebar'">
+        <aside class="sidebar offcanvas-lg offcanvas-start" th:if="${authenticated}" tabindex="-1" id="sidebar" aria-label="Main navigation">
+            <div class="offcanvas-header d-lg-none">
+                <span class="visually-hidden">Navigation</span>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="offcanvas"
+                        data-bs-target="#sidebar" aria-label="Close navigation"></button>
+            </div>
+            <div class="sidebar-inner">
+                <a th:href="@{/}" class="sidebar-brand">
+                    <span class="brand-mark"><img th:src="@{/images/logo.svg}" alt="" /></span>
+                    <span>Caipora</span>
                 </a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarToggle"
-                        aria-label="Toggle navigation" aria-controls="navbarToggle" aria-expanded="false">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarToggle">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="navbar-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
-                        </li>
-                        <li class="navbar-item dropdown" sec:authorize="isAuthenticated()">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="navbarEntitiesLink" role="button"
-                                    aria-expanded="false">Menu</a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarEntitiesLink">
-                                <li><a th:href="@{/departments}" class="dropdown-item">Departments</a></li>
-                                <li><a th:href="@{/users}" class="dropdown-item">Users</a></li>
-                                <li><a th:href="@{/versions}" class="dropdown-item">Versions</a></li>
-                                <li><a th:href="@{/deploys}" class="dropdown-item">Deploys</a></li>
-                                <li><a th:href="@{/stakeholders}" class="dropdown-item">Stakeholders</a></li>
-                                <li><a th:href="@{/softwares}" class="dropdown-item">Applications</a></li>
-                            </ul>
-                        </li>
-                        <li class="navbar-item">
-                            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="nav-link">Login</a>
-                            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="nav-link">
-                                <input value="Logout" type="submit" class="unset" />
-                            </form>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li>
+                            <a th:href="@{/}" class="sidebar-link" th:classappend="${requestUri == '/'} ? 'active'"
+                               th:attr="aria-current=${requestUri == '/'} ? 'page'">
+                                <i class="bi bi-grid-1x2" aria-hidden="true"></i> Dashboard
+                            </a>
                         </li>
                     </ul>
+
+                    <div class="sidebar-section"
+                         sec:authorize="hasAnyAuthority('ROLE_DEPLOY_VIEW', 'ROLE_APPLICATION_VIEW', 'ROLE_VERSION_VIEW')">Releases</div>
+                    <ul class="sidebar-nav">
+                        <li sec:authorize="hasAuthority('ROLE_DEPLOY_VIEW')">
+                            <a th:href="@{/deploys}" class="sidebar-link"
+                               th:classappend="${#strings.startsWith(requestUri, '/deploys')} ? 'active'">
+                                <i class="bi bi-rocket-takeoff" aria-hidden="true"></i> Deploys
+                            </a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ROLE_APPLICATION_VIEW')">
+                            <a th:href="@{/softwares}" class="sidebar-link"
+                               th:classappend="${#strings.startsWith(requestUri, '/softwares')} ? 'active'">
+                                <i class="bi bi-boxes" aria-hidden="true"></i> Applications
+                            </a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ROLE_VERSION_VIEW')">
+                            <a th:href="@{/versions}" class="sidebar-link"
+                               th:classappend="${#strings.startsWith(requestUri, '/versions')} ? 'active'">
+                                <i class="bi bi-tags" aria-hidden="true"></i> Versions
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-section"
+                         sec:authorize="hasAnyAuthority('ROLE_STAKEHOLDER_VIEW', 'ROLE_DEPARTMENT_VIEW')">Organization</div>
+                    <ul class="sidebar-nav">
+                        <li sec:authorize="hasAuthority('ROLE_STAKEHOLDER_VIEW')">
+                            <a th:href="@{/stakeholders}" class="sidebar-link"
+                               th:classappend="${#strings.startsWith(requestUri, '/stakeholders')} ? 'active'">
+                                <i class="bi bi-person-badge" aria-hidden="true"></i> Stakeholders
+                            </a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ROLE_DEPARTMENT_VIEW')">
+                            <a th:href="@{/departments}" class="sidebar-link"
+                               th:classappend="${#strings.startsWith(requestUri, '/departments')} ? 'active'">
+                                <i class="bi bi-diagram-3" aria-hidden="true"></i> Departments
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-section"
+                         sec:authorize="hasAnyAuthority('ROLE_USER_VIEW', 'ROLE_SWAGGER_ACCESS')">Administration</div>
+                    <ul class="sidebar-nav">
+                        <li sec:authorize="hasAuthority('ROLE_USER_VIEW')">
+                            <a th:href="@{/users}" class="sidebar-link"
+                               th:classappend="${#strings.startsWith(requestUri, '/users')} ? 'active'">
+                                <i class="bi bi-people" aria-hidden="true"></i> Users
+                            </a>
+                        </li>
+                        <li sec:authorize="hasAuthority('ROLE_SWAGGER_ACCESS')">
+                            <a th:href="@{/swagger-ui.html}" class="sidebar-link" target="_blank" rel="noopener" hx-boost="false">
+                                <i class="bi bi-braces" aria-hidden="true"></i> API docs
+                                <i class="bi bi-box-arrow-up-right ms-auto small" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="sidebar-footer">Caipora · Release management</div>
+            </div>
+        </aside>
+
+        <div class="app-main">
+            <header class="topbar" th:if="${authenticated}">
+                <button type="button" class="btn btn-icon d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+                        aria-controls="sidebar" aria-label="Open navigation">
+                    <i class="bi bi-list" aria-hidden="true"></i>
+                </button>
+                <a th:href="@{/}" class="d-lg-none fw-semibold text-body">Caipora</a>
+                <div class="ms-auto d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-icon" data-theme-toggle
+                            aria-label="Toggle dark mode" title="Toggle dark mode">
+                        <i class="bi bi-moon-stars theme-icon-light" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown">
+                        <button type="button" class="user-chip" data-bs-toggle="dropdown" aria-expanded="false"
+                                th:with="displayName=${#authentication.principal.displayName}">
+                            <span class="avatar" aria-hidden="true">[[${#strings.substring(displayName, 0, 1)}]]</span>
+                            <span class="d-none d-sm-inline fw-medium">[[${displayName}]]</span>
+                            <i class="bi bi-chevron-down small text-body-secondary" aria-hidden="true"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <div class="px-2 py-1 small text-body-secondary">
+                                Signed in as <strong class="text-body" sec:authentication="name">user</strong>
+                            </div>
+                            <hr class="dropdown-divider" />
+                            <a th:href="@{/account/password}" class="dropdown-item">
+                                <i class="bi bi-key" aria-hidden="true"></i> Change password
+                            </a>
+                            <form th:action="@{/logout}" method="post" hx-boost="false">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sign out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </nav>
+            </header>
+
+            <main id="main-content" class="app-content">
+                <!--/* success messages float (they auto-dismiss, so they must not shift the page under the cursor) */-->
+                <div class="toast-area" th:if="${MSG_SUCCESS}">
+                    <div class="alert alert-success alert-dismissible fade show" role="status" data-autodismiss>
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                        <span class="alert-text">[[${MSG_SUCCESS}]]</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="flash-stack" th:if="${MSG_INFO != null or MSG_ERROR != null}">
+                    <div th:if="${MSG_INFO}" class="alert alert-info alert-dismissible" role="status">
+                        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                        <span class="alert-text">[[${MSG_INFO}]]</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div th:if="${MSG_ERROR}" class="alert alert-danger alert-dismissible" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                        <span class="alert-text">[[${MSG_ERROR}]]</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div layout:fragment="content"></div>
+            </main>
         </div>
-    </header>
-    <main class="my-5">
-        <div class="container">
-            <!--/*@thymesVar id="MSG_SUCCESS" type="java.lang.String"*/-->
-            <!--/*@thymesVar id="MSG_INFO" type="java.lang.String"*/-->
-            <!--/*@thymesVar id="MSG_ERROR" type="java.lang.String"*/-->
-            <p th:if="${MSG_SUCCESS}" class="alert alert-success mb-4" role="alert">[[${MSG_SUCCESS}]]</p>
-            <p th:if="${MSG_INFO}" class="alert alert-info mb-4" role="alert">[[${MSG_INFO}]]</p>
-            <p th:if="${MSG_ERROR}" class="alert alert-danger mb-4" role="alert">[[${MSG_ERROR}]]</p>
-            <div layout:fragment="content"></div>
+
+        <!-- Confirmation dialog used by hx-confirm (see app.js) -->
+        <div class="modal fade" id="confirmModal" th:if="${authenticated}" tabindex="-1" aria-labelledby="confirmModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center p-4">
+                        <span class="modal-icon mb-3"><i class="bi bi-trash3" aria-hidden="true"></i></span>
+                        <h2 class="h5 mb-2" id="confirmModalTitle">Are you sure?</h2>
+                        <p class="text-body-secondary mb-4" data-confirm-message></p>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger flex-fill" data-confirm-accept>Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
+    </div>
+
 </body>
 </html>

@@ -55,9 +55,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- Sessions stored in PostgreSQL (shared by every instance). In Boot 4 the auto-configuration lives in the
+             starter; the bare spring-session-jdbc library alone left the app on in-memory Tomcat sessions. -->
         <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-jdbc</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-session-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.wimdeblauwe</groupId>
@@ -112,6 +114,18 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.22.0</version>
+        </dependency>
+        <!-- Random data for local development (see the "dev" package; only loaded with development profiles) -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <!-- HTML sanitization for rich-text fields (prevents stored XSS) -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.21.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-envers -->
         <dependency>

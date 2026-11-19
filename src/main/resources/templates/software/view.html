@@ -4,11 +4,12 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>View Application</title>
+    <title>Application</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('view', 'View Application', 'applicationForm', @{/softwares})}"></div>
+        <div th:replace="~{fragments/header :: viewHeader(${software.name}, @{/softwares},
+                @{/softwares/edit/{id}(id=${software.id})}, 'ROLE_APPLICATION_MANAGE')}"></div>
         <th:block th:replace="~{software/_form :: softwareForm('view', ${software}, ${ownerValues})}"></th:block>
     </div>
 </body>

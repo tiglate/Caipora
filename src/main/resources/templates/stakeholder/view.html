@@ -4,11 +4,12 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>View Stakeholder</title>
+    <title>Stakeholder</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('view', 'View Stakeholder', 'stakeholderForm', @{/stakeholders})}"></div>
+        <div th:replace="~{fragments/header :: viewHeader(${stakeholder.name}, @{/stakeholders},
+                @{/stakeholders/edit/{id}(id=${stakeholder.id})}, 'ROLE_STAKEHOLDER_MANAGE')}"></div>
         <th:block th:replace="~{stakeholder/_form :: stakeholderForm('view', ${stakeholder}, ${departmentValues}, ${genderValues})}"></th:block>
     </div>
 </body>

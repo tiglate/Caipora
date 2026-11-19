@@ -17,8 +17,8 @@ public interface SoftwareRepository extends JpaRepository<Software, Integer> {
     @Query("SELECT new br.dev.ampliar.caipora.model.SoftwareDTO(d.id, d.code, d.name, o.id, o.name, d.createdAt, d.updatedAt) " +
             "FROM Software d " +
             "LEFT JOIN d.owner o " +
-            "WHERE (:code IS NULL OR d.code LIKE %:code%) " +
-            "AND (:name IS NULL OR d.name LIKE %:name%) " +
+            "WHERE (:code IS NULL OR LOWER(d.code) LIKE CONCAT('%', LOWER(CAST(:code AS String)), '%')) " +
+            "AND (:name IS NULL OR LOWER(d.name) LIKE CONCAT('%', LOWER(CAST(:name AS String)), '%')) " +
             "AND (:owner IS NULL OR o.id = :owner)")
     Page<SoftwareDTO> findAllBySearchCriteria(
             @Param("code") String code,

@@ -1,54 +1,89 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en"
-      layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="light">
 <head>
-    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Sign in · Caipora</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}" />
+    <script th:src="@{/js/theme.js}"></script>
+    <link th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/webjars/bootstrap-icons/1.13.2/font/bootstrap-icons.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/app.css}" rel="stylesheet" />
+    <script th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}" defer></script>
+    <script th:src="@{/js/app.js}" defer></script>
 </head>
 <body>
-    <div layout:fragment="content" class="login-container">
-        <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
-        <div class="login-card">
-            <div class="card shadow">
-                <div class="card-header">
-                    Welcome
-                </div>
-                <div class="card-body">
-                    <form th:action="${requestUri}" method="post" th:object="${authentication}">
-                        <div class="mb-3">
-                            <label for="txtUsername" class="form-label">Username</label>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text bi-person"></span>
-                                <input type="text"
-                                       id="txtUsername"
-                                       class="form-control"
-                                       th:field="*{name}"
-                                       placeholder="Enter your username"
-                                       autofocus required />
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="txtPassword" class="form-label">Password</label>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text bi-lock-fill"></span>
-                                <input type="password"
-                                       id="txtPassword"
-                                       class="form-control"
-                                       th:field="*{password}"
-                                       placeholder="Enter your password"
-                                       required />
-                            </div>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" id="ckbRememberMe" th:field="*{rememberMe}">
-                            <label class="form-check-label" for="ckbRememberMe">Remember me</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                </div>
+    <!--/*@thymesVar id="MSG_INFO" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="MSG_ERROR" type="java.lang.String"*/-->
+    <div class="auth-page">
+        <section class="auth-hero" aria-hidden="true">
+            <div class="d-flex align-items-center gap-2 fw-bold fs-5 position-relative">
+                <span class="brand-mark"><img th:src="@{/images/logo.svg}" alt="" /></span> Caipora
             </div>
-        </div>
+            <div class="position-relative">
+                <h2 class="fw-bold mb-3">Every release, tracked from first build to production.</h2>
+                <p class="mb-4">Register application versions, follow deployments across environments and keep a
+                    complete audit trail of who did what, and when.</p>
+                <div class="auth-feature"><i class="bi bi-rocket-takeoff"></i><span>Deployments per environment, from DEV to DR</span></div>
+                <div class="auth-feature"><i class="bi bi-tags"></i><span>Versioned packages with changelogs</span></div>
+                <div class="auth-feature"><i class="bi bi-shield-check"></i><span>Role-based access and full audit history</span></div>
+            </div>
+            <div class="small position-relative opacity-75">Release management</div>
+        </section>
+
+        <main class="auth-panel" id="main-content">
+            <div class="auth-card">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <span class="brand-mark d-lg-none"><img th:src="@{/images/logo.svg}" alt="Caipora" /></span>
+                    <button type="button" class="btn btn-icon ms-auto" data-theme-toggle aria-label="Toggle dark mode">
+                        <i class="bi bi-moon-stars" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <h1 class="h3 mb-1">Welcome back</h1>
+                <p class="text-body-secondary mb-4">Sign in to your Caipora account.</p>
+
+                <div th:if="${MSG_INFO}" class="alert alert-info mb-3" role="status">
+                    <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                    <span class="alert-text">[[${MSG_INFO}]]</span>
+                </div>
+                <div th:if="${MSG_ERROR}" class="alert alert-danger mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    <span class="alert-text">[[${MSG_ERROR}]]</span>
+                </div>
+
+                <form th:action="@{/login}" method="post" th:object="${authentication}">
+                    <div class="mb-3">
+                        <label for="txtUsername" class="form-label">Username</label>
+                        <div class="input-icon">
+                            <i class="bi bi-person" aria-hidden="true"></i>
+                            <input type="text" id="txtUsername" class="form-control form-control-lg"
+                                   th:field="*{name}" autocomplete="username" autocapitalize="none" spellcheck="false"
+                                   maxlength="255" autofocus required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="txtPassword" class="form-label">Password</label>
+                        <div class="input-icon">
+                            <i class="bi bi-lock" aria-hidden="true"></i>
+                            <input type="password" id="txtPassword" class="form-control form-control-lg has-action"
+                                   th:field="*{password}" autocomplete="current-password" maxlength="255" required />
+                            <button type="button" class="btn btn-icon input-action" data-toggle-password="txtPassword"
+                                    aria-label="Show password" aria-pressed="false">
+                                <i class="bi bi-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-check mb-4">
+                        <input type="checkbox" class="form-check-input" id="ckbRememberMe" th:field="*{rememberMe}" />
+                        <label class="form-check-label" for="ckbRememberMe">Keep me signed in on this device</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Sign in
+                    </button>
+                </form>
+            </div>
+        </main>
     </div>
 </body>
 </html>

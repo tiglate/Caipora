@@ -16,8 +16,8 @@ public interface StakeholderRepository extends JpaRepository<Stakeholder, Intege
     @Query("SELECT new br.dev.ampliar.caipora.model.StakeholderDTO(s.id, s.name, s.email, s.gender, d.id, d.name, s.createdAt, s.updatedAt) " +
             "FROM Stakeholder s " +
             "LEFT JOIN s.department d " +
-            "WHERE (:name IS NULL OR s.name LIKE %:name%) " +
-            "AND (:email IS NULL OR s.email LIKE %:email%) " +
+            "WHERE (:name IS NULL OR LOWER(s.name) LIKE CONCAT('%', LOWER(CAST(:name AS String)), '%')) " +
+            "AND (:email IS NULL OR LOWER(s.email) LIKE CONCAT('%', LOWER(CAST(:email AS String)), '%')) " +
             "AND (:department IS NULL OR d.id = :department) " +
             "AND (:gender IS NULL OR s.gender = :gender)")
     Page<StakeholderDTO> findAllBySearchCriteria(

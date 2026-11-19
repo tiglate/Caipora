@@ -1,4 +1,4 @@
-CREATE VIEW vw_last_version_deployed
+CREATE OR REPLACE VIEW vw_last_version_deployed
 AS
 SELECT
     sow.id_software,
