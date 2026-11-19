@@ -153,12 +153,13 @@ public class VersionServiceImpl implements VersionService {
     }
 
     /**
-     * Resolves a stored file name inside the upload directory, refusing anything that would escape it.
+     * Resolves a stored file name inside the upload directory, refusing anything that would escape it
+     * (path traversal): the normalized path must start with the upload directory and sit directly inside it.
      */
     private Path resolveInUploadDirectory(final String fileName) {
         final Path root = uploadRoot();
         final Path resolved = root.resolve(fileName).normalize();
-        if (!root.equals(resolved.getParent())) {
+        if (!resolved.startsWith(root) || !root.equals(resolved.getParent())) {
             throw new IllegalArgumentException("Invalid file name");
         }
         return resolved;
