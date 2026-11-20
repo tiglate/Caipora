@@ -30,6 +30,12 @@ public class Software {
     @JoinColumn(name = "id_owner")
     private Stakeholder owner;
 
+    /**
+     * Script run on the server for every deploy of the application (stored as typed, never HTML-sanitized).
+     */
+    @Column(columnDefinition = "text")
+    private String deployScript;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "timestamp")
     private OffsetDateTime createdAt;
@@ -69,6 +75,14 @@ public class Software {
 
     public void setOwner(final Stakeholder owner) {
         this.owner = owner;
+    }
+
+    public String getDeployScript() {
+        return deployScript;
+    }
+
+    public void setDeployScript(final String deployScript) {
+        this.deployScript = deployScript;
     }
 
     public OffsetDateTime getCreatedAt() {

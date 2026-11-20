@@ -8,47 +8,79 @@
     <title>Deploys</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">Deploys</h1>
-    </div>
+    <!--/*@thymesVar id="deploys" type="java.util.List<br.dev.ampliar.caipora.model.SoftwareDeployedDTO>"*/-->
+    <div layout:fragment="content" th:with="canManage=${#authorization.expression('hasAuthority(''ROLE_DEPLOY_MANAGE'')')}">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Deploys</h1>
+                <p class="page-subtitle">The version active in each environment, per application.</p>
+            </div>
+        </div>
 
-    <div class="row row-cols-1 row-cols-lg-3 g-4 mb-3">
-        <div class="col" th:each="deploy : ${deploys}">
-            <div class="card shadow h-100">
-                <div class="card-header text-truncate">
-                    [[${deploy.code}]] - [[${deploy.name}]]
-                </div>
-                <div class="card-body p-2">
-                    <table class="table table-sm align-middle table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">Env</th>
-                                <th scope="col">Version</th>
-                                <th scope="col" class="text-center">Deploy</th>
-                                <th scope="col" class="text-center"><i class="bi-list"></i></th>
+        <div class="card" th:if="${#lists.isEmpty(deploys)}">
+            <div th:replace="~{fragments/form-utils :: emptyState('bi-rocket-takeoff', 'No applications yet', false)}"></div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-3 g-4 mb-3">
+            <div class="col" th:each="app : ${deploys}">
+                <div class="card deploy-card h-100">
+                    <div class="card-header">
+                        <span class="app-code" th:text="${app.code}">APP</span>
+                        <span class="text-truncate fw-normal" th:text="${app.name}" th:title="${app.name}">Application</span>
+                        <span class="ms-auto badge-soft badge-muted no-dot" th:unless="${app.hasScript}"
+                              title="Deploys are only recorded: the application has no deploy script">No script</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover env-table">
+                            <caption class="visually-hidden" th:text="|Active versions of ${app.name}|">Versions</caption>
+                            <tbody>
+                            <tr th:each="env : ${app.environments}">
+                                <th scope="row" class="env-name" th:text="${env.environment.shortName}">DEV</th>
+                                <td class="env-version">
+                                    <div class="env-version-line">
+                                        <a th:if="${env.deployed}" th:href="@{/deploys/view/{id}(id=${env.deployId})}"
+                                           th:text="${env.version}" data-bs-toggle="tooltip"
+                                           th:data-bs-title="|${env.version} · RFC ${env.rfc} · ${#temporals.format(env.executionDate, 'dd MMM yyyy')}|">v1.0</a>
+                                        <span th:unless="${env.deployed}" class="text-body-secondary">—</span>
+                                        <a th:if="${env.inProgress}" th:href="@{/deploys/view/{id}(id=${env.inProgressDeployId})}"
+                                           class="text-decoration-none" th:title="|${env.inProgressVersion} is being deployed|">
+                                            <th:block th:replace="~{deploy/_status :: badge(${env.inProgressStatus})}"></th:block>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="env-date text-body-secondary small"
+                                    th:text="${env.deployed} ? ${#temporals.format(env.executionDate, 'dd MMM yy')} : ''"></td>
+                                <td class="env-actions">
+                                    <th:block th:if="${canManage and env.deployed and !env.inProgress}">
+                                        <a th:href="@{/deploys/add/{softwareId}(softwareId=${app.softwareId}, rollback=${env.environment})}"
+                                           class="btn btn-icon btn-icon-danger" title="Roll back to the previous version"
+                                           th:aria-label="|Roll back ${app.name} in ${env.environment}|"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i></a>
+                                        <a th:if="${env.promoteTo != null}"
+                                           th:href="@{/deploys/add/{softwareId}(softwareId=${app.softwareId}, promote=${env.deployId})}"
+                                           class="btn btn-icon" th:title="|Promote ${env.version} to ${env.promoteTo}|"
+                                           th:aria-label="|Promote ${env.version} of ${app.name} to ${env.promoteTo}|"><i class="bi bi-arrow-up-circle" aria-hidden="true"></i></a>
+                                    </th:block>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dev.deployId}, 'DEV', ${deploy.dev.version}, ${deploy.dev.executionDate}, ${deploy.dev.rfc})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.qa.deployId}, 'QA', ${deploy.qa.version}, ${deploy.qa.executionDate}, ${deploy.qa.rfc})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.uat.deployId}, 'UAT', ${deploy.uat.version}, ${deploy.uat.executionDate}, ${deploy.uat.rfc})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.prod.deployId}, 'PROD', ${deploy.prod.version}, ${deploy.prod.executionDate}, ${deploy.prod.rfc})}"></tr>
-                            <tr th:replace="~{deploy/_cardrow::cardRow(${deploy.dr.deployId}, 'DR', ${deploy.dr.version}, ${deploy.dr.executionDate}, ${deploy.dr.rfc})}"></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer text-center">
-                    <button class="btn btn-danger btn-sm"
-                            sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')"><i class="bi-unlock"></i> Unlock</button>
-                    <button class="btn btn-secondary btn-sm"><i class="bi-clock"></i> History</button>
-                    <a class="btn btn-primary btn-sm"
-                       th:href="@{/deploys/add/{softwareId}(softwareId=${deploy.softwareId})}"
-                       sec:authorize="hasRole('ROLE_DEPLOY_MANAGE')"><i class="bi-plus-circle"></i> Deploy</a>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <form th:if="${canManage and app.inProgress}" th:action="@{/deploys/unlock/{id}(id=${app.softwareId})}" method="post"
+                              th:hx-confirm="|Cancel every deploy of ${app.name} still queued or running? Use it when a deploy is stuck.|">
+                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-unlock" aria-hidden="true"></i> Unlock</button>
+                        </form>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/deploys/history/{id}(id=${app.softwareId})}">
+                            <i class="bi bi-clock-history" aria-hidden="true"></i> History
+                        </a>
+                        <a class="btn btn-primary btn-sm" th:if="${canManage}"
+                           th:href="@{/deploys/add/{softwareId}(softwareId=${app.softwareId})}">
+                            <i class="bi bi-rocket-takeoff" aria-hidden="true"></i> Deploy
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </body>
 </html>

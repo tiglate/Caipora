@@ -40,6 +40,39 @@
             </div>
         </div>
 
+        <!--/*@thymesVar id="packagesFolder" type="java.lang.String"*/-->
+        <div class="card mb-4" th:with="canEditScript=${#authorization.expression('hasAuthority(''ROLE_DEPLOY_SCRIPT_MANAGE'')')}">
+            <div class="card-header">
+                <i class="bi bi-terminal" aria-hidden="true"></i>
+                <label for="mmoDeployScript" class="m-0" th:remove="${mode == 'view'} ? 'tag'">Deploy script</label>
+                <span class="card-header-hint" th:if="${mode != 'view' and !canEditScript}">Changing the script requires the Deploy Script permission</span>
+            </div>
+            <div class="card-body">
+                <p class="text-body-secondary small" th:if="${packagesFolder != null}">
+                    Packages folder: <code class="text-break" th:text="${packagesFolder}">/srv/caipora/packages/APP</code>
+                </p>
+                <th:block th:if="${mode != 'view'}">
+                    <textarea id="mmoDeployScript" class="form-control font-monospace script-editor" rows="14"
+                              spellcheck="false" autocomplete="off" th:field="*{deployScript}"
+                              th:disabled="${!canEditScript}" th:errorclass="is-invalid"
+                              placeholder="e.g.&#10;set -euo pipefail&#10;unzip -o &quot;$CAIPORA_PACKAGE&quot; -d &quot;/opt/apps/$CAIPORA_APP_CODE/$CAIPORA_ENVIRONMENT&quot;"></textarea>
+                    <div th:replace="~{fragments/form-utils :: fieldErrors('software', 'deployScript')}"></div>
+                    <div class="form-text">
+                        Run on the Caipora server for every deploy of the application; the deploy succeeds when the script
+                        exits with code 0. Leave it empty to only record deploys. Available environment variables:
+                        <code>CAIPORA_PACKAGE</code> (full path of the package), <code>CAIPORA_PACKAGE_NAME</code>,
+                        <code>CAIPORA_PACKAGES_FOLDER</code>, <code>CAIPORA_APP_CODE</code>, <code>CAIPORA_APP_NAME</code>,
+                        <code>CAIPORA_VERSION</code>, <code>CAIPORA_ENVIRONMENT</code>, <code>CAIPORA_RFC</code>,
+                        <code>CAIPORA_DEPLOY_ID</code> and <code>CAIPORA_OPERATOR</code>.
+                    </div>
+                </th:block>
+                <th:block th:if="${mode == 'view'}">
+                    <pre class="script-view mb-0" th:if="${software.deployScript != null}" th:text="${software.deployScript}">echo</pre>
+                    <p class="text-body-secondary mb-0" th:if="${software.deployScript == null}">No script: deploys are only recorded.</p>
+                </th:block>
+            </div>
+        </div>
+
         <th:block th:if="${mode != 'add'}">
             <div th:replace="~{fragments/form-utils :: audit(${software.id}, ${software.createdAt}, ${software.updatedAt})}"></div>
         </th:block>

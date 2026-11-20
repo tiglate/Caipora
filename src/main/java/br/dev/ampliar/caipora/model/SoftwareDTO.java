@@ -21,6 +21,9 @@ public class SoftwareDTO {
     @SoftwareNameUnique
     private String name;
 
+    @Size(max = 100_000)
+    private String deployScript;
+
     private OffsetDateTime createdAt;
 
     private OffsetDateTime updatedAt;
@@ -80,6 +83,14 @@ public class SoftwareDTO {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public String getDeployScript() {
+        return deployScript;
+    }
+
+    public void setDeployScript(String deployScript) {
+        this.deployScript = deployScript;
     }
 
     public OffsetDateTime getCreatedAt() {

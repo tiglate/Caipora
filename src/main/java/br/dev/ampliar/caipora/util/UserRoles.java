@@ -19,6 +19,11 @@ public class UserRoles {
     public static final String ROLE_APPLICATION_MANAGE = "ROLE_APPLICATION_MANAGE";
     public static final String ROLE_DEPLOY_VIEW = "ROLE_DEPLOY_VIEW";
     public static final String ROLE_DEPLOY_MANAGE = "ROLE_DEPLOY_MANAGE";
+    /**
+     * Edit the deploy script of the applications. Separate from ROLE_APPLICATION_MANAGE because the script runs on
+     * the server: whoever edits it can run any command there.
+     */
+    public static final String ROLE_DEPLOY_SCRIPT_MANAGE = "ROLE_DEPLOY_SCRIPT_MANAGE";
     public static final String ROLE_SWAGGER_ACCESS = "ROLE_SWAGGER_ACCESS";
     public static final String ROLE_ACTUATOR_ACCESS = "ROLE_ACTUATOR_ACCESS";
 }

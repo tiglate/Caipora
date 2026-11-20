@@ -5,8 +5,8 @@ import br.dev.ampliar.caipora.util.ReferencedWarning;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 
 public interface VersionService {
@@ -15,25 +15,34 @@ public interface VersionService {
 
     VersionDTO get(Integer id);
 
+    /**
+     * @throws IllegalArgumentException when the package is not a valid, unregistered file of the application folder
+     */
     @SuppressWarnings("UnusedReturnValue")
-    Integer create(VersionDTO versionDTO) throws IOException;
+    Integer create(VersionDTO versionDTO);
 
     void update(Integer id, VersionDTO versionDTO);
 
-    void delete(Integer id) throws IOException;
+    /**
+     * Deletes the version record. The package stays in the packages directory, which is managed outside Caipora.
+     */
+    void delete(Integer id);
 
     /**
-     * @return the package file of the given version, already validated to be inside the upload directory
+     * @return the packages of the application folder that are not registered as a version yet, most recent first
      */
-    StoredFile getStoredFile(Integer id);
+    List<PackageStorage.PackageFile> getAvailablePackages(Integer softwareId);
+
+    /**
+     * @return the packages folder of the application (it may not exist yet), or null when its code can't name one
+     */
+    Path getPackagesFolder(Integer softwareId);
+
+    /**
+     * @return the package file of the given version, already validated to be inside the application folder
+     */
+    Path getPackageFile(Integer id);
 
     ReferencedWarning getReferencedWarning(Integer id);
-
-    /**
-     * @param path         absolute path of the stored file
-     * @param downloadName name suggested to the browser (the original upload name, without the internal UUID prefix)
-     */
-    record StoredFile(Path path, String downloadName) {
-    }
 
 }

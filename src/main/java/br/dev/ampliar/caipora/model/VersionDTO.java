@@ -2,7 +2,6 @@ package br.dev.ampliar.caipora.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -32,7 +31,9 @@ public class VersionDTO {
 
     private String softwareName;
 
-    private MultipartFile file;
+    private boolean packageAvailable;
+
+    private String fileSize;
 
     private OffsetDateTime createdAt;
 
@@ -76,13 +77,6 @@ public class VersionDTO {
         this.fileName = fileName;
     }
 
-    /**
-     * @return the stored file name without the internal UUID prefix (the name originally uploaded)
-     */
-    public String getDisplayFileName() {
-        return fileName == null ? null : fileName.replaceFirst("^[0-9a-fA-F-]{36}_", "");
-    }
-
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
@@ -123,12 +117,23 @@ public class VersionDTO {
         this.softwareName = softwareName;
     }
 
-    public MultipartFile getFile() {
-        return file;
+    /**
+     * @return whether the package file is present in the application folder
+     */
+    public boolean isPackageAvailable() {
+        return packageAvailable;
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public void setPackageAvailable(boolean packageAvailable) {
+        this.packageAvailable = packageAvailable;
+    }
+
+    public String getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(String fileSize) {
+        this.fileSize = fileSize;
     }
 
     public OffsetDateTime getCreatedAt() {

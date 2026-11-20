@@ -14,11 +14,16 @@
                 <div class="row g-3">
                     <div class="col-md-5">
                         <label for="cboSoftware" class="form-label required">Application</label>
-                        <select id="cboSoftware" class="form-select" th:field="*{softwareId}" th:disabled="${mode == 'view'}"
-                                th:errorclass="is-invalid" th:autofocus="${mode == 'add'}">
+                        <select id="cboSoftware" class="form-select" th:field="*{softwareId}" th:disabled="${mode != 'add'}"
+                                th:errorclass="is-invalid" th:autofocus="${mode == 'add'}"
+                                th:attr="hx-get=${mode == 'add'} ? @{/versions/packages} : null,
+                                         hx-trigger=${mode == 'add'} ? 'change' : null,
+                                         hx-target=${mode == 'add'} ? '#packageField' : null,
+                                         hx-swap=${mode == 'add'} ? 'outerHTML' : null">
                             <option value="">Please select</option>
                             <option th:each="optionValue : ${softwareValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
                         </select>
+                        <input type="hidden" th:if="${mode == 'edit'}" th:field="*{softwareId}" />
                         <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'softwareId')}"></div>
                     </div>
                     <div class="col-md-4">
@@ -33,21 +38,21 @@
                                th:field="*{releaseDate}" th:disabled="${mode == 'view'}" th:errorclass="is-invalid" />
                         <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'releaseDate')}"></div>
                     </div>
-                    <div class="col-12" th:if="${mode == 'add'}">
-                        <label for="filFile" class="form-label required">Package</label>
-                        <input type="file" id="filFile" name="file" class="form-control" accept=".zip,.msi,.exe" required
-                               th:classappend="${#fields.hasErrors('file')} ? 'is-invalid'" />
-                        <div class="form-text">Accepted formats: .zip, .msi or .exe (up to 1 GB). The package cannot be replaced later.</div>
-                        <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'file')}"></div>
-                    </div>
+                    <div class="col-12" th:if="${mode == 'add'}" th:insert="~{version/_form :: packageField}"></div>
                     <div class="col-12" th:if="${mode != 'add'}">
                         <span class="form-label d-block">Package</span>
                         <div class="d-flex flex-wrap align-items-center gap-2">
-                            <span class="code-pill text-break" th:text="${version.displayFileName}">file.zip</span>
-                            <a th:href="@{/versions/download/{id}(id=${version.id})}" class="btn btn-secondary btn-sm"
-                               hx-boost="false" sec:authorize="hasAuthority('ROLE_VERSION_MANAGE')">
-                                <i class="bi bi-download" aria-hidden="true"></i> Download
-                            </a>
+                            <span class="code-pill text-break" th:text="${version.fileName}">file.zip</span>
+                            <th:block th:if="${version.packageAvailable}">
+                                <span class="text-body-secondary small" th:text="${version.fileSize}">12 MB</span>
+                                <a th:href="@{/versions/download/{id}(id=${version.id})}" class="btn btn-secondary btn-sm"
+                                   hx-boost="false" sec:authorize="hasAuthority('ROLE_VERSION_MANAGE')">
+                                    <i class="bi bi-download" aria-hidden="true"></i> Download
+                                </a>
+                            </th:block>
+                            <span th:unless="${version.packageAvailable}" class="badge text-bg-warning">
+                                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Not found in the packages folder
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -82,5 +87,30 @@
             <div th:replace="~{fragments/form-utils :: audit(${version.id}, ${version.createdAt}, ${version.updatedAt})}"></div>
         </th:block>
     </th:block>
+
+    <!--/*
+        Package of a new version: one of the files of the application folder that is not registered yet.
+        Refreshed by htmx (VersionController#packages) when another application is selected.
+    */-->
+    <!--/*@thymesVar id="packageValues" type="java.util.List<br.dev.ampliar.caipora.service.PackageStorage.PackageFile>"*/-->
+    <!--/*@thymesVar id="packagesFolder" type="java.lang.String"*/-->
+    <div th:fragment="packageField" id="packageField" th:object="${version}">
+        <label for="cboPackage" class="form-label required">Package</label>
+        <select id="cboPackage" class="form-select" th:field="*{fileName}" th:errorclass="is-invalid"
+                th:disabled="${#lists.isEmpty(packageValues)}" required>
+            <option value="" th:text="${version.softwareId == null} ? 'Select the application first'
+                    : (${#lists.isEmpty(packageValues)} ? 'No new package in the application folder' : 'Please select')">Please select</option>
+            <option th:each="file : ${packageValues}" th:value="${file.name}"
+                    th:text="|${file.name} (${file.displaySize()}, ${#temporals.format(file.lastModifiedDate(), 'dd MMM yyyy')})|">app.zip</option>
+        </select>
+        <div class="form-text" th:if="${packagesFolder != null}">
+            Copy the package to <code class="text-break" th:text="${packagesFolder}">/srv/caipora/packages/APP</code>
+            and it will be listed here. Packages already registered as a version are not listed.
+        </div>
+        <div class="form-text" th:if="${packagesFolder == null}">
+            The packages are read from the folder of the selected application.
+        </div>
+        <div th:replace="~{fragments/form-utils :: fieldErrors('version', 'fileName')}"></div>
+    </div>
 </body>
 </html>

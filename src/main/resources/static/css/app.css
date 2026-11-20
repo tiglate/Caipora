@@ -1232,3 +1232,125 @@ a:hover {
 .app-main {
     min-width: 0;
 }
+
+/* ---------- Deploy scripts, logs and status ---------- */
+.badge-danger { color: #b42318; background: #fef3f2; }
+.badge-warning { color: #b54708; background: #fffaeb; }
+.badge-info { color: #026aa2; background: #f0f9ff; }
+
+[data-bs-theme="dark"] .badge-danger { color: #fda29b; background: rgba(240, 68, 56, .15); }
+[data-bs-theme="dark"] .badge-warning { color: #fec84b; background: rgba(247, 144, 9, .15); }
+[data-bs-theme="dark"] .badge-info { color: #7cd4fd; background: rgba(11, 165, 236, .15); }
+
+.badge-soft.is-running::before {
+    animation: cp-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes cp-pulse {
+    50% { opacity: .25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badge-soft.is-running::before { animation: none; }
+}
+
+.script-editor {
+    font-size: .8125rem;
+    line-height: 1.5;
+    tab-size: 4;
+    resize: vertical;
+}
+
+.script-view,
+.log-view {
+    margin: 0;
+    padding: .875rem 1rem;
+    border-radius: .5rem;
+    border: 1px solid var(--cp-border);
+    background: var(--cp-surface-2);
+    font-family: var(--bs-font-monospace);
+    font-size: .8125rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    tab-size: 4;
+}
+
+.log-view {
+    max-height: 32rem;
+    overflow-y: auto;
+    background: #0f1424;
+    border-color: #0f1424;
+    color: #d5dbeb;
+}
+
+.deploy-card .card-header .app-code {
+    font-family: var(--bs-font-monospace);
+    font-weight: 600;
+}
+
+/* fixed layout: the narrow columns get set widths and the version takes all the rest */
+.deploy-card .env-table {
+    margin: 0;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.deploy-card .env-table td,
+.deploy-card .env-table th {
+    padding: .45rem .5rem;
+    vertical-align: middle;
+}
+
+.deploy-card .env-table .env-name {
+    width: 3.75rem;
+    padding-left: .875rem;
+    font-weight: 600;
+    font-size: .75rem;
+    letter-spacing: .03em;
+    color: var(--cp-text-muted);
+}
+
+.deploy-card .env-table .env-version {
+    min-width: 0;
+}
+
+.deploy-card .env-table .env-version-line {
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+    min-width: 0;
+}
+
+.deploy-card .env-table .env-version-line > a:first-child {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.deploy-card .env-table .env-version-line > :not(:first-child) {
+    flex-shrink: 0;
+}
+
+.deploy-card .env-table .env-date {
+    width: 5.5rem;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.deploy-card .env-table .env-actions {
+    width: 5rem;
+    padding-right: .875rem;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.deploy-card .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    justify-content: flex-end;
+    background: transparent;
+}

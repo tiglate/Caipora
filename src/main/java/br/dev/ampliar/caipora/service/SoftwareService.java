@@ -12,10 +12,24 @@ public interface SoftwareService {
 
     SoftwareDTO get(Integer id);
 
+    /**
+     * @param canEditScript whether the current user may set the deploy script (otherwise it is left empty)
+     * @throws IllegalArgumentException when the code can't name a packages folder
+     */
     @SuppressWarnings("UnusedReturnValue")
-    Integer create(SoftwareDTO softwareDTO);
+    Integer create(SoftwareDTO softwareDTO, boolean canEditScript);
 
-    void update(Integer id, SoftwareDTO softwareDTO);
+    /**
+     * @param canEditScript whether the current user may change the deploy script (otherwise it is kept)
+     * @throws IllegalArgumentException when the code changes while the application has versions, or the new code
+     *                                  can't name a packages folder
+     */
+    void update(Integer id, SoftwareDTO softwareDTO, boolean canEditScript);
+
+    /**
+     * @return the packages folder of the application (it may not exist yet), or null when the code can't name one
+     */
+    String getPackagesFolder(Integer id);
 
     void delete(Integer id);
 

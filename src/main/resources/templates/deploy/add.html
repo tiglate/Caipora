@@ -4,15 +4,34 @@
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>New Deploy</title>
+    <title>New deploy</title>
 </head>
 <body>
     <!--/*@thymesVar id="requestUri" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="intent" type="java.lang.String"*/-->
     <div layout:fragment="content">
-        <div th:replace="~{fragments/header :: header('add', 'New Deploy', 'deployForm', @{/deploys})}"></div>
-        <div th:replace="~{fragments/form-utils::globalErrors('deploy')}"></div>
-        <form th:action="${requestUri}" method="post" id="deployForm">
-            <th:block th:replace="~{deploy/_form :: deployForm('add', ${deploy}, ${versionValues}, ${environmentValues}, ${authorizerValues})}"></th:block>
+        <div class="page-header">
+            <div>
+                <a th:href="@{/deploys}" class="small text-body-secondary d-inline-flex align-items-center gap-1 mb-1">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to deploys
+                </a>
+                <h1 class="page-title">Deploy <span th:text="${deploy.softwareName}">Application</span></h1>
+                <p class="page-subtitle">
+                    <span class="code-pill" th:text="${deploy.softwareCode}">APP</span>
+                    <span th:if="${intent != null}" class="ms-1" th:text="${intent}">Promote</span>
+                </p>
+            </div>
+        </div>
+        <div th:replace="~{fragments/form-utils :: globalErrors('deploy')}"></div>
+        <form th:action="${requestUri}" method="post" id="deployForm" hx-boost="false" novalidate>
+            <th:block th:replace="~{deploy/_form :: deployForm}"></th:block>
+            <div class="form-actions">
+                <a th:href="@{/deploys}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-rocket-takeoff" aria-hidden="true"></i>
+                    <span th:text="${hasScript} ? 'Start deploy' : 'Record deploy'">Start deploy</span>
+                </button>
+            </div>
         </form>
     </div>
 </body>

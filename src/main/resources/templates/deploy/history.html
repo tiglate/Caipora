@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en"
+      layout:decorate="~{layout}">
+<head>
+    <title>Deploy history</title>
+</head>
+<body>
+    <!--/*@thymesVar id="software" type="br.dev.ampliar.caipora.domain.Software"*/-->
+    <!--/*@thymesVar id="deploys" type="org.springframework.data.domain.Page<br.dev.ampliar.caipora.model.DeployDTO>"*/-->
+    <div layout:fragment="content">
+        <div class="page-header">
+            <div>
+                <a th:href="@{/deploys}" class="small text-body-secondary d-inline-flex align-items-center gap-1 mb-1">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to deploys
+                </a>
+                <h1 class="page-title">Deploy history</h1>
+                <p class="page-subtitle"><span class="code-pill" th:text="${software.code}">APP</span> [[${software.name}]]</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" th:href="@{/deploys/add/{id}(id=${software.id})}"
+                   sec:authorize="hasAuthority('ROLE_DEPLOY_MANAGE')">
+                    <i class="bi bi-rocket-takeoff" aria-hidden="true"></i> Deploy
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <th:block th:if="${deploys.empty}">
+                <div th:replace="~{fragments/form-utils :: emptyState('bi-clock-history', 'No deploys yet', false)}"></div>
+            </th:block>
+            <div th:unless="${deploys.empty}" class="table-responsive">
+                <table class="table table-hover align-middle data-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Environment</th>
+                        <th scope="col">Version</th>
+                        <th scope="col">RFC</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Operator</th>
+                        <th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="deploy : ${deploys}">
+                        <td class="col-id">[[${deploy.id}]]</td>
+                        <td class="text-nowrap" th:text="${#temporals.format(deploy.executionDate, 'dd MMM yyyy')}">01 Jan 2026</td>
+                        <td th:text="${deploy.environment}">QA</td>
+                        <td>
+                            <a th:href="@{/deploys/view/{id}(id=${deploy.id})}" class="row-title" th:text="${deploy.versionName}">v1.0</a>
+                            <span th:if="${deploy.isActive}" class="badge-soft badge-brand no-dot ms-1">Active</span>
+                        </td>
+                        <td><span class="code-pill" th:text="${deploy.rfc}">CHG001</span></td>
+                        <td><th:block th:replace="~{deploy/_status :: badge(${deploy.status})}"></th:block></td>
+                        <td th:text="${deploy.operatorName}">Name</td>
+                        <td class="col-actions">
+                            <div class="row-actions">
+                                <a th:href="@{/deploys/view/{id}(id=${deploy.id})}" class="btn btn-icon" title="View"
+                                   th:aria-label="|View deploy ${deploy.id}|"><i class="bi bi-eye" aria-hidden="true"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:replace="~{fragments/form-utils :: pagination()}"></div>
+        </div>
+    </div>
+</body>
+</html>

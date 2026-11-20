@@ -1,152 +1,93 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      lang="en"
-      layout:decorate="~{layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Deploy Form</title>
 </head>
 <body>
-    <!--/*@thymesVar id="mode" type="java.lang.String"*/-->
     <!--/*@thymesVar id="deploy" type="br.dev.ampliar.caipora.model.DeployDTO"*/-->
-    <!--/*@thymesVar id="versionValues" type="java.util.Map"*/-->
+    <!--/*@thymesVar id="versionValues" type="java.util.List<br.dev.ampliar.caipora.domain.Version>"*/-->
     <!--/*@thymesVar id="authorizerValues" type="java.util.Map"*/-->
-    <!--/*@thymesVar id="environmentValues" type=" br. dev. ampliar. caipora. model. Environment[]"*/-->
-    <th:block th:fragment="deployForm(mode, deploy, versionValues, environmentValues, authorizerValues)" th:object="${deploy}">
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                Application
-            </div>
+    <!--/*@thymesVar id="environmentValues" type="br.dev.ampliar.caipora.model.Environment[]"*/-->
+    <!--/*@thymesVar id="hasScript" type="java.lang.Boolean"*/-->
+    <th:block th:fragment="deployForm" th:object="${deploy}">
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-rocket-takeoff" aria-hidden="true"></i> What to deploy</div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="appCode" class="form-label">App Code</label>
-                        <input type="text" id="appCode" disabled="disabled" class="form-control" th:field="*{softwareCode}" />
-                    </div>
-                    <div class="col-md-5">
-                        <label for="appName" class="form-label">App Name</label>
-                        <input type="text" id="appName" disabled="disabled" class="form-control" th:field="*{softwareName}" />
-                    </div>
-                    <div class="col-md-3">
-                        <label for="version" class="form-label">Version*</label>
-                        <select id="version"
-                                class="form-select"
-                                th:field="*{versionId}"
-                                th:disabled="${mode == 'view'}"
-                                th:classappend="${#fields.hasErrors('versionId') ? 'is-invalid' : ''}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="cboVersion" class="form-label required">Version</label>
+                        <select id="cboVersion" class="form-select" th:field="*{versionId}" th:errorclass="is-invalid"
+                                required th:autofocus="${deploy.versionId == null}">
                             <option value="">Please select</option>
-                            <option th:each="optionValue : ${versionValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
+                            <option th:each="version : ${versionValues}" th:value="${version.id}"
+                                    th:text="|${version.name} — ${version.fileName}|">v1.0.0 — app.zip</option>
                         </select>
-                        <div th:if="${#fields.hasErrors('versionId')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('versionId')}" class="mb-0">[[${error}]]</p>
+                        <div class="form-text" th:if="${#lists.isEmpty(versionValues)}">
+                            This application has no versions yet: register one first.
                         </div>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('deploy', 'versionId')}"></div>
                     </div>
-                    <div class="col-md-2">
-                        <label for="environment" class="form-label">Environment*</label>
-                        <select id="environment"
-                                class="form-select"
-                                th:field="*{environment}"
-                                th:disabled="${mode == 'view'}"
-                                th:classappend="${#fields.hasErrors('environment') ? 'is-invalid' : ''}">
+                    <div class="col-md-6">
+                        <label for="cboEnvironment" class="form-label required">Environment</label>
+                        <select id="cboEnvironment" class="form-select" th:field="*{environment}" th:errorclass="is-invalid" required>
                             <option value="">Please select</option>
-                            <option th:each="optionValue : ${environmentValues}" th:value="${optionValue}">[[${optionValue}]]</option>
+                            <option th:each="environment : ${environmentValues}" th:value="${environment}"
+                                    th:text="${environment}">QA</option>
                         </select>
-                        <div th:if="${#fields.hasErrors('environment')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('environment')}" class="mb-0">[[${error}]]</p>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('deploy', 'environment')}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="alert alert-info mb-0" role="note" th:if="${hasScript}">
+                            <i class="bi bi-terminal" aria-hidden="true"></i>
+                            <span class="alert-text">The deploy script of the application runs on the server as soon as you
+                                confirm; the version becomes active in the environment only if the script succeeds.</span>
+                        </div>
+                        <div class="alert alert-warning mb-0" role="note" th:unless="${hasScript}">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i>
+                            <span class="alert-text">This application has no deploy script: the deploy is only recorded,
+                                nothing is executed.</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow mb-3">
-            <div class="card-header">
-                Deploy Details
-            </div>
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-clipboard-check" aria-hidden="true"></i> Change details</div>
             <div class="card-body">
-                <div class="row mb-2">
-                    <div class="col-md-2">
-                        <label for="rfc" class="form-label">RFC*</label>
-                        <input type="text"
-                               id="rfc"
-                               class="form-control"
-                               th:field="*{rfc}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('rfc') ? 'is-invalid' : ''}" />
-                        <div th:if="${#fields.hasErrors('rfc')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('rfc')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="txtRfc" class="form-label required">RFC</label>
+                        <input type="text" id="txtRfc" class="form-control font-monospace" maxlength="30" required
+                               placeholder="e.g. CHG0012345" th:field="*{rfc}" th:errorclass="is-invalid"
+                               th:autofocus="${deploy.versionId != null}" />
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('deploy', 'rfc')}"></div>
                     </div>
                     <div class="col-md-3">
-                        <label for="executionDate" class="form-label">Execution Date*</label>
-                        <input type="text"
-                               id="executionDate"
-                               class="form-control js-datepicker"
-                               th:field="*{executionDate}"
-                               th:disabled="${mode == 'view'}"
-                               th:classappend="${#fields.hasErrors('executionDate') ? 'is-invalid' : ''}" />
-                        <div th:if="${#fields.hasErrors('executionDate')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('executionDate')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                        <label for="txtExecutionDate" class="form-label required">Execution date</label>
+                        <input type="text" id="txtExecutionDate" class="form-control js-datepicker" required
+                               placeholder="YYYY-MM-DD" th:field="*{executionDate}" th:errorclass="is-invalid" />
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('deploy', 'executionDate')}"></div>
                     </div>
-                    <div th:class="${mode == 'add' ? 'col-md-7' : 'col-md-6'}">
-                        <label for="authorizer" class="form-label">Authorizer*</label>
-                        <select id="authorizer"
-                                class="form-select"
-                                th:field="*{authorizerId}"
-                                th:disabled="${mode == 'view'}"
-                                th:classappend="${#fields.hasErrors('authorizerId') ? 'is-invalid' : ''}">
+                    <div class="col-md-6">
+                        <label for="cboAuthorizer" class="form-label required">Authorized by</label>
+                        <select id="cboAuthorizer" class="form-select" th:field="*{authorizerId}" th:errorclass="is-invalid" required>
                             <option value="">Please select</option>
-                            <option th:each="optionValue : ${authorizerValues}" th:value="${optionValue.key}">[[${optionValue.value}]]</option>
+                            <option th:each="optionValue : ${authorizerValues}" th:value="${optionValue.key}"
+                                    th:text="${optionValue.value}">Name</option>
                         </select>
-                        <div th:if="${#fields.hasErrors('authorizerId')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('authorizerId')}" class="mb-0">[[${error}]]</p>
-                        </div>
-                    </div>
-                    <div class="col-md-1" th:if="${mode == 'view'}">
-                        <label for="isActive" class="form-label">Active?</label>
-                        <input type="text"
-                               id="isActive"
-                               class="form-control"
-                               th:value="${deploy.isActive ? 'Yes' : 'No'}"
-                               disabled />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea id="notes"
-                                  class="form-control tinymce-editor"
-                                  th:field="*{notes}"
-                                  th:classappend="${#fields.hasErrors('notes') ? 'is-invalid' : ''}"
-                                  th:if="${mode == 'add'}"></textarea>
-                        <div th:if="${mode == 'view'}" th:utext="${deploy.notes}" class="form-control w-100" style="height: 180px; overflow-y: scroll; resize: both;">&nbsp;</div>
-                        <div th:if="${#fields.hasErrors('notes')}" class="invalid-feedback d-block">
-                            <p th:each="error : ${#fields.errors('notes')}" class="mb-0">[[${error}]]</p>
-                        </div>
+                        <div th:replace="~{fragments/form-utils :: fieldErrors('deploy', 'authorizerId')}"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card shadow mb-3" th:if="${mode == 'view'}">
-            <div class="card-header">
-                Audit
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="id" class="form-label">Id</label>
-                        <input type="number" id="id" th:field="*{id}" disabled="disabled" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label for="inputDate" class="form-label">Input Date/Time</label>
-                        <input type="text" id="inputDate" disabled="disabled" class="form-control" th:value="${#temporals.format(deploy.createdAt, 'dd-MMM-yy hh:mm:ss')}"  />
-                    </div>
-                    <div class="col-md-7">
-                        <label for="operator" class="form-label">Operator</label>
-                        <input type="text" id="operator" disabled="disabled" class="form-control" th:field="*{operatorName}" />
-                    </div>
-                </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-chat-left-text" aria-hidden="true"></i>
+                <label for="mmoNotes" class="m-0">Notes</label></div>
+            <div class="card-body p-0">
+                <textarea id="mmoNotes" class="form-control tinymce-editor" th:field="*{notes}" th:errorclass="is-invalid"></textarea>
+                <div th:replace="~{fragments/form-utils :: fieldErrors('deploy', 'notes')}"></div>
             </div>
         </div>
     </th:block>

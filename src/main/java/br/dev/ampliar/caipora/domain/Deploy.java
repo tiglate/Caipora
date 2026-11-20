@@ -1,8 +1,10 @@
 package br.dev.ampliar.caipora.domain;
 
+import br.dev.ampliar.caipora.model.DeployStatus;
 import br.dev.ampliar.caipora.model.Environment;
 import jakarta.persistence.*;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -37,6 +39,32 @@ public class Deploy {
 
     @Column(columnDefinition = "text")
     private String notes;
+
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private DeployStatus status = DeployStatus.PENDING;
+
+    private Integer exitCode;
+
+    @Column(name = "started_at", columnDefinition = "timestamp")
+    private OffsetDateTime startedAt;
+
+    @Column(name = "finished_at", columnDefinition = "timestamp")
+    private OffsetDateTime finishedAt;
+
+    /**
+     * Combined standard output and error of the deploy script (tail, size limited). Not audited: it is updated
+     * while the script runs and would otherwise copy the whole log into the audit table on every update.
+     */
+    @NotAudited
+    @Column(columnDefinition = "text")
+    private String scriptOutput;
+
+    /**
+     * Instance (node) that runs the script, so a restart only fails the deploys it was running itself.
+     */
+    @Column(length = 100)
+    private String executorNode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_version", nullable = false)
@@ -105,6 +133,54 @@ public class Deploy {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public DeployStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DeployStatus status) {
+        this.status = status;
+    }
+
+    public Integer getExitCode() {
+        return exitCode;
+    }
+
+    public void setExitCode(Integer exitCode) {
+        this.exitCode = exitCode;
+    }
+
+    public OffsetDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(OffsetDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public OffsetDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(OffsetDateTime finishedAt) {
+        this.finishedAt = finishedAt;
+    }
+
+    public String getScriptOutput() {
+        return scriptOutput;
+    }
+
+    public void setScriptOutput(String scriptOutput) {
+        this.scriptOutput = scriptOutput;
+    }
+
+    public String getExecutorNode() {
+        return executorNode;
+    }
+
+    public void setExecutorNode(String executorNode) {
+        this.executorNode = executorNode;
     }
 
     public Version getVersion() {
