@@ -28,6 +28,9 @@ class SoftwareServiceImplTest {
     @Mock
     private VersionRepository versionRepository;
 
+    @Mock
+    private PackageStorage packageStorage;
+
     @InjectMocks
     private SoftwareServiceImpl softwareService;
 
@@ -80,11 +83,85 @@ class SoftwareServiceImplTest {
 
         when(softwareRepository.save(any(Software.class))).thenReturn(software);
 
-        var id = softwareService.create(softwareDTO);
+        var id = softwareService.create(softwareDTO, false);
 
         assertNotNull(id);
         assertEquals(1, id);
         verify(softwareRepository, times(1)).save(any(Software.class));
+        verify(packageStorage).createApplicationFolder("SW001");
+    }
+
+    @Test
+    void testCreate_ScriptOnlyWithPermission() {
+        var softwareDTO = new SoftwareDTO();
+        softwareDTO.setCode("SW001");
+        softwareDTO.setName("Test Software");
+        softwareDTO.setDeployScript("echo a\r\necho b && echo <c>\r\n");
+        when(softwareRepository.save(any(Software.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        softwareService.create(softwareDTO, false);
+        softwareService.create(softwareDTO, true);
+
+        var captor = org.mockito.ArgumentCaptor.forClass(Software.class);
+        verify(softwareRepository, times(2)).save(captor.capture());
+        assertNull(captor.getAllValues().get(0).getDeployScript());
+        // stored as typed (not HTML-sanitized), with Unix line endings
+        assertEquals("echo a\necho b && echo <c>\n", captor.getAllValues().get(1).getDeployScript());
+    }
+
+    @Test
+    void testCodeMustBeAbleToNameAFolder() {
+        var softwareDTO = new SoftwareDTO();
+        softwareDTO.setCode("../X");
+        softwareDTO.setName("Test Software");
+
+        assertThrows(IllegalArgumentException.class, () -> softwareService.create(softwareDTO, false));
+        assertDoesNotThrow(() -> SoftwareServiceImpl.checkCode("CRM_2.v-1"));
+    }
+
+    @Test
+    void testUpdate_LegacyCodeCanStillBeSaved() {
+        var softwareDTO = new SoftwareDTO();
+        softwareDTO.setCode("OLD CODE");
+        softwareDTO.setName("Test Software");
+        var software = new Software();
+        software.setId(1);
+        software.setCode("OLD CODE");
+        when(softwareRepository.findById(1)).thenReturn(Optional.of(software));
+
+        assertDoesNotThrow(() -> softwareService.update(1, softwareDTO, false));
+    }
+
+    @Test
+    void testUpdate_KeepsScriptWithoutPermission() {
+        var softwareDTO = new SoftwareDTO();
+        softwareDTO.setCode("SW001");
+        softwareDTO.setName("Test Software");
+        softwareDTO.setDeployScript("rm -rf /");
+        var software = new Software();
+        software.setId(1);
+        software.setCode("SW001");
+        software.setDeployScript("echo deploy");
+        when(softwareRepository.findById(1)).thenReturn(Optional.of(software));
+
+        softwareService.update(1, softwareDTO, false);
+
+        assertEquals("echo deploy", software.getDeployScript());
+    }
+
+    @Test
+    void testUpdate_CodeLockedWhenTheApplicationHasVersions() {
+        var softwareDTO = new SoftwareDTO();
+        softwareDTO.setCode("NEW");
+        softwareDTO.setName("Test Software");
+        var software = new Software();
+        software.setId(1);
+        software.setCode("OLD");
+        when(softwareRepository.findById(1)).thenReturn(Optional.of(software));
+        when(versionRepository.findFirstBySoftware(software)).thenReturn(new br.dev.ampliar.caipora.domain.Version());
+
+        assertThrows(IllegalArgumentException.class, () -> softwareService.update(1, softwareDTO, true));
+        verify(softwareRepository, never()).save(any());
     }
 
     @Test
@@ -98,7 +175,7 @@ class SoftwareServiceImplTest {
         when(softwareRepository.findById(1)).thenReturn(Optional.of(software));
         when(softwareRepository.save(any(Software.class))).thenReturn(software);
 
-        softwareService.update(1, softwareDTO);
+        softwareService.update(1, softwareDTO, true);
 
         verify(softwareRepository, times(1)).findById(1);
         verify(softwareRepository, times(1)).save(any(Software.class));

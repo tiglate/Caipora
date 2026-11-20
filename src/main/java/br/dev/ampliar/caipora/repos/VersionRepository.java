@@ -30,4 +30,9 @@ public interface VersionRepository extends JpaRepository<Version, Integer> {
 
     Version findFirstBySoftware(Software software);
 
+    @Query("SELECT v.fileName FROM Version v WHERE v.software = :software")
+    List<String> findFileNamesBySoftware(@Param("software") Software software);
+
+    boolean existsBySoftwareAndFileNameIgnoreCase(Software software, String fileName);
+
 }

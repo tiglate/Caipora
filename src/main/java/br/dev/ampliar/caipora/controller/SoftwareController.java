@@ -74,6 +74,7 @@ public class SoftwareController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_APPLICATION_VIEW + "')")
     public String view(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("software", softwareService.get(id));
+        model.addAttribute("packagesFolder", softwareService.getPackagesFolder(id));
         return CONTROLLER_VIEW;
     }
 
@@ -90,7 +91,12 @@ public class SoftwareController {
         if (bindingResult.hasErrors()) {
             return CONTROLLER_ADD;
         }
-        softwareService.create(softwareDTO);
+        try {
+            softwareService.create(softwareDTO, canEditScript());
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("code", "software.code.invalid", e.getMessage());
+            return CONTROLLER_ADD;
+        }
         FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
         return REDIRECT_TO_CONTROLLER_INDEX;
     }
@@ -99,6 +105,7 @@ public class SoftwareController {
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_APPLICATION_MANAGE + "')")
     public String edit(@PathVariable(name = "id") final Integer id, final Model model) {
         model.addAttribute("software", softwareService.get(id));
+        model.addAttribute("packagesFolder", softwareService.getPackagesFolder(id));
         return CONTROLLER_EDIT;
     }
 
@@ -111,7 +118,13 @@ public class SoftwareController {
             softwareDTO.setId(id);
             return CONTROLLER_EDIT;
         }
-        softwareService.update(id, softwareDTO);
+        try {
+            softwareService.update(id, softwareDTO, canEditScript());
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("code", "software.code.locked", e.getMessage());
+            softwareDTO.setId(id);
+            return CONTROLLER_EDIT;
+        }
         FlashMessages.updateSuccess(redirectAttributes, ENTITY_NAME);
         return REDIRECT_TO_CONTROLLER_INDEX;
     }
@@ -128,6 +141,13 @@ public class SoftwareController {
             FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         }
         return REDIRECT_TO_CONTROLLER_INDEX;
+    }
+
+    private static boolean canEditScript() {
+        return SecurityUtils.currentUser()
+                .map(user -> user.getAuthorities().stream()
+                        .anyMatch(authority -> UserRoles.ROLE_DEPLOY_SCRIPT_MANAGE.equals(authority.getAuthority())))
+                .orElse(false);
     }
 
 }

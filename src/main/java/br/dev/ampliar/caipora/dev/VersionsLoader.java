@@ -4,9 +4,9 @@ import br.dev.ampliar.caipora.domain.Software;
 import br.dev.ampliar.caipora.domain.Version;
 import br.dev.ampliar.caipora.repos.SoftwareRepository;
 import br.dev.ampliar.caipora.repos.VersionRepository;
+import br.dev.ampliar.caipora.service.PackageStorage;
 import br.dev.ampliar.caipora.util.RandomUtils;
 import net.datafaker.Faker;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +16,13 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
  * Creates a few versions per application, each with a small placeholder package (a zip file with a README) in the
- * upload directory, so downloads work in development.
+ * folder of the application inside the packages directory, so downloads and deploy scripts work in development.
  */
 @Component
 public class VersionsLoader implements DataLoaderCommand {
@@ -32,16 +30,16 @@ public class VersionsLoader implements DataLoaderCommand {
     private final RandomUtils randomUtils;
     private final VersionRepository versionRepository;
     private final SoftwareRepository softwareRepository;
-    private final String uploadDirectory;
+    private final PackageStorage packageStorage;
 
     public VersionsLoader(final RandomUtils randomUtils,
                           final VersionRepository versionRepository,
                           final SoftwareRepository softwareRepository,
-                          @Value("${file.upload.directory}") final String uploadDirectory) {
+                          final PackageStorage packageStorage) {
         this.randomUtils = randomUtils;
         this.versionRepository = versionRepository;
         this.softwareRepository = softwareRepository;
-        this.uploadDirectory = uploadDirectory;
+        this.packageStorage = packageStorage;
     }
 
     @Override
@@ -107,14 +105,18 @@ public class VersionsLoader implements DataLoaderCommand {
     }
 
     /**
-     * Writes a placeholder package using the same naming scheme as real uploads ({@code <uuid>_<name>}).
+     * Writes a placeholder package in the folder of the application (an existing file is kept as it is).
      */
-    private String createPackage(final String originalName, final Software software, final String version) {
-        final String storedName = UUID.randomUUID() + "_" + originalName.replaceAll("[^A-Za-z0-9._-]", "_");
-        final Path directory = Paths.get(uploadDirectory).toAbsolutePath().normalize();
+    private String createPackage(final String fileName, final Software software, final String version) {
+        final String safeName = fileName.replaceAll("[^A-Za-z0-9._-]", "_");
+        final Path directory = packageStorage.applicationFolder(software.getCode());
+        final Path file = directory.resolve(safeName);
         try {
             Files.createDirectories(directory);
-            try (OutputStream out = Files.newOutputStream(directory.resolve(storedName));
+            if (Files.exists(file)) {
+                return safeName;
+            }
+            try (OutputStream out = Files.newOutputStream(file);
                  ZipOutputStream zip = new ZipOutputStream(out)) {
                 zip.putNextEntry(new ZipEntry("README.txt"));
                 zip.write(("Sample package generated for development.\n" + software.getName() + " " + version + "\n")
@@ -122,8 +124,8 @@ public class VersionsLoader implements DataLoaderCommand {
                 zip.closeEntry();
             }
         } catch (IOException e) {
-            throw new UncheckedIOException("Could not create the sample package " + storedName, e);
+            throw new UncheckedIOException("Could not create the sample package " + file, e);
         }
-        return storedName;
+        return safeName;
     }
 }

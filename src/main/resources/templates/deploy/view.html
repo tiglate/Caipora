@@ -1,15 +1,132 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       lang="en"
       layout:decorate="~{layout}">
 <head>
-    <title>View Deploy</title>
+    <title>Deploy</title>
 </head>
 <body>
-<div layout:fragment="content">
-    <div th:replace="~{fragments/header :: header('view', 'View Deploy', 'deployForm', @{/deploys})}"></div>
-    <th:block th:replace="~{deploy/_form :: deployForm('view', ${deploy}, ${versionValues}, ${environmentValues}, ${authorizerValues})}"></th:block>
-</div>
+    <!--/*@thymesVar id="deploy" type="br.dev.ampliar.caipora.model.DeployDTO"*/-->
+    <div layout:fragment="content">
+        <div class="page-header">
+            <div>
+                <a th:href="@{/deploys}" class="small text-body-secondary d-inline-flex align-items-center gap-1 mb-1">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to deploys
+                </a>
+                <h1 class="page-title">
+                    <span th:text="|${deploy.softwareName} ${deploy.versionName}|">App v1.0</span>
+                    <span class="text-body-secondary fw-normal">→ [[${deploy.environment}]]</span>
+                </h1>
+                <p class="page-subtitle d-flex flex-wrap align-items-center gap-2">
+                    <th:block th:replace="~{deploy/_status :: badge(${deploy.status})}"></th:block>
+                    <span th:if="${deploy.isActive}" class="badge-soft badge-brand no-dot">Active in [[${deploy.environment}]]</span>
+                    <span>RFC <span class="code-pill" th:text="${deploy.rfc}">CHG001</span></span>
+                </p>
+            </div>
+            <div class="page-actions">
+                <a th:href="@{/deploys/history/{id}(id=${deploy.softwareId})}" class="btn btn-secondary">
+                    <i class="bi bi-clock-history" aria-hidden="true"></i> History
+                </a>
+                <form th:if="${deploy.inProgress}" th:action="@{/deploys/cancel/{id}(id=${deploy.id})}" method="post"
+                      sec:authorize="hasAuthority('ROLE_DEPLOY_MANAGE')" hx-confirm="Cancel this deploy? A running script is stopped.">
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-stop-circle" aria-hidden="true"></i> Cancel deploy</button>
+                </form>
+                <form th:if="${deploy.status != null and deploy.status.canBeRerun()}" th:action="@{/deploys/rerun/{id}(id=${deploy.id})}"
+                      method="post" sec:authorize="hasAuthority('ROLE_DEPLOY_MANAGE')"
+                      hx-confirm="Run this deploy again, with the current deploy script of the application?">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Run again</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-rocket-takeoff" aria-hidden="true"></i> Deploy</div>
+            <div class="card-body">
+                <dl class="meta-list">
+                    <div>
+                        <dt>Application</dt>
+                        <dd><span class="code-pill" th:text="${deploy.softwareCode}">APP</span> [[${deploy.softwareName}]]</dd>
+                    </div>
+                    <div>
+                        <dt>Version</dt>
+                        <dd><a th:href="@{/versions/view/{id}(id=${deploy.versionId})}" th:text="${deploy.versionName}">v1.0</a></dd>
+                    </div>
+                    <div>
+                        <dt>Package</dt>
+                        <dd class="text-break" th:text="${deploy.fileName}">app.zip</dd>
+                    </div>
+                    <div>
+                        <dt>Environment</dt>
+                        <dd th:text="${deploy.environment}">QA</dd>
+                    </div>
+                    <div>
+                        <dt>Execution date</dt>
+                        <dd th:text="${#temporals.format(deploy.executionDate, 'dd MMM yyyy')}">01 Jan 2026</dd>
+                    </div>
+                    <div>
+                        <dt>Authorized by</dt>
+                        <dd th:text="${deploy.authorizerName ?: '—'}">Name</dd>
+                    </div>
+                    <div>
+                        <dt>Operator</dt>
+                        <dd th:text="${deploy.operatorName ?: '—'}">Name</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!--/* Execution: polled every 2 seconds while the deploy is queued or running; the page reloads when it ends */-->
+        <div th:fragment="execution" id="execution" class="card mb-4"
+             th:attr="hx-get=${deploy.inProgress} ? @{/deploys/view/{id}/execution(id=${deploy.id})} : null,
+                      hx-trigger=${deploy.inProgress} ? 'every 2s' : null,
+                      hx-swap=${deploy.inProgress} ? 'outerHTML' : null">
+            <div class="card-header">
+                <i class="bi bi-terminal" aria-hidden="true"></i> Execution
+                <span class="ms-auto"><th:block th:replace="~{deploy/_status :: badge(${deploy.status})}"></th:block></span>
+            </div>
+            <div class="card-body">
+                <dl class="meta-list mb-3">
+                    <div>
+                        <dt>Started</dt>
+                        <dd th:text="${deploy.startedAt != null} ? ${#temporals.format(deploy.startedAt, 'dd MMM yyyy, HH:mm:ss')} : '—'">—</dd>
+                    </div>
+                    <div>
+                        <dt>Finished</dt>
+                        <dd th:text="${deploy.finishedAt != null and !deploy.inProgress} ? ${#temporals.format(deploy.finishedAt, 'dd MMM yyyy, HH:mm:ss')} : '—'">—</dd>
+                    </div>
+                    <div>
+                        <dt>Duration</dt>
+                        <dd th:text="${deploy.duration ?: '—'}">—</dd>
+                    </div>
+                    <div>
+                        <dt>Exit code</dt>
+                        <dd th:text="${deploy.exitCode ?: '—'}">—</dd>
+                    </div>
+                    <div>
+                        <dt>Server</dt>
+                        <dd class="text-break" th:text="${deploy.executorNode ?: '—'}">—</dd>
+                    </div>
+                </dl>
+                <!--/* plain text on purpose (th:text): the output comes from the script */-->
+                <pre class="log-view" data-follow-log th:if="${deploy.scriptOutput != null}" th:text="${deploy.scriptOutput}"
+                     tabindex="0" aria-label="Script output">output</pre>
+                <p class="text-body-secondary mb-0" th:if="${deploy.scriptOutput == null}"
+                   th:text="${deploy.inProgress} ? 'Waiting for the script to start…' : 'No output recorded.'">No output.</p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><i class="bi bi-chat-left-text" aria-hidden="true"></i> Notes</div>
+            <div class="card-body p-0">
+                <!--/* sanitized on the server (HtmlSanitizer) before being stored and rendered */-->
+                <div th:if="${deploy.notes != null}" class="rich-content" th:utext="${deploy.notes}"></div>
+                <p th:if="${deploy.notes == null}" class="text-body-secondary mb-0 p-3">Nothing recorded.</p>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/form-utils :: audit(${deploy.id}, ${deploy.createdAt}, null)}"></div>
+    </div>
 </body>
 </html>

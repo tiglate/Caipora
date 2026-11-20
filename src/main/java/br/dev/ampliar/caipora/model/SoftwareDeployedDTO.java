@@ -1,20 +1,29 @@
 package br.dev.ampliar.caipora.model;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * An application and the state of each of its environments (deploy overview card).
+ */
 @SuppressWarnings("unused")
 public class SoftwareDeployedDTO {
     private Integer softwareId;
     private String code;
     private String name;
-    private DeployedDTO dev;
-    private DeployedDTO qa;
-    private DeployedDTO uat;
-    private DeployedDTO prod;
-    private DeployedDTO dr;
+    private boolean hasScript;
+    private final Map<Environment, DeployedDTO> environments = new EnumMap<>(Environment.class);
 
     public SoftwareDeployedDTO(Integer softwareId, String softwareCode, String softwareName) {
         this.softwareId = softwareId;
         this.code = softwareCode;
         this.name = softwareName;
+        for (final Environment environment : Environment.values()) {
+            final DeployedDTO deployed = new DeployedDTO();
+            deployed.setEnvironment(environment);
+            environments.put(environment, deployed);
+        }
     }
 
     public Integer getSoftwareId() {
@@ -41,43 +50,30 @@ public class SoftwareDeployedDTO {
         this.name = name;
     }
 
-    public DeployedDTO getDev() {
-        return dev;
+    public boolean isHasScript() {
+        return hasScript;
     }
 
-    public void setDev(DeployedDTO dev) {
-        this.dev = dev;
+    public void setHasScript(boolean hasScript) {
+        this.hasScript = hasScript;
     }
 
-    public DeployedDTO getQa() {
-        return qa;
+    public DeployedDTO get(final Environment environment) {
+        return environments.get(environment);
     }
 
-    public void setQa(DeployedDTO qa) {
-        this.qa = qa;
+    /**
+     * @return the environments in pipeline order
+     */
+    public List<DeployedDTO> getEnvironments() {
+        return List.copyOf(environments.values());
     }
 
-    public DeployedDTO getUat() {
-        return uat;
+    public boolean isInProgress() {
+        return environments.values().stream().anyMatch(DeployedDTO::isInProgress);
     }
 
-    public void setUat(DeployedDTO uat) {
-        this.uat = uat;
-    }
-
-    public DeployedDTO getProd() {
-        return prod;
-    }
-
-    public void setProd(DeployedDTO prod) {
-        this.prod = prod;
-    }
-
-    public DeployedDTO getDr() {
-        return dr;
-    }
-
-    public void setDr(DeployedDTO dr) {
-        this.dr = dr;
+    public boolean isNeverDeployed() {
+        return environments.values().stream().noneMatch(DeployedDTO::isDeployed);
     }
 }

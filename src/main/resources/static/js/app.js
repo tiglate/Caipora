@@ -264,8 +264,16 @@
         document.body.style.removeProperty('padding-right');
     }
 
+    /** Live deploy logs start scrolled to their most recent lines. */
+    function followLogs() {
+        document.querySelectorAll('[data-follow-log]').forEach((log) => {
+            log.scrollTop = log.scrollHeight;
+        });
+    }
+
     function initPage() {
         updateThemeToggle();
+        followLogs();
         initDatepickers();
         initEditors(false);
         initTooltips();

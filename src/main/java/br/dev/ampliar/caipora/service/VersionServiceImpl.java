@@ -10,53 +10,35 @@ import br.dev.ampliar.caipora.repos.VersionRepository;
 import br.dev.ampliar.caipora.util.HtmlSanitizer;
 import br.dev.ampliar.caipora.util.NotFoundException;
 import br.dev.ampliar.caipora.util.ReferencedWarning;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 @Service
 @Transactional(readOnly = true)
 public class VersionServiceImpl implements VersionService {
 
-    private static final Logger log = LoggerFactory.getLogger(VersionServiceImpl.class);
-
-    private static final Set<String> ALLOWED_EXTENSIONS = Set.of("zip", "msi", "exe");
-    private static final int MAX_ORIGINAL_NAME_LENGTH = 150;
-    private static final Pattern UNSAFE_FILENAME_CHARS = Pattern.compile("[^A-Za-z0-9._-]");
-    private static final Pattern STORED_NAME_PREFIX = Pattern.compile("^[0-9a-fA-F-]{36}_");
-
     private final VersionRepository versionRepository;
     private final SoftwareRepository softwareRepository;
     private final DeployRepository deployRepository;
-    private final String uploadDirectory;
+    private final PackageStorage packageStorage;
 
     public VersionServiceImpl(final VersionRepository versionRepository,
                               final SoftwareRepository softwareRepository,
                               final DeployRepository deployRepository,
-                              @Value("${file.upload.directory}") final String uploadDirectory) {
+                              final PackageStorage packageStorage) {
         this.versionRepository = versionRepository;
         this.softwareRepository = softwareRepository;
         this.deployRepository = deployRepository;
-        this.uploadDirectory = uploadDirectory;
+        this.packageStorage = packageStorage;
     }
 
     @Override
@@ -77,18 +59,23 @@ public class VersionServiceImpl implements VersionService {
 
     @Override
     @Transactional
-    public Integer create(final VersionDTO versionDTO) throws IOException {
-        validateFile(versionDTO.getFile());
-        final Version version = mapToEntity(versionDTO);
-        final String storedFileName = saveFile(versionDTO.getFile());
-        version.setFileName(storedFileName);
-        try {
-            return versionRepository.save(version).getId();
-        } catch (RuntimeException e) {
-            // don't leave orphan files behind when the database insert fails
-            deleteFileQuietly(storedFileName);
-            throw e;
+    public Integer create(final VersionDTO versionDTO) {
+        final Version version = mapToEntity(versionDTO, new Version());
+        final Software software = version.getSoftware();
+        if (software == null) {
+            throw new IllegalArgumentException("Please select the application.");
         }
+        // the form only offers files of the application folder, but the request could be forged
+        try {
+            packageStorage.resolvePackage(software.getCode(), versionDTO.getFileName());
+        } catch (IllegalArgumentException | NotFoundException e) {
+            throw new IllegalArgumentException("Please select a package of the application folder.", e);
+        }
+        if (versionRepository.existsBySoftwareAndFileNameIgnoreCase(software, versionDTO.getFileName())) {
+            throw new IllegalArgumentException("This package is already registered as a version.");
+        }
+        version.setFileName(versionDTO.getFileName());
+        return versionRepository.save(version).getId();
     }
 
     @Override
@@ -96,73 +83,60 @@ public class VersionServiceImpl implements VersionService {
     public void update(final Integer id, final VersionDTO versionDTO) {
         final Version version = versionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        // the package file cannot be replaced through an update
-        versionDTO.setFileName(version.getFileName());
+        // neither the package nor the application can be changed through an update
+        final String fileName = version.getFileName();
+        final Software software = version.getSoftware();
         mapToEntity(versionDTO, version);
+        version.setFileName(fileName);
+        version.setSoftware(software);
         versionRepository.save(version);
     }
 
     @Override
     @Transactional
-    public void delete(final Integer id) throws IOException {
+    public void delete(final Integer id) {
         final Version version = versionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        final String fileName = version.getFileName();
-        versionRepository.deleteById(id);
-        // Remove the file only once the row is really gone, otherwise a rollback would leave a version without file.
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    deleteFileQuietly(fileName);
-                }
-            });
-        } else {
-            deleteFile(fileName);
+        versionRepository.delete(version);
+    }
+
+    @Override
+    public List<PackageStorage.PackageFile> getAvailablePackages(final Integer softwareId) {
+        if (softwareId == null) {
+            return List.of();
+        }
+        final Software software = softwareRepository.findById(softwareId)
+                .orElseThrow(() -> new NotFoundException("software not found"));
+        final Set<String> registered = versionRepository.findFileNamesBySoftware(software).stream()
+                .map(name -> name.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+        final List<PackageStorage.PackageFile> files;
+        try {
+            files = packageStorage.listPackages(software.getCode());
+        } catch (IllegalArgumentException e) {
+            return List.of(); // code that can't name a folder
+        }
+        return files.stream()
+                .filter(file -> !registered.contains(file.name().toLowerCase(Locale.ROOT)))
+                .toList();
+    }
+
+    @Override
+    public Path getPackagesFolder(final Integer softwareId) {
+        final Software software = softwareRepository.findById(softwareId)
+                .orElseThrow(() -> new NotFoundException("software not found"));
+        try {
+            return packageStorage.applicationFolder(software.getCode());
+        } catch (IllegalArgumentException e) {
+            return null; // code that can't name a folder
         }
     }
 
     @Override
-    public StoredFile getStoredFile(final Integer id) {
+    public Path getPackageFile(final Integer id) {
         final Version version = versionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        final Path path = resolveInUploadDirectory(version.getFileName());
-        if (!Files.isRegularFile(path) || !Files.isReadable(path)) {
-            throw new NotFoundException("file not found");
-        }
-        return new StoredFile(path, STORED_NAME_PREFIX.matcher(version.getFileName()).replaceFirst(""));
-    }
-
-    private void deleteFile(final String fileName) throws IOException {
-        if (fileName == null || fileName.isBlank()) {
-            return;
-        }
-        Files.deleteIfExists(resolveInUploadDirectory(fileName));
-    }
-
-    private void deleteFileQuietly(final String fileName) {
-        try {
-            deleteFile(fileName);
-        } catch (IOException | RuntimeException e) {
-            log.warn("Could not delete uploaded file {}", fileName, e);
-        }
-    }
-
-    private Path uploadRoot() {
-        return Paths.get(uploadDirectory).toAbsolutePath().normalize();
-    }
-
-    /**
-     * Resolves a stored file name inside the upload directory, refusing anything that would escape it
-     * (path traversal): the normalized path must start with the upload directory and sit directly inside it.
-     */
-    private Path resolveInUploadDirectory(final String fileName) {
-        final Path root = uploadRoot();
-        final Path resolved = root.resolve(fileName).normalize();
-        if (!resolved.startsWith(root) || !root.equals(resolved.getParent())) {
-            throw new IllegalArgumentException("Invalid file name");
-        }
-        return resolved;
+        return packageStorage.resolvePackage(version.getSoftware().getCode(), version.getFileName());
     }
 
     private VersionDTO mapToDTO(final Version version, final VersionDTO versionDTO) {
@@ -174,21 +148,21 @@ public class VersionServiceImpl implements VersionService {
         versionDTO.setChangelog(HtmlSanitizer.sanitize(version.getChangelog()));
         versionDTO.setComments(HtmlSanitizer.sanitize(version.getComments()));
         if (version.getSoftware() != null) {
-            versionDTO.setSoftwareId(version.getSoftware().getId());
-            versionDTO.setSoftwareName(version.getSoftware().getName());
+            final Software software = version.getSoftware();
+            versionDTO.setSoftwareId(software.getId());
+            versionDTO.setSoftwareName(software.getName());
+            packageStorage.findPackage(software.getCode(), version.getFileName()).ifPresent(file -> {
+                versionDTO.setPackageAvailable(true);
+                versionDTO.setFileSize(file.displaySize());
+            });
         }
         versionDTO.setCreatedAt(version.getCreatedAt());
         versionDTO.setUpdatedAt(version.getUpdatedAt());
         return versionDTO;
     }
 
-    private Version mapToEntity(final VersionDTO versionDTO) {
-        return mapToEntity(versionDTO, new Version());
-    }
-
     private Version mapToEntity(final VersionDTO versionDTO, final Version version) {
         version.setName(versionDTO.getName());
-        version.setFileName(versionDTO.getFileName());
         version.setReleaseDate(versionDTO.getReleaseDate());
         version.setChangelog(HtmlSanitizer.sanitize(versionDTO.getChangelog()));
         version.setComments(HtmlSanitizer.sanitize(versionDTO.getComments()));
@@ -210,42 +184,6 @@ public class VersionServiceImpl implements VersionService {
             return referencedWarning;
         }
         return null;
-    }
-
-    private String saveFile(final MultipartFile file) throws IOException {
-        final Path root = uploadRoot();
-        Files.createDirectories(root);
-        final String uniqueFilename = UUID.randomUUID() + "_" + safeOriginalName(file.getOriginalFilename());
-        final Path filePath = resolveInUploadDirectory(uniqueFilename);
-        try (InputStream inputStream = file.getInputStream()) {
-            // no REPLACE_EXISTING: the UUID makes collisions practically impossible, never overwrite silently
-            Files.copy(inputStream, filePath);
-        }
-        return uniqueFilename;
-    }
-
-    /**
-     * Keeps only the base name of the client-supplied file name and replaces anything outside a conservative
-     * character set, so the stored name is safe on every file system and inside HTTP headers.
-     */
-    static String safeOriginalName(final String originalFilename) {
-        String name = FilenameUtils.getName(originalFilename == null ? "" : originalFilename);
-        name = UNSAFE_FILENAME_CHARS.matcher(name).replaceAll("_");
-        if (name.length() > MAX_ORIGINAL_NAME_LENGTH) {
-            final String extension = FilenameUtils.getExtension(name);
-            name = name.substring(0, MAX_ORIGINAL_NAME_LENGTH - extension.length() - 1) + "." + extension;
-        }
-        return name.isBlank() ? "package" : name;
-    }
-
-    private void validateFile(final MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File is required");
-        }
-        final String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (extension == null || !ALLOWED_EXTENSIONS.contains(extension.toLowerCase(Locale.ROOT))) {
-            throw new IllegalArgumentException("Invalid file type. Only .zip, .msi, and .exe files are allowed.");
-        }
     }
 
 }

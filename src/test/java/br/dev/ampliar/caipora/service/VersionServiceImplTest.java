@@ -1,31 +1,29 @@
 package br.dev.ampliar.caipora.service;
 
 import br.dev.ampliar.caipora.domain.Deploy;
+import br.dev.ampliar.caipora.domain.Software;
 import br.dev.ampliar.caipora.domain.Version;
 import br.dev.ampliar.caipora.model.VersionDTO;
 import br.dev.ampliar.caipora.repos.DeployRepository;
 import br.dev.ampliar.caipora.repos.SoftwareRepository;
 import br.dev.ampliar.caipora.repos.VersionRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -40,27 +38,26 @@ class VersionServiceImplTest {
     @Mock
     private DeployRepository deployRepository;
 
-    @InjectMocks
-    private VersionServiceImpl versionService;
+    @TempDir
+    Path packagesDir;
 
-    private Path tempDir;
+    private VersionServiceImpl versionService;
+    private Software software;
 
     @BeforeEach
     void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
-        tempDir = Files.createTempDirectory("test-uploads");
-        ReflectionTestUtils.setField(versionService, "uploadDirectory", tempDir.toString());
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        Files.walk(tempDir)
-            .map(Path::toFile)
-            .forEach(file -> {
-                if (!file.delete()) {
-                    file.deleteOnExit();
-                }
-            });
+        final PackageStorage packageStorage = new PackageStorage(packagesDir.toString(), List.of("zip", "msi", "tar.gz"));
+        versionService = new VersionServiceImpl(versionRepository, softwareRepository, deployRepository, packageStorage);
+        software = new Software();
+        software.setId(7);
+        software.setCode("CRM");
+        software.setName("CRM");
+        when(softwareRepository.findById(7)).thenReturn(Optional.of(software));
+        Files.createDirectories(packagesDir.resolve("CRM"));
+        Files.writeString(packagesDir.resolve("CRM/crm-1.0.zip"), "zip");
+        Files.writeString(packagesDir.resolve("CRM/crm-1.1.tar.gz"), "tgz");
+        Files.writeString(packagesDir.resolve("CRM/notes.txt"), "not a package");
     }
 
     @Test
@@ -85,62 +82,111 @@ class VersionServiceImplTest {
         var version = new Version();
         version.setId(1);
         version.setName("1.0.0");
+        version.setSoftware(software);
+        version.setFileName("crm-1.0.zip");
 
         when(versionRepository.findById(1)).thenReturn(Optional.of(version));
 
         var result = versionService.get(1);
 
-        assertNotNull(result);
         assertEquals("1.0.0", result.getName());
-        verify(versionRepository, times(1)).findById(1);
+        assertTrue(result.isPackageAvailable());
+        assertEquals("3 B", result.getFileSize());
     }
 
     @Test
-    void testCreate() throws IOException {
-        var versionDTO = new VersionDTO();
-        versionDTO.setName("1.0.0");
-        var fileContent = "test content".getBytes();
-        var file = new MockMultipartFile("file", "test.zip", "application/zip", fileContent);
-        versionDTO.setFile(file);
+    void testGet_PackageMissing() {
         var version = new Version();
         version.setId(1);
+        version.setSoftware(software);
+        version.setFileName("gone.zip");
+        when(versionRepository.findById(1)).thenReturn(Optional.of(version));
 
-        when(versionRepository.save(any(Version.class))).thenReturn(version);
-
-        var id = versionService.create(versionDTO);
-
-        assertNotNull(id);
-        assertEquals(1, id);
-        verify(versionRepository, times(1)).save(any(Version.class));
+        assertFalse(versionService.get(1).isPackageAvailable());
     }
 
     @Test
-    void testUpdate() {
+    void testCreate_RegistersAPackageOfTheApplicationFolder() {
         var versionDTO = new VersionDTO();
         versionDTO.setName("1.0.0");
+        versionDTO.setSoftwareId(7);
+        versionDTO.setFileName("crm-1.0.zip");
+        var saved = new Version();
+        saved.setId(1);
+        when(versionRepository.save(any(Version.class))).thenReturn(saved);
+
+        assertEquals(1, versionService.create(versionDTO));
+
+        final ArgumentCaptor<Version> captor = ArgumentCaptor.forClass(Version.class);
+        verify(versionRepository).save(captor.capture());
+        assertEquals("crm-1.0.zip", captor.getValue().getFileName());
+        assertSame(software, captor.getValue().getSoftware());
+    }
+
+    @Test
+    void testCreate_RejectsFilesOutsideTheApplicationFolder() {
+        for (String name : List.of("../other.zip", "missing.zip", "notes.txt", "sub/crm.zip", "")) {
+            var versionDTO = new VersionDTO();
+            versionDTO.setName("1.0.0");
+            versionDTO.setSoftwareId(7);
+            versionDTO.setFileName(name);
+            assertThrows(IllegalArgumentException.class, () -> versionService.create(versionDTO), name);
+        }
+        verify(versionRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreate_RejectsAPackageAlreadyRegistered() {
+        var versionDTO = new VersionDTO();
+        versionDTO.setName("1.0.0");
+        versionDTO.setSoftwareId(7);
+        versionDTO.setFileName("crm-1.0.zip");
+        when(versionRepository.existsBySoftwareAndFileNameIgnoreCase(software, "crm-1.0.zip")).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> versionService.create(versionDTO));
+    }
+
+    @Test
+    void testGetAvailablePackages_ListsOnlyUnregisteredPackages() {
+        when(versionRepository.findFileNamesBySoftware(software)).thenReturn(List.of("CRM-1.0.ZIP"));
+
+        var packages = versionService.getAvailablePackages(7);
+
+        assertEquals(List.of("crm-1.1.tar.gz"), packages.stream().map(PackageStorage.PackageFile::name).toList());
+    }
+
+    @Test
+    void testUpdate_KeepsPackageAndApplication() {
+        var versionDTO = new VersionDTO();
+        versionDTO.setName("1.0.1");
+        versionDTO.setFileName("other.zip");
         var version = new Version();
         version.setId(1);
+        version.setSoftware(software);
+        version.setFileName("crm-1.0.zip");
 
         when(versionRepository.findById(1)).thenReturn(Optional.of(version));
-        when(versionRepository.save(any(Version.class))).thenReturn(version);
 
         versionService.update(1, versionDTO);
 
-        verify(versionRepository, times(1)).findById(1);
-        verify(versionRepository, times(1)).save(any(Version.class));
+        assertEquals("1.0.1", version.getName());
+        assertEquals("crm-1.0.zip", version.getFileName());
+        assertSame(software, version.getSoftware());
+        verify(versionRepository).save(version);
     }
 
     @Test
-    void testDelete() throws IOException {
+    void testDelete_KeepsThePackage() {
         var version = new Version();
         version.setId(1);
-        version.setFileName("test.zip");
-
+        version.setSoftware(software);
+        version.setFileName("crm-1.0.zip");
         when(versionRepository.findById(1)).thenReturn(Optional.of(version));
 
         versionService.delete(1);
 
-        verify(versionRepository, times(1)).deleteById(1);
+        verify(versionRepository).delete(version);
+        assertTrue(Files.exists(packagesDir.resolve("CRM/crm-1.0.zip")));
     }
 
     @Test
@@ -160,30 +206,13 @@ class VersionServiceImplTest {
     }
 
     @Test
-    void testGetStoredFile_RejectsPathTraversal() {
+    void testGetPackageFile_RejectsPathTraversal() {
         var version = new Version();
         version.setId(1);
-        version.setFileName("../../etc/passwd");
+        version.setSoftware(software);
+        version.setFileName("../../etc/passwd.zip");
         when(versionRepository.findById(1)).thenReturn(Optional.of(version));
 
-        assertThrows(IllegalArgumentException.class, () -> versionService.getStoredFile(1));
-    }
-
-    @Test
-    void testDelete_RejectsPathTraversal() {
-        var version = new Version();
-        version.setId(1);
-        version.setFileName("../outside.zip");
-        when(versionRepository.findById(1)).thenReturn(Optional.of(version));
-
-        assertThrows(IllegalArgumentException.class, () -> versionService.delete(1));
-    }
-
-    @Test
-    void testSafeOriginalName_StripsDirectoriesAndUnsafeCharacters() {
-        assertEquals("passwd", VersionServiceImpl.safeOriginalName("../../etc/passwd"));
-        assertEquals("evil.zip", VersionServiceImpl.safeOriginalName("C:\\temp\\evil.zip"));
-        assertEquals("my_file__1_.zip", VersionServiceImpl.safeOriginalName("my file (1).zip"));
-        assertEquals("package", VersionServiceImpl.safeOriginalName(null));
+        assertThrows(IllegalArgumentException.class, () -> versionService.getPackageFile(1));
     }
 }

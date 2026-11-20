@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Deploy Status</title>
+</head>
+<body>
+    <!--/*@thymesVar id="status" type="br.dev.ampliar.caipora.model.DeployStatus"*/-->
+    <span th:fragment="badge(status)" th:switch="${status?.name()}" th:remove="tag">
+        <span th:case="'PENDING'" class="badge-soft badge-info is-running">Queued</span>
+        <span th:case="'RUNNING'" class="badge-soft badge-info is-running">Running</span>
+        <span th:case="'SUCCEEDED'" class="badge-soft badge-success">Succeeded</span>
+        <span th:case="'FAILED'" class="badge-soft badge-danger">Failed</span>
+        <span th:case="'CANCELLED'" class="badge-soft badge-warning">Cancelled</span>
+        <span th:case="*" class="badge-soft badge-muted">Unknown</span>
+    </span>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package br.dev.ampliar.caipora.dev;
 
 import br.dev.ampliar.caipora.domain.*;
+import br.dev.ampliar.caipora.model.DeployStatus;
 import br.dev.ampliar.caipora.model.Environment;
 import br.dev.ampliar.caipora.repos.*;
 import br.dev.ampliar.caipora.util.RandomUtils;
@@ -97,6 +98,8 @@ public class DeploysLoader implements DataLoaderCommand {
                     deploy.setAuthorizer(randomUtils.pickOne(authorizers));
                     deploy.setNotes(randomUtils.chance(0.3) ? "<p>" + faker.lorem().sentence(10) + "</p>" : null);
                     deploy.setIsActive(false);
+                    deploy.setStatus(DeployStatus.SUCCEEDED);
+                    deploy.setExitCode(0);
                     deployRepository.save(deploy);
                     latest.put(PIPELINE[e], deploy);
                     count++;

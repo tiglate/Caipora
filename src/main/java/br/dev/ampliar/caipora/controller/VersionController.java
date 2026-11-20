@@ -6,8 +6,6 @@ import br.dev.ampliar.caipora.repos.SoftwareRepository;
 import br.dev.ampliar.caipora.service.VersionService;
 import br.dev.ampliar.caipora.util.*;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
@@ -25,8 +23,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Map.entry;
@@ -36,8 +36,6 @@ import static java.util.Map.entry;
 @Controller
 @RequestMapping("/versions")
 public class VersionController {
-
-    private static final Logger log = LoggerFactory.getLogger(VersionController.class);
 
     private static final String ENTITY_NAME = "Version";
     private static final String CONTROLLER_ADD = "version/add";
@@ -91,32 +89,53 @@ public class VersionController {
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
-    public String add(@ModelAttribute("version") final VersionDTO versionDTO) {
+    public String add(@ModelAttribute("version") final VersionDTO versionDTO, final Model model) {
+        if (versionDTO.getReleaseDate() == null) {
+            versionDTO.setReleaseDate(LocalDate.now());
+        }
+        addPackagesToModel(versionDTO.getSoftwareId(), model);
         return CONTROLLER_ADD;
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public String add(@ModelAttribute("version") @Valid final VersionDTO versionDTO,
-                      final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
-        if (versionDTO.getFile() == null || versionDTO.getFile().isEmpty()) {
-            bindingResult.rejectValue("file", "NotNull", "Please select the package file.");
+                      final BindingResult bindingResult, final Model model,
+                      final RedirectAttributes redirectAttributes) {
+        if (versionDTO.getFileName() == null || versionDTO.getFileName().isBlank()) {
+            bindingResult.rejectValue("fileName", "NotNull", "Please select the package.");
         }
-        if (bindingResult.hasErrors()) {
-            return CONTROLLER_ADD;
+        if (!bindingResult.hasErrors()) {
+            try {
+                versionService.create(versionDTO);
+                FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
+                return REDIRECT_TO_CONTROLLER_INDEX;
+            } catch (IllegalArgumentException e) {
+                bindingResult.rejectValue("fileName", "version.package.invalid", e.getMessage());
+            }
         }
-        try {
-            versionService.create(versionDTO);
-        } catch (IllegalArgumentException e) {
-            bindingResult.rejectValue("file", "error.file", e.getMessage());
-            return CONTROLLER_ADD;
-        } catch (IOException e) {
-            log.error("Could not store the uploaded package", e);
-            bindingResult.reject("error.upload", "The file could not be stored. Please try again or contact the administrator.");
-            return CONTROLLER_ADD;
+        addPackagesToModel(versionDTO.getSoftwareId(), model);
+        return CONTROLLER_ADD;
+    }
+
+    /**
+     * Fragment with the packages of the selected application, refreshed by htmx when the application changes.
+     */
+    @GetMapping("/packages")
+    @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
+    public String packages(@ModelAttribute("version") final VersionDTO versionDTO, final Model model) {
+        addPackagesToModel(versionDTO.getSoftwareId(), model);
+        return "version/_form :: packageField";
+    }
+
+    private void addPackagesToModel(final Integer softwareId, final Model model) {
+        if (softwareId == null || softwareRepository.findById(softwareId).isEmpty()) {
+            model.addAttribute("packageValues", List.of());
+            return;
         }
-        FlashMessages.createSuccess(redirectAttributes, ENTITY_NAME);
-        return REDIRECT_TO_CONTROLLER_INDEX;
+        model.addAttribute("packageValues", versionService.getAvailablePackages(softwareId));
+        final Path folder = versionService.getPackagesFolder(softwareId);
+        model.addAttribute("packagesFolder", folder == null ? null : folder.toString());
     }
 
     @GetMapping("/edit/{id}")
@@ -149,28 +168,23 @@ public class VersionController {
             FlashMessages.referencedWarning(redirectAttributes, referencedWarning);
             return REDIRECT_TO_CONTROLLER_INDEX;
         }
-        try {
-            versionService.delete(id);
-            FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
-        } catch (IOException e) {
-            log.error("Could not delete the package of version {}", id, e);
-            FlashMessages.error(redirectAttributes, "The version package could not be deleted.");
-        }
+        versionService.delete(id);
+        FlashMessages.deleteSuccess(redirectAttributes, ENTITY_NAME);
         return REDIRECT_TO_CONTROLLER_INDEX;
     }
 
     @GetMapping("/download/{id}")
     @PreAuthorize("hasAnyAuthority('" + UserRoles.ROLE_VERSION_MANAGE + "')")
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") final Integer id) {
-        final VersionService.StoredFile storedFile = versionService.getStoredFile(id);
+        final Path packageFile = versionService.getPackageFile(id);
         final ContentDisposition contentDisposition = ContentDisposition.attachment()
-                .filename(storedFile.downloadName(), StandardCharsets.UTF_8)
+                .filename(packageFile.getFileName().toString(), StandardCharsets.UTF_8)
                 .build();
         // Always served as a binary download, never rendered inline by the browser.
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .header("X-Content-Type-Options", "nosniff")
-                .body(new FileSystemResource(storedFile.path()));
+                .body(new FileSystemResource(packageFile));
     }
 }

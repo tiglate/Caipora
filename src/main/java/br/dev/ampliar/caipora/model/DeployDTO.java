@@ -3,6 +3,7 @@ package br.dev.ampliar.caipora.model;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
@@ -44,6 +45,24 @@ public class DeployDTO {
     private String operatorName;
 
     private OffsetDateTime createdAt;
+
+    private String versionName;
+
+    private String fileName;
+
+    private String authorizerName;
+
+    private DeployStatus status;
+
+    private Integer exitCode;
+
+    private OffsetDateTime startedAt;
+
+    private OffsetDateTime finishedAt;
+
+    private String scriptOutput;
+
+    private String executorNode;
 
     public Integer getId() {
         return id;
@@ -155,5 +174,93 @@ public class DeployDTO {
 
     public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getAuthorizerName() {
+        return authorizerName;
+    }
+
+    public void setAuthorizerName(String authorizerName) {
+        this.authorizerName = authorizerName;
+    }
+
+    public DeployStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DeployStatus status) {
+        this.status = status;
+    }
+
+    public Integer getExitCode() {
+        return exitCode;
+    }
+
+    public void setExitCode(Integer exitCode) {
+        this.exitCode = exitCode;
+    }
+
+    public OffsetDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(OffsetDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public OffsetDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(OffsetDateTime finishedAt) {
+        this.finishedAt = finishedAt;
+    }
+
+    public String getScriptOutput() {
+        return scriptOutput;
+    }
+
+    public void setScriptOutput(String scriptOutput) {
+        this.scriptOutput = scriptOutput;
+    }
+
+    public String getExecutorNode() {
+        return executorNode;
+    }
+
+    public void setExecutorNode(String executorNode) {
+        this.executorNode = executorNode;
+    }
+
+    public boolean isInProgress() {
+        return status != null && status.isInProgress();
+    }
+
+    /**
+     * @return how long the script ran (until now while running), e.g. "1 min 05 s"; null when it hasn't started
+     */
+    public String getDuration() {
+        if (startedAt == null) {
+            return null;
+        }
+        final OffsetDateTime end = finishedAt != null ? finishedAt : OffsetDateTime.now();
+        final long seconds = Math.max(0, Duration.between(startedAt, end).toSeconds());
+        return seconds < 60 ? seconds + " s" : "%d min %02d s".formatted(seconds / 60, seconds % 60);
     }
 }

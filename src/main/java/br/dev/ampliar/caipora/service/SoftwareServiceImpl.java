@@ -19,16 +19,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SoftwareServiceImpl implements SoftwareService {
 
+    private static final java.util.regex.Pattern CODE_PATTERN = java.util.regex.Pattern.compile("[A-Za-z0-9][A-Za-z0-9._-]*");
+
     private final SoftwareRepository softwareRepository;
     private final StakeholderRepository stakeholderRepository;
     private final VersionRepository versionRepository;
+    private final PackageStorage packageStorage;
 
     public SoftwareServiceImpl(final SoftwareRepository softwareRepository,
                                final StakeholderRepository stakeholderRepository,
-                               final VersionRepository versionRepository) {
+                               final VersionRepository versionRepository,
+                               final PackageStorage packageStorage) {
         this.softwareRepository = softwareRepository;
         this.stakeholderRepository = stakeholderRepository;
         this.versionRepository = versionRepository;
+        this.packageStorage = packageStorage;
     }
 
     @Override
@@ -50,18 +55,66 @@ public class SoftwareServiceImpl implements SoftwareService {
 
     @Override
     @Transactional
-    public Integer create(final SoftwareDTO softwareDTO) {
+    public Integer create(final SoftwareDTO softwareDTO, final boolean canEditScript) {
+        checkCode(softwareDTO.getCode());
         final Software software = mapToEntity(softwareDTO);
-        return softwareRepository.save(software).getId();
+        software.setDeployScript(canEditScript ? normalizeScript(softwareDTO.getDeployScript()) : null);
+        final Integer id = softwareRepository.save(software).getId();
+        packageStorage.createApplicationFolder(software.getCode());
+        return id;
     }
 
     @Override
     @Transactional
-    public void update(final Integer id, final SoftwareDTO softwareDTO) {
+    public void update(final Integer id, final SoftwareDTO softwareDTO, final boolean canEditScript) {
         final Software software = softwareRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
+        if (softwareDTO.getCode() != null && !softwareDTO.getCode().equals(software.getCode())
+                && versionRepository.findFirstBySoftware(software) != null) {
+            throw new IllegalArgumentException(
+                    "The code cannot be changed while the application has versions: it names the packages folder.");
+        }
+        if (softwareDTO.getCode() != null && !softwareDTO.getCode().equals(software.getCode())) {
+            checkCode(softwareDTO.getCode());
+        }
+        final String script = canEditScript ? normalizeScript(softwareDTO.getDeployScript()) : software.getDeployScript();
         mapToEntity(softwareDTO, software);
+        software.setDeployScript(script);
         softwareRepository.save(software);
+        packageStorage.createApplicationFolder(software.getCode());
+    }
+
+    @Override
+    public String getPackagesFolder(final Integer id) {
+        final Software software = softwareRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+        try {
+            return packageStorage.applicationFolder(software.getCode()).toString();
+        } catch (IllegalArgumentException e) {
+            return null; // code recorded before codes were restricted: it can't name a folder
+        }
+    }
+
+    /**
+     * The code names the packages folder of the application. Checked only for new or changed codes, so
+     * applications recorded before the restriction can still be edited.
+     */
+    static void checkCode(final String code) {
+        if (code != null && !CODE_PATTERN.matcher(code).matches()) {
+            throw new IllegalArgumentException(
+                    "Use only letters, digits, dots, hyphens and underscores (the code names the packages folder).");
+        }
+    }
+
+    /**
+     * Scripts are stored as typed (no HTML sanitizing: it would break {@code <}, {@code >} and {@code &&}), only
+     * with Unix line endings (browsers submit CRLF, which breaks bash) and blank meaning "no script".
+     */
+    static String normalizeScript(final String script) {
+        if (script == null || script.isBlank()) {
+            return null;
+        }
+        return script.replace("\r\n", "\n").replace('\r', '\n');
     }
 
     @Override
@@ -75,6 +128,8 @@ public class SoftwareServiceImpl implements SoftwareService {
         softwareDTO.setCode(software.getCode());
         softwareDTO.setName(software.getName());
         softwareDTO.setOwnerId(software.getOwner() == null ? null : software.getOwner().getId());
+        softwareDTO.setOwnerName(software.getOwner() == null ? null : software.getOwner().getName());
+        softwareDTO.setDeployScript(software.getDeployScript());
         softwareDTO.setCreatedAt(software.getCreatedAt());
         softwareDTO.setUpdatedAt(software.getUpdatedAt());
         return softwareDTO;
